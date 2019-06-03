@@ -29,6 +29,9 @@ export function DockerSpawner(): Spawner {
       '--rm',
       '--privileged',
       '--interactive',
+      '--network=host',
+      '--volume',
+      '/dev:/dev',
       '--volume',
       `${process.cwd()}:${abs()}`,
     ];
