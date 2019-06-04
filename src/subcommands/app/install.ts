@@ -9,7 +9,7 @@ import { AppInstaller } from '../../app-installer';
 import { echo } from '../../echo';
 
 export const appInstall = createLeaf({
-  name: 'install',
+  name: '_install',
   hidden: true,
   description: "Install this application's dependencies",
   async action() {

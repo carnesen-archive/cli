@@ -6,7 +6,7 @@ import { execSync } from 'child_process';
 import { join } from 'path';
 
 export const appStart = createLeaf({
-  name: 'start',
+  name: '_start',
   hidden: true,
   description: 'Run this application\'s "start" script',
   options: {},
