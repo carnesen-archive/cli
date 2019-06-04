@@ -1,4 +1,3 @@
-import { isAbsolute } from 'path';
 import { createStringInput, UsageError, createOneOfInput } from '@alwaysai/alwayscli';
 
 import { yes } from '../../../../inputs/yes';
@@ -9,7 +8,7 @@ export function validatePath(value: string) {
     ? 'Value is required'
     : value === '/'
     ? 'The filesystem root "/" is not a valid target directory'
-    : !isAbsolute(value)
+    : !value.startsWith('/')
     ? 'Value must be an absolute path'
     : undefined;
 }

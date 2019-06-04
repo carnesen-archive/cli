@@ -1,14 +1,15 @@
 import { Spawner, Cmd } from './types';
 import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
-import { resolve } from 'path';
+import { platform } from 'os';
+import { ResolvePosixPath } from '../resolve-posix-path';
 
 export const IMAGE_NAME = 'alwaysai/edgeiq';
 export const APP_DIR = '/app';
 
 export function DockerSpawner(): Spawner {
+  const abs = ResolvePosixPath(APP_DIR);
   const gnuSpawner = GnuSpawner({ abs, ...SpawnerBase(translate) });
-
   return {
     ...gnuSpawner,
     rimraf(path?: string) {
@@ -19,23 +20,23 @@ export function DockerSpawner(): Spawner {
     },
   };
 
-  function abs(...paths: string[]) {
-    return resolve(APP_DIR, ...paths);
-  }
-
   function translate(cmd: Cmd) {
     const args = [
       'run',
       '--rm',
       '--privileged',
       '--interactive',
-      '--network=host',
-      '--volume',
-      '/dev:/dev',
       '--volume',
       `${process.cwd()}:${abs()}`,
     ];
-    // ^^ --volume mounts the current working directory into the container
+    if (platform() === 'linux') {
+      args.push('--network=host');
+    } else {
+      args.push('--publish', '127.0.0.1:5000:5000/tcp');
+    }
+    if (platform() !== 'win32') {
+      args.push('--volume', '/dev:/dev');
+    }
     if (cmd.tty) {
       args.push('--tty');
     }

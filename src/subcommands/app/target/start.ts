@@ -4,7 +4,8 @@ import { appConfigFile } from '../../../app-config-file';
 import { targetConfigFile } from './target-config-file';
 import { VENV } from '../../../app-installer';
 import { spawnerBase } from '../../../spawner/spawner-base';
-import { join } from 'path';
+
+const ACTIVATE = [VENV, 'bin', 'activate'].join('/');
 
 export const appTargetStart = createLeaf({
   name: 'start',
@@ -23,7 +24,7 @@ export const appTargetStart = createLeaf({
       case 'docker:': {
         spawner.runForeground({
           exe: '/bin/bash',
-          args: ['-t', '-c', `. ${join(VENV, 'bin', 'activate')} && ${script}`],
+          args: ['-t', '-c', `. ${ACTIVATE} && ${script}`],
           tty: true,
           cwd: '.',
         });
@@ -34,7 +35,7 @@ export const appTargetStart = createLeaf({
       case 'ssh+docker:': {
         spawner.runForeground({
           exe: '/bin/bash',
-          args: ['-t', '-c', `'. ${join(VENV, 'bin', 'activate')} && ${script}'`],
+          args: ['-t', '-c', `'. ${ACTIVATE} && ${script}'`],
           tty: true,
           cwd: '.',
         });
@@ -42,15 +43,11 @@ export const appTargetStart = createLeaf({
       }
 
       case 'ssh:': {
-        const command = `cd ${spawner.abs()} && . ${join(
-          VENV,
-          'bin',
-          'activate',
-        )} && ${script}`;
+        const command = `cd ${spawner.abs()} && . ${ACTIVATE} && ${script}`;
 
         spawnerBase.runForeground({
           exe: 'ssh',
-          args: ['-L 5000:0.0.0.0:5000', '-t', targetConfig.hostname, command],
+          args: ['-L', '5000:0.0.0.0:5000', '-t', targetConfig.hostname, command],
         });
         return;
       }

@@ -6,15 +6,14 @@ set -o xtrace
 rm alwaysai.app.json
 
 cat >app.py <<EOF
-import datetime
-import time
+import http.server
+import socketserver
 
-def main():
-    while True:
-        print('foo')
-        time.sleep(1)
-if __name__ == "__main__":
-    main()
+PORT = 5000
+
+httpd = socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler)
+print("Listening http://localhost:{}".format(PORT))
+httpd.serve_forever()
 EOF
 
 alwaysai app init --yes
