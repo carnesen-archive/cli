@@ -2,8 +2,8 @@ import { basename } from 'path';
 
 import { createLeaf, UsageError } from '@alwaysai/alwayscli';
 
-import { getNonInteractiveStreamName } from '../../../../prompt';
-import { TargetProtocol } from '../../../../target-protocol';
+import { getNonInteractiveStreamName } from '../../../../util/prompt';
+import { TargetProtocol } from '../../../../util/target-protocol';
 
 import { targetConfigFile } from '../target-config-file';
 import { options } from './options';
@@ -13,7 +13,7 @@ import {
   promptForHostname,
   checkForDocker,
 } from './prompts';
-import { echo } from '../../../../echo';
+import { echo } from '../../../../util/echo';
 
 export const init = createLeaf({
   name: 'init',

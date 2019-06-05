@@ -7,10 +7,10 @@ import pump = require('pump');
 import rimraf = require('rimraf');
 
 import { RpcClient } from '../rpc-client';
-import { getRandomString } from '../get-random-string';
+import { getRandomString } from '../util/get-random-string';
 import { ModelPackagePath } from './model-package-path';
 import { parsePackageUrl } from './parse-package-url';
-import { S3 } from '../aws-clients';
+import { S3 } from '../util/s3';
 
 const rimrafAsync = promisify(rimraf);
 

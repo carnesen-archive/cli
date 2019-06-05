@@ -1,8 +1,8 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-import { appConfigFile } from '../../../app-config-file';
+import { appConfigFile } from '../../../config/app-config-file';
 import { ids } from '../../../inputs/ids';
 import logSymbols = require('log-symbols');
-import { echo } from '../../../echo';
+import { echo } from '../../../util/echo';
 
 export const removeModels = createLeaf({
   name: 'remove',

@@ -4,7 +4,7 @@ import {
   createOneOfInput,
   createFlagInput,
 } from '@alwaysai/alwayscli';
-import { configFile } from '../../config';
+import { cliConfigFile } from '../../config/cli-config';
 import { CLI_NAME } from '../../constants';
 import { SYSTEM_IDS } from '@alwaysai/codecs';
 
@@ -12,7 +12,7 @@ const show = createLeaf({
   name: 'show',
   description: `Show your current "${CLI_NAME}" configuration`,
   action() {
-    return configFile.read();
+    return cliConfigFile.read();
   },
 });
 
@@ -24,7 +24,7 @@ const set = createLeaf({
   },
   action(_, opts) {
     if (opts.systemId) {
-      configFile.update(config => {
+      cliConfigFile.update(config => {
         config.systemId = opts.systemId;
       });
     }
@@ -40,11 +40,11 @@ const unset = createLeaf({
   },
   action(_, opts) {
     if (opts.all) {
-      configFile.remove();
+      cliConfigFile.remove();
       return;
     }
     if (opts.systemId) {
-      configFile.update(config => {
+      cliConfigFile.update(config => {
         delete config.systemId;
       });
     }

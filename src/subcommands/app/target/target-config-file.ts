@@ -7,7 +7,7 @@ import { TerseError } from '@alwaysai/alwayscli';
 
 import { SshSpawner } from '../../../spawner/ssh-spawner';
 import { DockerSpawner } from '../../../spawner/docker-spawner';
-import { TargetProtocol } from '../../../target-protocol';
+import { TargetProtocol } from '../../../util/target-protocol';
 import chalk from 'chalk';
 import { SshDockerSpawner } from '../../../spawner/ssh-docker-spawner';
 

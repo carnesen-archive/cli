@@ -5,9 +5,9 @@ import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 import { getCurrentUser, CognitoAuth } from '../../cognito-auth';
 import { email, promptForEmail } from '../../inputs/email';
 import { password, promptForPassword } from '../../inputs/password';
-import { webAuthUrl } from '../../config';
-import { echo } from '../../echo';
-import { getNonInteractiveStreamName, prompt } from '../../prompt';
+import { webAuthUrl } from '../../config/cli-config';
+import { echo } from '../../util/echo';
+import { getNonInteractiveStreamName, prompt } from '../../util/prompt';
 import { yes } from '../../inputs/yes';
 
 export const userLogin = createLeaf({

@@ -2,15 +2,15 @@ import { Choice } from 'prompts';
 
 import { TerseError, UsageError } from '@alwaysai/alwayscli';
 
-import { prompt, getNonInteractiveStreamName } from '../../../../prompt';
-import { TargetProtocol } from '../../../../target-protocol';
+import { prompt, getNonInteractiveStreamName } from '../../../../util/prompt';
+import { TargetProtocol } from '../../../../util/target-protocol';
 import { SshSpawner } from '../../../../spawner/ssh-spawner';
 import { JsSpawner } from '../../../../spawner/js-spawner';
 
 import { validatePath, options } from './options';
 import logSymbols = require('log-symbols');
 import ora = require('ora');
-import { echo } from '../../../../echo';
+import { echo } from '../../../../util/echo';
 
 export async function checkForDocker(
   opts: Partial<{ hostname: string; yes: boolean }> = {},

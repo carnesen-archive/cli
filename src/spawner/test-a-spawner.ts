@@ -1,7 +1,7 @@
 import { join, isAbsolute } from 'path';
 
 import { Spawner } from './types';
-import { getRandomString } from '../get-random-string';
+import { getRandomString } from '../util/get-random-string';
 
 type SpawnerFactory<T extends any[]> = (...args: T) => Spawner;
 

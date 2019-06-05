@@ -1,6 +1,6 @@
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../../../app-config-file';
+import { appConfigFile } from '../../../config/app-config-file';
 import { targetConfigFile } from './target-config-file';
 import { VENV } from '../../../app-installer';
 import { spawnerBase } from '../../../spawner/spawner-base';

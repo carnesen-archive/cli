@@ -1,11 +1,11 @@
 import { dirname } from 'path';
 
 import { Spawner } from '../spawner/types';
-import { ModelId } from '../model-id';
+import { ModelId } from '../util/model-id';
 import { MODEL_CONFIG_FILE_NAME } from '../subcommands/model/model-config-file';
-import { getRandomString } from '../get-random-string';
+import { getRandomString } from '../util/get-random-string';
 import { PackageStreamFromCache } from '../model-manager/package-stream-from-cache';
-import { AppConfig } from '../app-config-file';
+import { AppConfig } from '../config/app-config-file';
 
 function runBestEffortBackgroundTask<T extends any[]>(
   fn: (...args: T) => any,

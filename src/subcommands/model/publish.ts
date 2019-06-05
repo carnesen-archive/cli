@@ -5,8 +5,8 @@ import { parsePackageUrl } from '../../model-manager/parse-package-url';
 import { PackageStreamFromCache } from '../../model-manager/package-stream-from-cache';
 import { PackageStreamFromCwd } from '../../model-manager/package-stream-from-cwd';
 import { streamPackageToCache } from '../../model-manager/stream-package-to-cache';
-import { spinOnPromise } from '../../spin-on-promise';
-import { S3 } from '../../aws-clients';
+import { spinOnPromise } from '../../util/spin-on-promise';
+import { S3 } from '../../util/s3';
 
 export const publish = createLeaf({
   name: 'publish',

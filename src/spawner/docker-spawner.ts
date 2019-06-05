@@ -2,7 +2,7 @@ import { Spawner, Cmd } from './types';
 import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { platform } from 'os';
-import { ResolvePosixPath } from '../resolve-posix-path';
+import { ResolvePosixPath } from '../util/resolve-posix-path';
 
 export const IMAGE_NAME = 'alwaysai/edgeiq';
 export const APP_DIR = '/app';

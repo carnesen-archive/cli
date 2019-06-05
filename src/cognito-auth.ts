@@ -6,9 +6,9 @@ import { Auth as CognitoAuth } from 'aws-amplify';
 import { CognitoUser } from '@aws-amplify/auth';
 import { CognitoUserSession } from 'amazon-cognito-identity-js';
 
-import { credentialsStore } from './credentials-store';
+import { credentialsStore } from './config/credentials-store';
 import { AWS_REGION } from './constants';
-import { userPoolId, userPoolClientId } from './config';
+import { userPoolId, userPoolClientId } from './config/cli-config';
 
 CognitoAuth.configure({
   region: AWS_REGION,

@@ -1,11 +1,11 @@
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 import { ErrorCode } from '@alwaysai/cloud-api';
 
-import { appConfigFile } from '../../../app-config-file';
+import { appConfigFile } from '../../../config/app-config-file';
 import { ids } from '../../../inputs/ids';
 import { RpcClient } from '../../../rpc-client';
-import { spinOnPromise } from '../../../spin-on-promise';
-import { echo } from '../../../echo';
+import { spinOnPromise } from '../../../util/spin-on-promise';
+import { echo } from '../../../util/echo';
 
 export const addModels = createLeaf({
   name: 'add',

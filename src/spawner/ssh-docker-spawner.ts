@@ -2,7 +2,7 @@ import { Cmd } from './types';
 import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { APP_DIR, IMAGE_NAME } from './docker-spawner';
-import { ResolvePosixPath } from '../resolve-posix-path';
+import { ResolvePosixPath } from '../util/resolve-posix-path';
 
 export function SshDockerSpawner(config: { path: string; hostname: string }) {
   ResolvePosixPath(config.path);

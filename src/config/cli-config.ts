@@ -5,7 +5,7 @@ import * as c from '@alwaysai/codecs';
 
 import { ConfigFile, ALWAYSAI_CONFIG_DIR } from '@alwaysai/config-nodejs';
 import { TERSE } from '@alwaysai/alwayscli';
-import { CLI_NAME } from './constants';
+import { CLI_NAME } from '../constants';
 
 const props = {
   systemId: c.systemId,
@@ -16,7 +16,7 @@ const codec = t.partial(props);
 const FILE_NAME = 'alwaysai.cli.json';
 const path = join(ALWAYSAI_CONFIG_DIR, FILE_NAME);
 
-export const configFile = ConfigFile({
+export const cliConfigFile = ConfigFile({
   path,
   codec,
   ENOENT: {
@@ -26,7 +26,7 @@ export const configFile = ConfigFile({
   initialValue: {},
 });
 
-const maybeConfig = configFile.readIfExists();
+const maybeConfig = cliConfigFile.readIfExists();
 const systemId =
   maybeConfig && maybeConfig.systemId ? maybeConfig.systemId : 'production';
 

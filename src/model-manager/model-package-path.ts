@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { ModelId } from '../model-id';
+import { ModelId } from '../util/model-id';
 import { MODEL_PACKAGE_CACHE_DIR } from '../constants';
 
 export function ModelPackagePath(opts: { id: string; version: string }) {

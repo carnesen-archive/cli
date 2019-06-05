@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 import pump = require('pump');
 import rimraf = require('rimraf');
 
-import { getRandomString } from '../get-random-string';
+import { getRandomString } from '../util/get-random-string';
 import { ModelPackagePath } from './model-package-path';
 import mkdirp = require('mkdirp');
 import { dirname } from 'path';

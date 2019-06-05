@@ -1,5 +1,5 @@
 import { Input, UsageError, TerseError } from '@alwaysai/alwayscli';
-import { prompt } from '../prompt';
+import { prompt } from '../util/prompt';
 
 const placeholder = '<address>';
 

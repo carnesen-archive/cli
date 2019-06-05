@@ -1,7 +1,7 @@
 import { createStringInput, UsageError, createOneOfInput } from '@alwaysai/alwayscli';
 
 import { yes } from '../../../../inputs/yes';
-import { TARGET_PROTOCOLS } from '../../../../target-protocol';
+import { TARGET_PROTOCOLS } from '../../../../util/target-protocol';
 
 export function validatePath(value: string) {
   return !value

@@ -4,8 +4,8 @@ import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 
 import { yes } from '../../inputs/yes';
 import { modelConfigFile } from './model-config-file';
-import { checkTerminalIsInteractive } from '../../prompt';
-import { echo } from '../../echo';
+import { checkTerminalIsInteractive } from '../../util/prompt';
+import { echo } from '../../util/echo';
 
 type Config = Parameters<typeof modelConfigFile.write>[0];
 

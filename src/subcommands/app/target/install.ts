@@ -2,12 +2,12 @@ import LogSymbols = require('log-symbols');
 
 import { createLeaf } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../../../app-config-file';
+import { appConfigFile } from '../../../config/app-config-file';
 import { targetConfigFile } from './target-config-file';
-import { spinOnPromise } from '../../../spin-on-promise';
+import { spinOnPromise } from '../../../util/spin-on-promise';
 import { JsSpawner } from '../../../spawner/js-spawner';
 import { AppInstaller } from '../../../app-installer';
-import { echo } from '../../../echo';
+import { echo } from '../../../util/echo';
 
 export const install = createLeaf({
   name: 'install',

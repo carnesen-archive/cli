@@ -1,5 +1,5 @@
 import { streamPackageToCache } from './stream-package-to-cache';
-import { getRandomString } from '../get-random-string';
+import { getRandomString } from '../util/get-random-string';
 import { JsSpawner } from '../spawner/js-spawner';
 import { basename } from 'path';
 import tempy = require('tempy');

@@ -5,10 +5,10 @@ import origin = require('remote-origin-url');
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 
 import { yes } from '../../inputs/yes';
-import { appConfigFile } from '../../app-config-file';
-import { prompt, checkTerminalIsInteractive } from '../../prompt';
+import { appConfigFile } from '../../config/app-config-file';
+import { prompt, checkTerminalIsInteractive } from '../../util/prompt';
 import { ASSETS_DIR } from '../../constants';
-import { echo } from '../../echo';
+import { echo } from '../../util/echo';
 
 const APP_PY = readFileSync(join(ASSETS_DIR, 'app.py'), {
   encoding: 'utf8',

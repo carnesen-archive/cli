@@ -2,12 +2,12 @@ import { cast } from '@alwaysai/codecs';
 import { rpcMethodSpecs, RpcApi, RpcRequest, ErrorCode } from '@alwaysai/cloud-api';
 import { TerseError } from '@alwaysai/alwayscli';
 
-import { SendRpcData } from './create-send-rpc-data';
+import { SendRpcData } from './send-rpc-data';
 import { deserializeRpcResponse } from './deserialize-rpc-response';
 
 import { getBearerToken } from '../cognito-auth';
-import { PLEASE_LOG_IN_MESSAGE } from '../credentials-store';
-import { cloudApiUrl } from '../config';
+import { PLEASE_LOG_IN_MESSAGE } from '../config/credentials-store';
+import { cloudApiUrl } from '../config/cli-config';
 
 export async function RpcClient(): Promise<RpcApi> {
   const bearerToken = await getBearerToken();
