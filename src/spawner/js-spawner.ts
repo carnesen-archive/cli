@@ -13,10 +13,10 @@ import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 
 export function JsSpawner(context: { path?: string } = {}): Spawner {
-  const gnuSpawner = GnuSpawner({ abs, ...SpawnerBase(translate) });
+  const gnuSpawner = GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
   return {
     ...gnuSpawner,
-    abs,
+    resolvePath,
     readdir,
     mkdirp,
     rimraf,
@@ -24,8 +24,8 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
     exists,
   };
 
-  function abs(...paths: string[]) {
-    return resolve(context.path || '', ...paths);
+  function resolvePath(...paths: (string | undefined)[]) {
+    return resolve(context.path || '', ...paths.map(path => path || ''));
   }
 
   function translate(cmd: Cmd) {
@@ -34,22 +34,22 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
     };
 
     if (cmd.cwd) {
-      translated.cwd = abs(cmd.cwd);
+      translated.cwd = resolvePath(cmd.cwd);
     }
 
     return translated;
   }
 
   async function mkdirp(path = '') {
-    await promisify(mkdirpJs)(abs(path));
+    await promisify(mkdirpJs)(resolvePath(path));
   }
 
   async function rimraf(path = '') {
-    await promisify(rimrafJs)(abs(path));
+    await promisify(rimrafJs)(resolvePath(path));
   }
 
   function readdir(path = '') {
-    return promisify(fsReaddir)(abs(path));
+    return promisify(fsReaddir)(resolvePath(path));
   }
 
   async function tar(...paths: string[]) {
@@ -59,7 +59,7 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
       }
     }
     const packageStream = (tarJs.create(
-      { sync: true, gzip: true, cwd: abs() },
+      { sync: true, gzip: true, cwd: resolvePath() },
       paths,
     ) as unknown) as Readable;
     // ^^ The @types for tar.create are not correct
@@ -71,7 +71,7 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
       throw new Error('path is mandatory');
     }
     try {
-      await promisify(access)(abs(path));
+      await promisify(access)(resolvePath(path));
       return true;
     } catch (ex) {
       return false;

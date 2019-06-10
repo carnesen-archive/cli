@@ -1,6 +1,6 @@
 import { createLeaf } from '@alwaysai/alwayscli';
 import { targetConfigFile } from './target-config-file';
-import { VENV } from '../../../app-installer';
+import { ACTIVATE } from '../../../app-installer';
 
 export const shell = createLeaf({
   name: 'shell',
@@ -8,22 +8,23 @@ export const shell = createLeaf({
   action() {
     const target = targetConfigFile.readSpawner();
     const targetConfig = targetConfigFile.read();
-    const rcfile = `${target.abs(VENV, 'bin', 'activate')}`;
     switch (targetConfig.protocol) {
       case 'docker:': {
         target.runForeground({
           exe: '/bin/bash',
-          args: ['--rcfile', rcfile],
+          args: ['--rcfile', ACTIVATE],
           tty: true,
           cwd: '.',
+          expose5000: true,
         });
         break;
       }
 
       case 'ssh:': {
         target.runForeground({
-          exe: `cd "${target.abs()}"; /bin/bash --rcfile ${rcfile}`,
+          exe: `cd "${target.resolvePath()}"; /bin/bash --rcfile ${ACTIVATE}`,
           tty: true,
+          expose5000: true,
         });
         break;
       }
@@ -31,9 +32,10 @@ export const shell = createLeaf({
       case 'ssh+docker:': {
         target.runForeground({
           exe: '/bin/bash',
-          args: ['--rcfile', rcfile],
+          args: ['--rcfile', ACTIVATE],
           tty: true,
           cwd: '.',
+          expose5000: true,
         });
         break;
       }

@@ -1,19 +1,17 @@
 import { Cmd } from './types';
 import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
-import { resolve } from 'path';
+import { ResolvePosixPath } from '../util/resolve-posix-path';
 
-export function ChildSpawner(context: { path?: string } = {}) {
-  return GnuSpawner({ abs, ...SpawnerBase(translate) });
+export function ChildSpawner(context: { path: string }) {
+  const resolvePath = ResolvePosixPath(context.path);
 
-  function abs(...paths: string[]) {
-    return resolve(context.path || '', ...paths);
-  }
+  return GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
 
   function translate(cmd: Cmd) {
     const translated = { ...cmd };
     if (cmd.cwd) {
-      translated.cwd = abs(cmd.cwd);
+      translated.cwd = resolvePath(cmd.cwd);
     }
 
     return translated;

@@ -3,7 +3,7 @@
 set -o errexit
 set -o xtrace
 
-alwaysai app target init --yes --protocol ssh+docker: --hostname alwaysai06 --path /tmp/foo321
+alwaysai app target init --yes --protocol ssh+docker: --hostname $HOSTNAME --path foo321
 alwaysai app target exec rm -rf models venv app.py
 alwaysai app target install
 alwaysai app target start

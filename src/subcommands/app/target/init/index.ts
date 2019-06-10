@@ -122,7 +122,7 @@ async function runPromptedInterface({ yes, ...passed }: NamedInputs) {
       const path = await promptForPath(
         passed.path ||
           (existing && existing.protocol === protocol && existing.path) ||
-          '/',
+          '',
         connected ? hostname : undefined,
         yes,
       );
@@ -137,7 +137,7 @@ async function runPromptedInterface({ yes, ...passed }: NamedInputs) {
         yes,
       );
       const path = await promptForPath(
-        passed.path || (existing && existing.protocol === 'ssh:' && existing.path) || '/',
+        passed.path || (existing && existing.protocol === 'ssh:' && existing.path) || '',
         connected ? hostname : undefined,
         yes,
       );

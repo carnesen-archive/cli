@@ -2,10 +2,8 @@ import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 
 import { appConfigFile } from '../../../config/app-config-file';
 import { targetConfigFile } from './target-config-file';
-import { VENV } from '../../../app-installer';
+import { ACTIVATE } from '../../../app-installer';
 import { spawnerBase } from '../../../spawner/spawner-base';
-
-const ACTIVATE = [VENV, 'bin', 'activate'].join('/');
 
 export const appTargetStart = createLeaf({
   name: 'start',
@@ -27,6 +25,7 @@ export const appTargetStart = createLeaf({
           args: ['-t', '-c', `. ${ACTIVATE} && ${script}`],
           tty: true,
           cwd: '.',
+          expose5000: true,
         });
         return;
       }
@@ -38,12 +37,13 @@ export const appTargetStart = createLeaf({
           args: ['-t', '-c', `'. ${ACTIVATE} && ${script}'`],
           tty: true,
           cwd: '.',
+          expose5000: true,
         });
         return;
       }
 
       case 'ssh:': {
-        const command = `cd ${spawner.abs()} && . ${ACTIVATE} && ${script}`;
+        const command = `cd ${spawner.resolvePath()} && . ${ACTIVATE} && ${script}`;
 
         spawnerBase.runForeground({
           exe: 'ssh',

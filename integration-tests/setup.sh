@@ -3,8 +3,6 @@
 set -o errexit
 set -o xtrace
 
-rm alwaysai.app.json
-
 cat >app.py <<EOF
 import http.server
 import socketserver
@@ -16,6 +14,7 @@ print("Listening http://localhost:{}".format(PORT))
 httpd.serve_forever()
 EOF
 
+rm -f alwaysai.app.json
 alwaysai app init --yes
 alwaysai app models search
-alwaysai app models add alwaysai/agenet
+alwaysai app models add alwaysai/squeezenet alwaysai/SqueezenetSSD

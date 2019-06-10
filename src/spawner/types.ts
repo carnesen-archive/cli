@@ -5,6 +5,7 @@ export type Cmd = {
   args?: string[];
   cwd?: string;
   tty?: boolean;
+  expose5000?: boolean;
   input?: Readable;
 };
 
@@ -14,7 +15,7 @@ export type Spawner = {
   run: (cmd: Cmd) => Promise<string>;
   runForeground: (cmd: Cmd) => void;
   runStreaming: (cmd: Cmd) => Promise<Readable>;
-  abs: (...paths: string[]) => string;
+  resolvePath: (...paths: (string | undefined)[]) => string;
   readdir: (path?: string) => Promise<string[]>;
   mkdirp: (path?: string) => Promise<void>;
   rimraf: (path?: string) => Promise<void>;

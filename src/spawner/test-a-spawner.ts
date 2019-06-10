@@ -1,34 +1,45 @@
-import { join, isAbsolute } from 'path';
+import { posix } from 'path';
 
 import { Spawner } from './types';
 import { getRandomString } from '../util/get-random-string';
 
 type SpawnerFactory<T extends any[]> = (...args: T) => Spawner;
 
+const { join } = posix;
+
 export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...args: T) {
   const spawner = factory(...args);
-  const { abs, mkdirp, rimraf, run, readdir, runForeground, tar, untar } = spawner;
+  const {
+    resolvePath,
+    mkdirp,
+    rimraf,
+    run,
+    readdir,
+    runForeground,
+    tar,
+    untar,
+  } = spawner;
 
   describe(factory.name, () => {
-    describe(abs.name, () => {
-      it('returns the absolute context path of the spawner if no args are passed', () => {
-        const contextPath = abs();
-        expect(isAbsolute(contextPath)).toBe(true);
+    describe(resolvePath.name, () => {
+      it('returns the context path of the spawner if no args are passed', () => {
+        const contextPath = resolvePath();
+        expect(typeof contextPath).toBe('string');
       });
 
-      it('resolves a context-path-relative paths to ab absolute one', () => {
-        const contextPath = abs();
-        const path = abs('foo');
+      it('resolves a context-path-relative path', () => {
+        const contextPath = resolvePath();
+        const path = resolvePath('foo');
         expect(path).toBe(join(contextPath, 'foo'));
       });
 
       it('resolves absolute paths to themselves', () => {
-        const path = abs('/foo');
+        const path = resolvePath('/foo');
         expect(path).toBe('/foo');
       });
 
       it('acts like path.resolve (i.e. `cd x && cd y && cd z`) for multiple paths', () => {
-        const path = abs('foo', '/bar', 'baz');
+        const path = resolvePath('foo', '/bar', 'baz');
         expect(path).toBe('/bar/baz');
       });
     });
@@ -36,39 +47,23 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
     describe(mkdirp.name, () => {
       it('makes the context path directory if no args are provided', async () => {
         await spawner.mkdirp();
-        expect(await spawner.exists(abs())).toBe(true);
+        expect(await spawner.exists(resolvePath())).toBe(true);
       });
 
       it('makes a context-path-relative directory if one is provided', async () => {
         const tmpId = getRandomString();
         await spawner.mkdirp(tmpId);
-        expect(await spawner.exists(join(abs(), tmpId))).toBe(true);
-      });
-
-      it('makes an absolute path if one is provided', async () => {
-        const tmpId = getRandomString();
-        const tmpDir = abs(tmpId);
-        expect(await spawner.exists(tmpDir)).toBe(false);
-        await spawner.mkdirp(tmpDir);
-        expect(await spawner.exists(tmpDir)).toBe(true);
+        expect(await spawner.exists(join(resolvePath(), tmpId))).toBe(true);
       });
     });
 
     describe(rimraf.name, () => {
-      it('removes an abs-relative directory if one is provided', async () => {
+      it('removes an context-relative directory if one is provided', async () => {
         const tmpId = getRandomString();
         await spawner.mkdirp(tmpId);
-        expect(await spawner.exists(join(abs(), tmpId))).toBe(true);
+        expect(await spawner.exists(join(resolvePath(), tmpId))).toBe(true);
         await spawner.rimraf(tmpId);
-        expect(await spawner.exists(join(abs(), tmpId))).toBe(false);
-      });
-
-      it('removes an absolute path if one is provided', async () => {
-        const tmpId = getRandomString();
-        const tmpDir = abs(tmpId);
-        expect(await spawner.exists(tmpDir)).toBe(false);
-        await spawner.mkdirp(tmpDir);
-        expect(await spawner.exists(tmpDir)).toBe(true);
+        expect(await spawner.exists(join(resolvePath(), tmpId))).toBe(false);
       });
     });
 

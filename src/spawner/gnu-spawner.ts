@@ -1,22 +1,20 @@
 import { Readable } from 'stream';
-
 import { Spawner } from './types';
-import { isAbsolute } from 'path';
 import { CodedError } from '@carnesen/coded-error';
 
 export function GnuSpawner(context: {
-  abs: Spawner['abs'];
+  resolvePath: Spawner['resolvePath'];
   run: Spawner['run'];
   runForeground: Spawner['runForeground'];
   runStreaming: Spawner['runStreaming'];
 }): Spawner {
-  const { abs, run, runForeground, runStreaming } = context;
+  const { resolvePath, run, runForeground, runStreaming } = context;
 
   return {
     run,
     runForeground,
     runStreaming,
-    abs,
+    resolvePath,
     readdir,
     mkdirp,
     rimraf,
@@ -26,15 +24,16 @@ export function GnuSpawner(context: {
   };
 
   async function mkdirp(path?: string) {
-    await run({ exe: 'mkdir', args: ['-p', abs(path || '')] });
+    await run({ exe: 'mkdir', args: ['-p', resolvePath(path)] });
   }
 
   async function readdir(path?: string) {
     let output: string;
-    const absPath = abs(path || '');
+    const resolvedPath = resolvePath(path);
     try {
-      output = await run({ exe: 'ls', args: ['-A1', absPath] });
-      // ^^ The output looks like '/foo/bar.txt' if path is an existing file or else it looks like 'a b c' if the path is a directory with files/subdirs a, b, c.
+      output = await run({ exe: 'ls', args: ['-A1', resolvedPath] });
+      // ^^ The output looks like '/foo/bar.txt' if path is an existing file
+      // Else it looks like 'a b c' if the path is a directory with files/subdirs a, b, c.
     } catch (ex) {
       if (
         ex &&
@@ -45,21 +44,21 @@ export function GnuSpawner(context: {
       }
       throw ex;
     }
-    if (isAbsolute(output)) {
-      throw new CodedError(`ENOTDIR: not a directory "${absPath}"`, 'ENOTDIR');
+    if (output.startsWith('/')) {
+      throw new CodedError(`ENOTDIR: not a directory "${resolvedPath}"`, 'ENOTDIR');
     }
     return output.length > 0 ? output.split('\n') : [];
   }
 
   async function rimraf(path?: string) {
-    await run({ exe: 'rm', args: ['-rf', abs(path || '')] });
+    await run({ exe: 'rm', args: ['-rf', resolvePath(path)] });
   }
 
   async function tar(...paths: string[]) {
     return await runStreaming({
       exe: 'tar',
       args: ['-cz', ...paths],
-      cwd: abs(),
+      cwd: resolvePath(),
     });
   }
 
@@ -67,7 +66,7 @@ export function GnuSpawner(context: {
     await run({
       exe: 'tar',
       args: ['-xz'],
-      cwd: abs(cwd),
+      cwd: resolvePath(cwd),
       input,
     });
   }
@@ -77,7 +76,7 @@ export function GnuSpawner(context: {
       throw new Error('"path" is required');
     }
     try {
-      await run({ exe: 'stat', args: [abs(path)] });
+      await run({ exe: 'stat', args: [resolvePath(path)] });
       return true;
     } catch (ex) {
       return false;

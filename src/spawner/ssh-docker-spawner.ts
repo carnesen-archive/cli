@@ -5,13 +5,12 @@ import { APP_DIR, IMAGE_NAME } from './docker-spawner';
 import { ResolvePosixPath } from '../util/resolve-posix-path';
 
 export function SshDockerSpawner(config: { path: string; hostname: string }) {
-  ResolvePosixPath(config.path);
-  const abs = ResolvePosixPath(APP_DIR);
-  return GnuSpawner({ abs, ...SpawnerBase(translate) });
+  const resolvePath = ResolvePosixPath(APP_DIR);
+  return GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
 
   function translate(cmd: Cmd) {
     const exe = 'ssh';
-    const sshArgs: string[] = ['-L', '5000:0.0.0.0:5000'];
+    const sshArgs: string[] = [];
     const dockerArgs: string[] = [
       'docker',
       'run',
@@ -30,14 +29,11 @@ export function SshDockerSpawner(config: { path: string; hostname: string }) {
       dockerArgs.push('--tty');
     }
 
-    sshArgs.push(config.hostname);
-
-    if (cmd.cwd) {
-      dockerArgs.push('--workdir', abs(cmd.cwd));
+    if (cmd.expose5000) {
+      sshArgs.push('-L', '5000:0.0.0.0:5000');
     }
-
-    dockerArgs.push(IMAGE_NAME);
-    dockerArgs.push(cmd.exe);
+    sshArgs.push(config.hostname);
+    dockerArgs.push('--workdir', resolvePath(cmd.cwd), IMAGE_NAME, cmd.exe);
 
     if (cmd.args) {
       dockerArgs.push(...cmd.args);

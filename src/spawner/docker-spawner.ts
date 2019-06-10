@@ -8,12 +8,12 @@ export const IMAGE_NAME = 'alwaysai/edgeiq';
 export const APP_DIR = '/app';
 
 export function DockerSpawner(): Spawner {
-  const abs = ResolvePosixPath(APP_DIR);
-  const gnuSpawner = GnuSpawner({ abs, ...SpawnerBase(translate) });
+  const resolvePath = ResolvePosixPath(APP_DIR);
+  const gnuSpawner = GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
   return {
     ...gnuSpawner,
     rimraf(path?: string) {
-      if (abs(path || '') === abs()) {
+      if (!path || resolvePath(path) === resolvePath()) {
         throw new Error('Refusing to delete whole directory because it is mirrored');
       }
       return gnuSpawner.rimraf(path);
@@ -27,23 +27,26 @@ export function DockerSpawner(): Spawner {
       '--privileged',
       '--interactive',
       '--volume',
-      `${process.cwd()}:${abs()}`,
+      `${process.cwd()}:${resolvePath()}`,
     ];
-    if (platform() === 'linux') {
-      args.push('--network=host');
-    } else {
-      args.push('--publish', '127.0.0.1:5000:5000/tcp');
+
+    if (cmd.expose5000) {
+      if (platform() === 'linux') {
+        args.push('--network=host');
+      } else {
+        args.push('--publish', '127.0.0.1:5000:5000/tcp');
+      }
     }
+
     if (platform() !== 'win32') {
       args.push('--volume', '/dev:/dev');
     }
+
     if (cmd.tty) {
       args.push('--tty');
     }
-    if (cmd.cwd) {
-      // Workdir determines the user's current working directory in the container
-      args.push('--workdir', abs(cmd.cwd));
-    }
+
+    args.push('--workdir', resolvePath(cmd.cwd));
     args.push(IMAGE_NAME, cmd.exe);
 
     if (cmd.args) {

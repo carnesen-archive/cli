@@ -8,19 +8,17 @@ export function validatePath(value: string) {
     ? 'Value is required'
     : value === '/'
     ? 'The filesystem root "/" is not a valid target directory'
-    : !value.startsWith('/')
-    ? 'Value must be an absolute path'
     : undefined;
 }
 
 const path = createStringInput({
-  description: 'Absolute path for the application on the target system',
+  description: 'Application directory path',
 });
 const originalGetValue = path.getValue;
 path.getValue = async argv => {
   const path = await originalGetValue(argv);
   if (typeof path === 'undefined') {
-    return path;
+    return undefined;
   }
   const errorMessage = validatePath(path);
   if (errorMessage) {

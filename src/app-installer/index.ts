@@ -2,9 +2,12 @@ import difference = require('lodash.difference');
 
 import { Spawner } from '../spawner/types';
 import { InstallModels } from './install-models';
+import { posix } from 'path';
 
 const REQUIREMENTS_FILE_NAME = 'requirements.txt';
-export const VENV = 'venv';
+const VENV = 'venv';
+export const ACTIVATE = posix.join(VENV, 'bin', 'activate');
+
 const IGNORED_FILE_NAMES = ['models', 'node_modules', '.git', 'venv'];
 
 export function AppInstaller(target: Spawner) {
@@ -42,8 +45,8 @@ export function AppInstaller(target: Spawner) {
     if (await target.exists(REQUIREMENTS_FILE_NAME)) {
       changed = true;
       await target.run({
-        exe: target.abs(VENV, 'bin', 'pip'),
-        args: ['install', '--requirement', target.abs(REQUIREMENTS_FILE_NAME)],
+        exe: target.resolvePath(VENV, 'bin', 'pip'),
+        args: ['install', '--requirement', target.resolvePath(REQUIREMENTS_FILE_NAME)],
       });
     }
     return changed;
