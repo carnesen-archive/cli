@@ -4,16 +4,12 @@ import { createLeaf, UsageError } from '@alwaysai/alwayscli';
 
 import { getNonInteractiveStreamName } from '../../../../util/prompt';
 import { TargetProtocol } from '../../../../util/target-protocol';
+import { echo } from '../../../../util/echo';
 
 import { targetConfigFile } from '../target-config-file';
 import { options } from './options';
-import {
-  promptForProtocol,
-  promptForPath,
-  promptForHostname,
-  checkForDocker,
-} from './prompts';
-import { echo } from '../../../../util/echo';
+import { promptForProtocol, promptForPath, promptForHostname } from './prompts';
+import { checkForDocker } from './check-for-docker';
 
 export const init = createLeaf({
   name: 'init',
@@ -110,6 +106,7 @@ async function runPromptedInterface({ yes, ...passed }: NamedInputs) {
 
   switch (protocol) {
     case 'docker:': {
+      await checkForDocker({ yes });
       return targetConfigFile.write({ protocol });
     }
     case 'ssh+docker:': {
@@ -119,6 +116,7 @@ async function runPromptedInterface({ yes, ...passed }: NamedInputs) {
           '',
         yes,
       );
+      await checkForDocker({ hostname, yes });
       const path = await promptForPath(
         passed.path ||
           (existing && existing.protocol === protocol && existing.path) ||
@@ -126,7 +124,6 @@ async function runPromptedInterface({ yes, ...passed }: NamedInputs) {
         connected ? hostname : undefined,
         yes,
       );
-      await checkForDocker({ hostname, yes });
       return targetConfigFile.write({ protocol, hostname, path });
     }
     case 'ssh:': {

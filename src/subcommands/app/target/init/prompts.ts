@@ -1,33 +1,15 @@
 import { Choice } from 'prompts';
+import ora = require('ora');
 
-import { TerseError, UsageError } from '@alwaysai/alwayscli';
+import { UsageError } from '@alwaysai/alwayscli';
 
-import { prompt, getNonInteractiveStreamName } from '../../../../util/prompt';
+import { prompt } from '../../../../util/prompt';
 import { TargetProtocol } from '../../../../util/target-protocol';
 import { SshSpawner } from '../../../../spawner/ssh-spawner';
-import { JsSpawner } from '../../../../spawner/js-spawner';
-
-import { validatePath, options } from './options';
-import logSymbols = require('log-symbols');
-import ora = require('ora');
 import { echo } from '../../../../util/echo';
 
-export async function checkForDocker(
-  opts: Partial<{ hostname: string; yes: boolean }> = {},
-) {
-  const spawner = opts.hostname
-    ? SshSpawner({ hostname: opts.hostname, path: '/tmp' })
-    : JsSpawner();
-  const spinner = ora('Check for "docker" executable');
-  try {
-    await spawner.run({ exe: 'docker', args: ['--version'] });
-    spinner.succeed();
-  } catch (ex) {
-    spinner.fail('Command "docker --version" failed.');
-    echo(ex.message);
-    await promptToConfirmSave(opts.yes || false);
-  }
-}
+import { validatePath, options } from './options';
+import { confirmSave } from './confirm-save';
 
 export async function promptForProtocol(initialProtocol: TargetProtocol) {
   const choices: Choice[] = [
@@ -81,7 +63,7 @@ export async function promptForHostname(initialValue: string, yes: boolean) {
     ({ hostname } = answer);
   }
   let connected = false;
-  const spinner = ora('Check connectivity');
+  const spinner = ora('Check connectivity').start();
   try {
     const spawner = SshSpawner({ hostname, path: '/tmp' });
     await spawner.run({ exe: 'ls' });
@@ -92,7 +74,7 @@ export async function promptForHostname(initialValue: string, yes: boolean) {
     if (ex.message) {
       echo(ex.message);
     }
-    await promptToConfirmSave(yes);
+    await confirmSave(yes);
   }
   return { connected, hostname };
 }
@@ -123,7 +105,7 @@ export async function promptForPath(
   }
 
   if (hostname) {
-    const spinner = ora('Check filesystem permissions');
+    const spinner = ora('Check filesystem permissions').start();
     try {
       const spawner = SshSpawner({ hostname, path });
       await spawner.mkdirp();
@@ -133,37 +115,9 @@ export async function promptForPath(
       if (ex.message) {
         echo(ex.message);
       }
-      await promptToConfirmSave(yes);
+      await confirmSave(yes);
     }
   }
 
   return path;
-}
-
-async function promptToConfirmSave(yes: boolean) {
-  if (yes) {
-    echo(
-      logSymbols.warning,
-      "We'll save this configuration despite failed checks because --yes was passed",
-    );
-    return;
-  }
-  if (getNonInteractiveStreamName()) {
-    throw new TerseError(
-      'The above error is fatal because this terminal is not interactive nor was "--yes" passed as a command-line option.',
-    );
-  }
-
-  const answers = await prompt([
-    {
-      type: 'confirm',
-      name: 'confirmed',
-      message: 'Do you want to save this configuration?',
-      initial: false,
-    },
-  ]);
-
-  if (!answers.confirmed) {
-    throw new TerseError('Operation canceled by user');
-  }
 }
