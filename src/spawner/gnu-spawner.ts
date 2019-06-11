@@ -62,7 +62,7 @@ export function GnuSpawner(context: {
     });
   }
 
-  async function untar(input: Readable, cwd = '') {
+  async function untar(input: Readable, cwd = '.') {
     await run({
       exe: 'tar',
       args: ['-xz'],
