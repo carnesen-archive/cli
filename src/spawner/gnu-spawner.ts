@@ -66,7 +66,7 @@ export function GnuSpawner(context: {
     await run({
       exe: 'tar',
       args: ['-xz'],
-      cwd: resolvePath(cwd),
+      cwd,
       input,
     });
   }
