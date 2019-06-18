@@ -84,7 +84,8 @@
     "src",
     "lib",
     "assets",
-    "alwaysai.git.json"
+    "alwaysai.git.json",
+    "package-lock.json"
   ],
   "keywords": [
     "alwaysai",
