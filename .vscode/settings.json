@@ -4,6 +4,7 @@
     "cognito",
     "create",
     "deserialize",
+    "keymirror",
     "stream",
     "tarbomb",
     "untar",

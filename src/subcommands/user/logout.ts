@@ -1,6 +1,5 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-
-import { CognitoAuth } from '../../cognito-auth';
+import { credentialsStore } from '../../config/credentials-store';
 
 export const userLogout = createLeaf({
   name: 'logout',
@@ -8,7 +7,7 @@ export const userLogout = createLeaf({
   options: {},
   async action() {
     try {
-      await CognitoAuth.signOut();
+      await credentialsStore.clear();
       return 'Logged out successfully';
     } catch {
       return 'An error occurred logging out';

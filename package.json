@@ -1,7 +1,7 @@
 {
   "name": "alwaysai",
   "description": "The alwaysAI command-line interface (CLI)",
-  "version": "0.0.0-41",
+  "version": "0.0.0-42",
   "main": "lib/index.js",
   "publishConfig": {
     "access": "public",
@@ -32,8 +32,6 @@
     "@alwaysai/cloud-api": "0.0.0-14",
     "@alwaysai/codecs": "0.0.0-5",
     "@alwaysai/config-nodejs": "0.0.0-4",
-    "@aws-amplify/auth": "1.2.25",
-    "@aws-amplify/ui": "1.0.20",
     "@carnesen/coded-error": "0.1.0",
     "@types/download": "6.2.4",
     "@types/graphql": "14.2.1",
@@ -47,9 +45,7 @@
     "@types/semver": "6.0.0",
     "@types/signal-exit": "3.0.0",
     "@types/tar": "4.0.1",
-    "@types/zen-observable": "0.8.0",
     "amazon-cognito-identity-js": "3.0.13",
-    "aws-amplify": "1.1.29",
     "aws-sdk": "2.478.0",
     "chalk": "2.4.2",
     "download": "7.1.0",

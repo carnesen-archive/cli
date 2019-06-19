@@ -16,7 +16,7 @@ const ENOENT = {
 
 const path = join(ALWAYSAI_CONFIG_DIR, 'alwaysai.credentials.json');
 
-export const configFile = ConfigFile({
+const configFile = ConfigFile({
   path,
   codec,
   ENOENT,
@@ -24,7 +24,7 @@ export const configFile = ConfigFile({
 });
 
 configFile.update(() => {
-  // No-op
+  // No-op: to write the file if it does not already exist
 });
 
 const storage: ICognitoStorage = {

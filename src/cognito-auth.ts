@@ -1,51 +1,50 @@
-/// <reference lib="dom" />
 (global as any).fetch = require('node-fetch');
-// ^^ Attaches `fetch` polyfill to global scope
+import {
+  CognitoUserPool,
+  CognitoUser,
+  CognitoUserSession,
+} from 'amazon-cognito-identity-js';
 
-import { Auth as CognitoAuth } from 'aws-amplify';
-import { CognitoUser } from '@aws-amplify/auth';
-import { CognitoUserSession } from 'amazon-cognito-identity-js';
-
-import { credentialsStore } from './config/credentials-store';
-import { AWS_REGION } from './constants';
 import { userPoolId, userPoolClientId } from './config/cli-config';
+import { credentialsStore } from './config/credentials-store';
 
-CognitoAuth.configure({
-  region: AWS_REGION,
-  storage: credentialsStore,
-  userPoolId,
-  userPoolWebClientId: userPoolClientId,
-  authenticationFlowType: 'USER_PASSWORD_AUTH',
+const cognitoUserPool = new CognitoUserPool({
+  UserPoolId: userPoolId,
+  ClientId: userPoolClientId,
+  Storage: credentialsStore,
 });
 
-type User = CognitoUser & { challengeName?: string };
-
-export async function getCurrentUser() {
-  try {
-    const user: User = await CognitoAuth.currentUserPoolUser();
-    return user;
-  } catch (ex) {
-    // https://github.com/aws-amplify/amplify-js/blob/e679bf57e8bf8d9de0a9142e9161f8bfb93aef08/packages/auth/src/Auth.ts#L963
-    if (ex === 'No current user') {
-      return undefined;
-    }
-    throw ex;
+export function getCurrentUser() {
+  const cognitoUser = cognitoUserPool.getCurrentUser();
+  if (!cognitoUser) {
+    return undefined;
   }
+  return cognitoUser;
 }
 
 export async function getBearerToken() {
-  let session: CognitoUserSession | undefined = undefined;
-  try {
-    session = await CognitoAuth.currentSession();
-  } catch (ex) {
-    if (ex !== 'No current user') {
-      throw ex;
-    }
+  const user = await getCurrentUser();
+  if (!user) {
+    return undefined;
   }
-  if (session) {
-    return session.getAccessToken().getJwtToken();
-  }
-  return undefined;
+  const session: CognitoUserSession = await new Promise((resolve, reject) => {
+    user.getSession((err: any, val: any) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(val);
+      }
+    });
+  });
+  const jwt = session.getAccessToken().getJwtToken();
+  return jwt;
 }
 
-export { CognitoAuth };
+export function instantiateUser(email: string) {
+  const cognitoUser = new CognitoUser({
+    Username: email,
+    Pool: cognitoUserPool,
+    Storage: credentialsStore,
+  });
+  return cognitoUser;
+}
