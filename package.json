@@ -9,6 +9,7 @@
   },
   "types": "lib/index.d.ts",
   "bin": {
+    "aai": "lib/index.js",
     "alwaysai": "lib/index.js"
   },
   "engines": {
