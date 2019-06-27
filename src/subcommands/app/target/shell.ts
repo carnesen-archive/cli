@@ -10,7 +10,7 @@ export const shell = createLeaf({
     const targetConfig = targetConfigFile.read();
     switch (targetConfig.protocol) {
       case 'docker:': {
-        target.runForeground({
+        target.runForegroundSync({
           exe: '/bin/bash',
           args: ['--rcfile', ACTIVATE],
           tty: true,
@@ -21,7 +21,7 @@ export const shell = createLeaf({
       }
 
       case 'ssh:': {
-        target.runForeground({
+        target.runForegroundSync({
           exe: `cd "${target.resolvePath()}"; /bin/bash --rcfile ${ACTIVATE}`,
           tty: true,
           expose5000: true,
@@ -30,7 +30,7 @@ export const shell = createLeaf({
       }
 
       case 'ssh+docker:': {
-        target.runForeground({
+        target.runForegroundSync({
           exe: '/bin/bash',
           args: ['--rcfile', ACTIVATE],
           tty: true,

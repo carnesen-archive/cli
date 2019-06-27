@@ -10,6 +10,6 @@ export const exec = createLeaf({
   }),
   action([exe, ...args]) {
     const spawner = targetConfigFile.readSpawner();
-    spawner.runForeground({ exe, args, cwd: '.' });
+    spawner.runForegroundSync({ exe, args, cwd: '.' });
   },
 });

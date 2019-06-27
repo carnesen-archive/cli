@@ -15,7 +15,7 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
     rimraf,
     run,
     readdir,
-    runForeground,
+    runForegroundSync,
     tar,
     untar,
   } = spawner;
@@ -79,10 +79,10 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
       });
     });
 
-    describe(runForeground.name, () => {
+    describe(runForegroundSync.name, () => {
       it('runs a command synchronously with inherited I/O', async () => {
         const tmpDir = await run({ exe: 'mktemp', args: ['-d'] });
-        runForeground({ exe: 'ls', cwd: tmpDir });
+        runForegroundSync({ exe: 'ls', cwd: tmpDir });
       });
     });
 

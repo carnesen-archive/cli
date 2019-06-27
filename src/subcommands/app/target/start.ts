@@ -9,7 +9,7 @@ export const appTargetStart = createLeaf({
   name: 'start',
   options: {},
   description: 'Run this application "start" script on the target',
-  action() {
+  async action() {
     const appConfig = appConfigFile.read();
     const script = appConfig.scripts && appConfig.scripts.start;
     if (!script) {
@@ -20,7 +20,7 @@ export const appTargetStart = createLeaf({
 
     switch (targetConfig.protocol) {
       case 'docker:': {
-        spawner.runForeground({
+        await spawner.runForeground({
           exe: '/bin/bash',
           args: ['-t', '-c', `. ${ACTIVATE} && ${script}`],
           tty: true,
@@ -32,7 +32,7 @@ export const appTargetStart = createLeaf({
 
       // This case differs from "docker:"" only in the extra single quotes around the command
       case 'ssh+docker:': {
-        spawner.runForeground({
+        await spawner.runForeground({
           exe: '/bin/bash',
           args: ['-t', '-c', `'. ${ACTIVATE} && ${script}'`],
           tty: true,
@@ -45,7 +45,7 @@ export const appTargetStart = createLeaf({
       case 'ssh:': {
         const command = `cd ${spawner.resolvePath()} && . ${ACTIVATE} && ${script}`;
 
-        spawnerBase.runForeground({
+        spawnerBase.runForegroundSync({
           exe: 'ssh',
           args: ['-L', '5000:0.0.0.0:5000', '-t', targetConfig.hostname, command],
         });
