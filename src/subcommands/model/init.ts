@@ -40,7 +40,6 @@ export const init = createLeaf({
       description: '',
       license: 'UNLICENSED',
       public: true,
-      purpose: 'Classification',
     };
 
     modelConfigFile.write(defaultConfig);
