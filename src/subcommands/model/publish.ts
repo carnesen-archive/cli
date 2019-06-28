@@ -13,10 +13,18 @@ export const publish = createLeaf({
   description: 'Publish a new version of a model to the alwaysAI cloud',
   async action() {
     const config = modelConfigFile.read();
-
+    const { accuracy, description, id, license, public: public_, version } = config;
+    const strippedConfig = {
+      accuracy,
+      description,
+      id,
+      license,
+      public: public_,
+      version,
+    };
     // Create the provisional record in the database and get packageUrl
     const rpcApi = await RpcClient();
-    const modelVersion = await rpcApi.createModelVersion(config);
+    const modelVersion = await rpcApi.createModelVersion(strippedConfig);
     await spinOnPromise(
       (async () => {
         const cwdPackageStream = await PackageStreamFromCwd();
