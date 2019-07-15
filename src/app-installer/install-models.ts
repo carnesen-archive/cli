@@ -5,7 +5,7 @@ import { ModelId } from '../util/model-id';
 import { MODEL_CONFIG_FILE_NAME } from '../subcommands/model/model-config-file';
 import { getRandomString } from '../util/get-random-string';
 import { PackageStreamFromCache } from '../model-manager/package-stream-from-cache';
-import { AppConfig } from '../config/app-config-file';
+import { AppConfig } from '../util/app-config-file';
 
 const MODELS_DIR = 'models';
 

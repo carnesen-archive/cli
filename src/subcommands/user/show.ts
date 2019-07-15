@@ -1,6 +1,6 @@
 import { createLeaf } from '@alwaysai/alwayscli';
 
-import { getCurrentUser } from '../../cognito-auth';
+import { getCurrentUser } from '../../util/cognito-auth';
 import chalk from 'chalk';
 
 export const userShow = createLeaf({

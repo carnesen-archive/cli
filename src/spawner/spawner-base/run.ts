@@ -6,6 +6,9 @@ import { TerseError } from '@alwaysai/alwayscli';
 
 import { Cmd } from '../types';
 
+export const PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE =
+  'Process exited with non-zero status code';
+
 export async function run(cmd: Cmd) {
   return new Promise<string>((resolve, reject) => {
     const child = spawn(cmd.exe, cmd.args || [], { cwd: cmd.cwd });
@@ -43,7 +46,7 @@ export async function run(cmd: Cmd) {
           resolve(str);
         }
       } else {
-        let message = `Process exited with non-zero status code ${chalk.bold(
+        let message = `${PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE} ${chalk.bold(
           code.toString(),
         )}`;
         message += '\n\n';

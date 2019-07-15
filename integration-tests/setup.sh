@@ -10,11 +10,11 @@ import socketserver
 PORT = 5000
 
 httpd = socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler)
-print("Listening http://localhost:{}".format(PORT))
+print("Listening http://0.0.0.0:{}/".format(PORT))
 httpd.serve_forever()
 EOF
 
 rm -f alwaysai.app.json
-alwaysai app init --yes
+alwaysai app configure --yes
 alwaysai app models search
 alwaysai app models add alwaysai/squeezenet alwaysai/SqueezenetSSD

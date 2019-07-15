@@ -4,9 +4,13 @@
     "cognito",
     "create",
     "deserialize",
+    "executables",
     "keymirror",
+    "openssh",
+    "passwordless",
     "stream",
     "tarbomb",
+    "tempy",
     "untar",
     "workdir"
   ],

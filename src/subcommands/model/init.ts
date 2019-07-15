@@ -2,7 +2,7 @@ import { basename } from 'path';
 
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 
-import { yes } from '../../inputs/yes';
+import { yesCliInput } from '../../cli-inputs/yes-cli-input';
 import { modelConfigFile } from './model-config-file';
 import { checkTerminalIsInteractive } from '../../util/prompt';
 import { echo } from '../../util/echo';
@@ -15,7 +15,7 @@ export const init = createLeaf({
   name: 'init',
   description: 'Initialize this directory as an alwaysAI model',
   options: {
-    yes,
+    yes: yesCliInput,
   },
   async action(_, { yes }) {
     if (!yes) {

@@ -1,5 +1,5 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-import { credentialsStore } from '../../config/credentials-store';
+import { credentialsStore } from '../../util/credentials-store';
 
 export const userLogout = createLeaf({
   name: 'logout',

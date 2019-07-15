@@ -4,7 +4,7 @@ import logSymbols = require('log-symbols');
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 import { ErrorCode } from '@alwaysai/cloud-api';
 
-import { appConfigFile } from '../../../config/app-config-file';
+import { appConfigFile } from '../../../util/app-config-file';
 import { RpcClient } from '../../../rpc-client';
 import { echo } from '../../../util/echo';
 

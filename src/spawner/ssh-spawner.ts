@@ -2,15 +2,23 @@ import { Cmd } from './types';
 import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { ResolvePosixPath } from '../util/resolve-posix-path';
+import { PRIVATE_KEY_FILE_PATH } from '../constants';
 
 export type SshSpawner = ReturnType<typeof SshSpawner>;
-export function SshSpawner(config: { path: string; hostname: string }) {
+export function SshSpawner(config: { hostname: string; path?: string }) {
   const resolvePath = ResolvePosixPath(config.path);
   return GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
 
   function translate(cmd: Cmd) {
     const exe = 'ssh';
-    const args: string[] = [];
+    const args: string[] = [
+      '-i',
+      PRIVATE_KEY_FILE_PATH,
+      '-o',
+      'BatchMode=yes',
+      '-o',
+      'StrictHostKeyChecking=no',
+    ];
     if (cmd.tty) {
       args.push('-t');
     }

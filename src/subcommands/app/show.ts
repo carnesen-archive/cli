@@ -1,12 +1,17 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-import { appConfigFile } from '../../config/app-config-file';
+import { appConfigFile } from '../../util/app-config-file';
+import { echo } from '../../util/echo';
+import { targetConfigFile } from '../../util/target-config-file';
 
-export const show = createLeaf({
+export const appShowCliLeaf = createLeaf({
   name: 'show',
   description: "Show this directory's alwaysAI application configuration",
   options: {},
   action() {
-    const config = appConfigFile.read();
-    return config;
+    echo(appConfigFile.describeModels());
+    echo();
+    echo(appConfigFile.describeScripts());
+    echo();
+    echo(targetConfigFile.describe());
   },
 });

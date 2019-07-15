@@ -1,41 +1,45 @@
+import ora = require('ora');
+import { existsSync } from 'fs';
+
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 import { ErrorCode } from '@alwaysai/cloud-api';
 
-import { appConfigFile } from '../../../config/app-config-file';
-import { ids } from '../../../inputs/ids';
+import { appConfigFile } from '../../../util/app-config-file';
+import { modelIdsCliInput } from '../../../cli-inputs/model-ids-cli-input';
 import { RpcClient } from '../../../rpc-client';
-import { spinOnPromise } from '../../../util/spin-on-promise';
 import { echo } from '../../../util/echo';
+import { downloadModelVersionPackage } from '../../../model-manager/download-model-version-package';
+import { ModelPackagePath } from '../../../model-manager/model-package-path';
 
-export const addModels = createLeaf({
+export const addModelsAddCliLeaf = createLeaf({
   name: 'add',
   description: 'Add one or more alwaysAI models to this app',
-  args: ids,
-  async action(ids) {
+  args: modelIdsCliInput,
+  async action(modelIds) {
     appConfigFile.read();
     const rpcClient = await RpcClient();
-    const checked: [string, string][] = [];
-    for (const id of ids) {
+    const fetched: [string, string][] = [];
+    for (const modelId of modelIds) {
+      const spinner = ora(`Fetch model "${modelId}"`).start();
       try {
-        const { version } = await spinOnPromise(
-          rpcClient.getModelVersion({ id }),
-          `Checking model "${id}"`,
-        );
-        checked.push([id, version]);
+        const { version } = await rpcClient.getModelVersion({ id: modelId });
+        if (!existsSync(ModelPackagePath({ id: modelId, version }))) {
+          await downloadModelVersionPackage({ id: modelId, version });
+        }
+        fetched.push([modelId, version]);
+        spinner.succeed();
       } catch (ex) {
+        spinner.fail();
         if (ex.code === ErrorCode.MODEL_VERSION_NOT_FOUND) {
-          throw new TerseError(`Model not found: "${id}"`);
+          throw new TerseError(`Model not found: "${modelId}"`);
         }
         throw ex;
       }
     }
-    checked.forEach(([id, version]) => {
+    fetched.forEach(([id, version]) => {
       appConfigFile.addModel(id, version);
     });
-
-    const newConfig = appConfigFile.read();
-    echo('Here is your new model configuration:');
     echo();
-    echo(newConfig);
+    echo(appConfigFile.describeModels());
   },
 });

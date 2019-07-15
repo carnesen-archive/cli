@@ -2,7 +2,6 @@ import * as t from 'io-ts';
 import keyMirror = require('keymirror');
 
 export const TargetProtocol = keyMirror({
-  'ssh:': null,
   'docker:': null,
   'ssh+docker:': null,
 });

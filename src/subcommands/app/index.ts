@@ -1,13 +1,26 @@
 import { createBranch } from '@alwaysai/alwayscli';
-import { init } from './init';
-import { show } from './show';
-import { models } from './models';
-import { target } from './target';
-import { appInstall } from './install';
-import { appStart } from './start';
+import { appShowCliLeaf } from './show';
+import { appModelsCliBranch } from './models';
+import { appUnderscoreInstallCliLeaf } from './_install';
+import { appUnderscoreStartCliLeaf } from './_start';
+import { appConfigureCliLeaf } from './configure';
+import { appDeployCliLeaf } from './deploy';
+import { appStartCliLeaf } from './start';
+import { appExecCliLeaf } from './exec';
+import { appShellCliLeaf } from './shell';
 
-export const app = createBranch({
+export const appCliBranch = createBranch({
   name: 'app',
   description: 'Develop an alwaysAI application',
-  subcommands: [init, target, appInstall, appStart, show, models],
+  subcommands: [
+    appConfigureCliLeaf,
+    appDeployCliLeaf,
+    appExecCliLeaf,
+    appModelsCliBranch,
+    appStartCliLeaf,
+    appShellCliLeaf,
+    appShowCliLeaf,
+    appUnderscoreInstallCliLeaf,
+    appUnderscoreStartCliLeaf,
+  ],
 });

@@ -4,7 +4,7 @@ import {
   createOneOfInput,
   createFlagInput,
 } from '@alwaysai/alwayscli';
-import { cliConfigFile } from '../../config/cli-config';
+import { cliConfigFile } from '../../util/cli-config';
 import { CLI_NAME } from '../../constants';
 import { SYSTEM_IDS } from '@alwaysai/codecs';
 

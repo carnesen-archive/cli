@@ -3,6 +3,8 @@ import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { APP_DIR, IMAGE_NAME } from './docker-spawner';
 import { ResolvePosixPath } from '../util/resolve-posix-path';
+import { PRIVATE_KEY_FILE_PATH } from '../constants';
+import { posix } from 'path';
 
 export function SshDockerSpawner(config: { path: string; hostname: string }) {
   const resolvePath = ResolvePosixPath(APP_DIR);
@@ -10,7 +12,10 @@ export function SshDockerSpawner(config: { path: string; hostname: string }) {
 
   function translate(cmd: Cmd) {
     const exe = 'ssh';
-    const sshArgs: string[] = [];
+    const sshArgs: string[] = ['-i', PRIVATE_KEY_FILE_PATH];
+    const expandablePath = posix.isAbsolute(config.path)
+      ? config.path
+      : `~/${config.path}`;
     const dockerArgs: string[] = [
       'docker',
       'run',
@@ -21,7 +26,7 @@ export function SshDockerSpawner(config: { path: string; hostname: string }) {
       '--volume',
       '/dev:/dev',
       '--volume',
-      `${config.path}:${APP_DIR}`,
+      `${expandablePath}:${APP_DIR}`,
     ];
 
     if (cmd.tty) {
