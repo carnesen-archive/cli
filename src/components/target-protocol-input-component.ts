@@ -8,8 +8,9 @@ import { TargetProtocol } from '../util/target-protocol';
 export async function targetProtocolInputComponent(props: {
   yes: boolean;
   targetProtocol?: TargetProtocol;
+  developerHostPlatform?: NodeJS.Platform;
 }) {
-  const developerHostPlatform = platform();
+  const developerHostPlatform = props.developerHostPlatform || platform();
 
   if (developerHostPlatform !== 'linux') {
     return TargetProtocol['ssh+docker:'];
@@ -39,10 +40,10 @@ export async function targetProtocolInputComponent(props: {
     },
   ];
 
-  const initial = choices.findIndex(choice => choice.value === props.targetProtocol);
-  if (initial === -1) {
-    throw new Error(`Unexpected protocol "${props.targetProtocol}"`);
-  }
+  const foundChoiceIndex = choices.findIndex(
+    choice => choice.value === props.targetProtocol,
+  );
+  const initial = foundChoiceIndex > -1 ? foundChoiceIndex : 0;
 
   const answer = await prompt([
     {
