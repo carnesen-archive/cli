@@ -5,8 +5,7 @@ import { prompt, getNonInteractiveStreamName } from '../util/prompt';
 import { UsageError } from '@alwaysai/alwayscli';
 import { TargetProtocol } from '../util/target-protocol';
 
-export async function targetProtocolInputComponent(props: {
-  yes: boolean;
+export async function targetProtocolPromptedInputComponent(props: {
   targetProtocol?: TargetProtocol;
   developerHostPlatform?: NodeJS.Platform;
 }) {
@@ -14,15 +13,6 @@ export async function targetProtocolInputComponent(props: {
 
   if (developerHostPlatform !== 'linux') {
     return TargetProtocol['ssh+docker:'];
-  }
-
-  if (props.yes) {
-    if (!props.targetProtocol) {
-      throw new UsageError(
-        'The command-line option "protocol" is required if you\'ve passed the "yes" flag, which disables interactive prompts.',
-      );
-    }
-    return props.targetProtocol;
   }
 
   const nonInteractiveStreamName = getNonInteractiveStreamName();

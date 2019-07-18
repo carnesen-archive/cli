@@ -1,27 +1,9 @@
-import { createStringInput, UsageError } from '@alwaysai/alwayscli';
+import { createStringInput } from '@alwaysai/alwayscli';
+import { basename } from 'path';
 
-function validatePath(value: string) {
-  return !value
-    ? 'Value is required'
-    : value === '/'
-    ? 'The filesystem root "/" is not a valid target directory'
-    : undefined;
-}
+const DEFAULT_VALUE = `alwaysai/${basename(process.cwd())}`;
 
 export const targetPathCliInput = createStringInput({
-  description: 'Application directory path',
+  description: `Application directory path [e.g. "${DEFAULT_VALUE}"]`,
+  defaultValue: DEFAULT_VALUE,
 });
-
-const originalGetValue = targetPathCliInput.getValue;
-
-targetPathCliInput.getValue = async argv => {
-  const path = await originalGetValue(argv);
-  if (typeof path === 'undefined') {
-    return undefined;
-  }
-  const errorMessage = validatePath(path);
-  if (errorMessage) {
-    throw new UsageError(errorMessage);
-  }
-  return path;
-};

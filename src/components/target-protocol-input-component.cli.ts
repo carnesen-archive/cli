@@ -1,11 +1,10 @@
 import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
-import { targetProtocolInputComponent } from './target-protocol-input-component';
+import { targetProtocolPromptedInputComponent } from './target-protocol-input-component';
 
 const leaf = createLeaf({
-  name: targetProtocolInputComponent.name,
+  name: targetProtocolPromptedInputComponent.name,
   async action() {
-    return await targetProtocolInputComponent({
-      yes: false,
+    return await targetProtocolPromptedInputComponent({
       developerHostPlatform: 'linux',
     });
   },

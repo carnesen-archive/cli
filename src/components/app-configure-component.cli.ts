@@ -6,10 +6,9 @@ const leaf = createLeaf({
   async action() {
     return await appConfigureComponent({
       yes: false,
-      alwaysaiUserEmail: 'dev@alwaysai.co',
-      alwaysaiUserPassword: '',
       targetProtocol: 'ssh+docker:',
       targetHostname: 'localhost',
+      targetPath: '',
     });
   },
 });

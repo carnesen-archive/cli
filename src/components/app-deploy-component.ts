@@ -1,49 +1,19 @@
 import logSymbols = require('log-symbols');
-import { appConfigFile, APP_CONFIG_FILE_NAME } from '../util/app-config-file';
-import { targetConfigFile, TARGET_CONFIG_FILE_NAME } from '../util/target-config-file';
+
+import { appConfigFile } from '../util/app-config-file';
+import { targetConfigFile } from '../util/target-config-file';
 import { JsSpawner } from '../spawner/js-spawner';
 import { AppInstaller } from '../app-installer';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
-import { existsSync } from 'fs';
-import { APP_DOT_PY } from '../constants';
-import { appConfigureComponent } from './app-configure-component';
-import { TargetProtocol } from '../util/target-protocol';
-import { alwaysaiUserLoginComponent } from './alwaysai-user-login-component';
+import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
+import { checkForRequiredFilesComponent } from './check-for-required-files-component';
 
-export async function appDeployComponent(props: {
-  yes: boolean;
-  alwaysaiUserEmail?: string;
-  alwaysaiUserPassword?: string;
-  targetProtocol?: TargetProtocol;
-  targetHostname?: string;
-  targetPath?: string;
-}) {
-  await alwaysaiUserLoginComponent({
-    yes: props.yes,
-    alwaysaiUserEmail: props.alwaysaiUserEmail,
-    alwaysaiUserPassword: props.alwaysaiUserPassword,
-  });
-  {
-    let titleOfMissingFile = '';
-    if (!titleOfMissingFile && !appConfigFile.exists()) {
-      titleOfMissingFile = `application configuration file "${APP_CONFIG_FILE_NAME}"`;
-    }
+export async function appDeployComponent(props: { yes: boolean }) {
+  const { yes } = props;
 
-    if (!titleOfMissingFile && !targetConfigFile.exists()) {
-      titleOfMissingFile = `target configuration file "${TARGET_CONFIG_FILE_NAME}"`;
-    }
-
-    if (!titleOfMissingFile && !existsSync(APP_DOT_PY)) {
-      titleOfMissingFile = `python application file "${APP_DOT_PY}"`;
-    }
-    if (titleOfMissingFile) {
-      echo(
-        `We're going to run the "app configure" steps because the ${titleOfMissingFile} does not exist.`,
-      );
-      await appConfigureComponent(props);
-    }
-  }
+  await checkUserIsLoggedInComponent({ yes });
+  await checkForRequiredFilesComponent({ yes });
   const appConfig = appConfigFile.read();
   const targetSpawner = targetConfigFile.readSpawner();
   const targetConfig = targetConfigFile.read();
