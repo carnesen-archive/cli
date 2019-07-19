@@ -43,20 +43,6 @@ export async function writePrivateKeyFileComponent() {
       );
     }
 
-    if ((stats.mode & 0o700) < 0o400) {
-      spinner.fail();
-      throw new TerseError(
-        `"${PRIVATE_KEY_FILE_PRETTY_PATH}" exists but is not user-readable. Please remove it or fix its permissions`,
-      );
-    }
-
-    if ((stats.mode & 0o077) !== 0) {
-      spinner.fail();
-      throw new TerseError(
-        `"${PRIVATE_KEY_FILE_PRETTY_PATH}" exists but is group- or world-readable. Please remove it or fix its permissions.`,
-      );
-    }
-
     const keyMaterial = await promisify(readFile)(PRIVATE_KEY_FILE_PATH, {
       encoding: 'utf8',
     });
