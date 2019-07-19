@@ -3,7 +3,7 @@ import { RpcClient } from '../../../rpc-client';
 
 export const searchModels = createLeaf({
   name: 'search',
-  description: 'Search alwaysAI models',
+  description: 'Search models in the alwaysAI Cloud',
   async action() {
     const rpcClient = await RpcClient();
     const modelVersions = await rpcClient.listModelVersions();

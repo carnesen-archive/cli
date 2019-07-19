@@ -11,7 +11,7 @@ import { platform } from 'os';
 
 export const appConfigureCliLeaf = createLeaf({
   name: 'configure',
-  description: 'Configure your application and deployment target',
+  description: 'Configure this directory as an alwaysAI application',
   options: {
     yes: yesCliInput,
     protocol: targetProtocolCliInput,
@@ -32,9 +32,6 @@ export const appConfigureCliLeaf = createLeaf({
           throw new UsageError(
             NotAllowedWithMessage('hostname', 'protocol', opts.protocol),
           );
-        }
-        if (opts.path) {
-          throw new UsageError(NotAllowedWithMessage('path', 'protocol', opts.protocol));
         }
         break;
       }

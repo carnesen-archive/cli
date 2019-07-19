@@ -6,7 +6,7 @@ import { echo } from '../../../util/echo';
 
 export const removeModels = createLeaf({
   name: 'remove',
-  description: `Remove model(s) from this alwaysAI app`,
+  description: `Remove model(s) from this application`,
   options: {},
   args: modelIdsCliInput,
   async action(ids) {

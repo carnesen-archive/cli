@@ -7,12 +7,12 @@ import { appModelsUpdate } from './update';
 
 export const appModelsCliBranch = createBranch({
   name: 'models',
-  description: 'Manage models in an alwaysAI App',
+  description: "Manage this application's models",
   subcommands: [
-    showModels,
-    searchModels,
     addModelsAddCliLeaf,
-    appModelsUpdate,
     removeModels,
+    searchModels,
+    showModels,
+    appModelsUpdate,
   ],
 });

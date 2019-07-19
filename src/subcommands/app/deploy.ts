@@ -5,7 +5,7 @@ import { appDeployComponent } from '../../components/app-deploy-component';
 
 export const appDeployCliLeaf = createLeaf({
   name: 'deploy',
-  description: 'Install this application and its dependencies to the target',
+  description: 'Deploy this application to the target directory',
   options: {
     yes: yesCliInput,
   },

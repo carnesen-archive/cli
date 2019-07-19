@@ -5,7 +5,7 @@ import { targetConfigFile } from '../../util/target-config-file';
 
 export const appShowCliLeaf = createLeaf({
   name: 'show',
-  description: "Show this directory's alwaysAI application configuration",
+  description: "Show this application's configuration",
   options: {},
   action() {
     echo(appConfigFile.describeModels());

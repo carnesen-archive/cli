@@ -4,7 +4,7 @@ import { ACTIVATE } from '../../app-installer';
 
 export const appShellCliLeaf = createLeaf({
   name: 'shell',
-  description: 'Run a shell in the target environment',
+  description: 'Launch a bash shell in the target directory',
   action() {
     const target = targetConfigFile.readSpawner();
     const targetConfig = targetConfigFile.read();

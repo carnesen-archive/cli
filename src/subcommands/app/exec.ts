@@ -3,7 +3,7 @@ import { targetConfigFile } from '../../util/target-config-file';
 
 export const appExecCliLeaf = createLeaf({
   name: 'exec',
-  description: 'Run a command in the application target directory',
+  description: 'Run a command in the target directory',
   args: createStringArrayInput({
     placeholder: '<command> [<args>]',
     required: true,

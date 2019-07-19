@@ -13,7 +13,7 @@ import { ModelPackagePath } from '../../../model-manager/model-package-path';
 
 export const addModelsAddCliLeaf = createLeaf({
   name: 'add',
-  description: 'Add one or more alwaysAI models to this app',
+  description: 'Add model(s) to this application',
   args: modelIdsCliInput,
   async action(modelIds) {
     appConfigFile.read();
