@@ -38,7 +38,7 @@ export async function checkForDockerComponent(props: { targetHostname?: string }
     const spinner = ora('Check docker permissions').start();
     spinner.start();
     try {
-      await spawner.run({ exe: 'docker', args: ['run', 'hello-world'] });
+      await spawner.run({ exe: 'docker', args: ['run', '--rm', 'hello-world'] });
       spinner.succeed();
     } catch (ex) {
       spinner.fail('Command "docker run hello-world" failed');
