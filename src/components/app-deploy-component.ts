@@ -18,7 +18,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
   const targetSpawner = targetConfigFile.readSpawner();
   const targetConfig = targetConfigFile.read();
   const sourceSpawner = JsSpawner();
-  await targetSpawner.mkdirp();
+  await spinOnPromise(targetSpawner.mkdirp(), 'Create target directory');
 
   const appInstaller = AppInstaller(targetSpawner);
 
