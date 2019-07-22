@@ -43,7 +43,9 @@ export async function checkForDockerComponent(props: { targetHostname?: string }
     } catch (ex) {
       spinner.fail('Command "docker run hello-world" failed');
       echo(ex.message);
-      echo("Please double-check that you've done these post-install steps:");
+      echo(
+        'Please double-check that you\'ve complete the "Manage Docker as a non-root user" post-install steps described here:',
+      );
       echo();
       echo('  https://docs.docker.com/install/linux/linux-postinstall/');
       echo();
