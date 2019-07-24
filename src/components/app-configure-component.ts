@@ -18,7 +18,7 @@ export async function appConfigureComponent(props: {
 }) {
   const { yes } = props;
   await checkUserIsLoggedInComponent({ yes });
-  await writeAppConfigFileComponent();
+  await writeAppConfigFileComponent({ yes });
   await writeAppPyFileComponent();
 
   const targetProtocol = yes

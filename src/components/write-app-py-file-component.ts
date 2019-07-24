@@ -7,7 +7,7 @@ import edgeiq
 
 def main():
     # Your alwaysAI app goes here!
-    pass
+    print("This is a stub of an alwaysAI application")
 
 if __name__ == "__main__":
     main()`;
