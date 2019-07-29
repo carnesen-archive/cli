@@ -7,11 +7,10 @@ import { deserializeRpcResponse } from './deserialize-rpc-response';
 
 import { getBearerToken } from '../util/cognito-auth';
 import { PLEASE_LOG_IN_MESSAGE } from '../util/credentials-store';
-import { cloudApiUrl } from '../util/cli-config';
 
 export async function RpcClient(): Promise<RpcApi> {
   const bearerToken = await getBearerToken();
-  const sendRpcData = SendRpcData({ bearerToken, cloudApiUrl });
+  const sendRpcData = SendRpcData({ bearerToken });
 
   const rpcClient: any = {};
   for (const [methodName, { argsCodec }] of Object.entries(rpcMethodSpecs)) {

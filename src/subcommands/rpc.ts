@@ -8,7 +8,6 @@ import { rpcMethodSpecs } from '@alwaysai/cloud-api';
 import { RpcClient } from '../rpc-client';
 import { SendRpcData } from '../rpc-client/send-rpc-data';
 import { getBearerToken } from '../util/cognito-auth';
-import { cloudApiUrl } from '../util/cli-config';
 
 const methods = Object.entries(rpcMethodSpecs).map(([methodName, { description }]) => {
   return createLeaf({
@@ -36,7 +35,7 @@ const raw = createLeaf({
   description: 'Send a custom data payload to the RPC endpoint',
   async action(data) {
     const bearerToken = await getBearerToken();
-    const sendRpcData = SendRpcData({ bearerToken, cloudApiUrl });
+    const sendRpcData = SendRpcData({ bearerToken });
     return await sendRpcData(data);
   },
 });

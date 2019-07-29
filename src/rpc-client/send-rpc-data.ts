@@ -3,22 +3,19 @@ import * as https from 'https';
 import { URL } from 'url';
 
 import { CodedError } from '@carnesen/coded-error';
-import { CLOUD_API_URL, CLOUD_API_RPC_PATH } from '@alwaysai/cloud-api';
-export function SendRpcData(
-  config: Partial<{
-    bearerToken?: string;
-    cloudApiUrl: string;
-  }> = {},
-) {
-  const { cloudApiUrl = CLOUD_API_URL, bearerToken: idToken } = config;
+import { CLOUD_API_RPC_PATH } from '@alwaysai/cloud-api';
+import { cloudApiUrl } from '../util/cli-config';
+
+export function SendRpcData(config: { bearerToken?: string }) {
+  const { bearerToken } = config;
   const { protocol, hostname, port } = new URL(cloudApiUrl);
 
   const headers: http.OutgoingHttpHeaders = {
     'Content-Type': 'application/json',
   };
 
-  if (idToken) {
-    headers.Authorization = `Bearer ${idToken}`;
+  if (bearerToken) {
+    headers.Authorization = `Bearer ${bearerToken}`;
   }
 
   return function sendRpcData(data: string) {

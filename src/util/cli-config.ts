@@ -30,18 +30,45 @@ const maybeConfig = cliConfigFile.readIfExists();
 const systemId =
   maybeConfig && maybeConfig.systemId ? maybeConfig.systemId : 'production';
 
-export const userPoolId = 'us-west-2_1qn5QzXzP';
-export const userPoolClientId = '3mot5qlvchlui2mqs803fccbvm';
-export const webAuthUrl = 'https://auth.a6i0.net&redirect_uri=https://dashboard.a6i0.net';
+export let userPoolId: string;
+export let userPoolClientId: string;
 export let cloudApiUrl: string;
+export let s3Credentials: string;
+let domainName: string;
 switch (systemId) {
-  case 'local':
+  case 'local': {
+    userPoolId = 'us-west-2_1qn5QzXzP';
+    userPoolClientId = '3mot5qlvchlui2mqs803fccbvm';
+    domainName = 'a6i0.net';
     cloudApiUrl = 'http://localhost:8000';
+    s3Credentials =
+      'eyJhY2Nlc3NLZXlJZCI6IkFLSUE2UERXNFJHNE9KTkNLUEdCIiwic2VjcmV0QWNjZXNzS2V5IjoiSmt0QWttUVhKU1ppdGlucjZQZGw1VGIyOXIvWEltVHFSVXUzcDErZyJ9';
     break;
-  case 'development':
-  case 'production':
-    cloudApiUrl = 'http://cloud-api-586812470.us-west-2.elb.amazonaws.com/';
+  }
+
+  case 'development': {
+    userPoolId = 'us-west-2_1qn5QzXzP';
+    userPoolClientId = '3mot5qlvchlui2mqs803fccbvm';
+    domainName = 'a6i0.net';
+    cloudApiUrl = `https://api.${domainName}`;
+    s3Credentials =
+      'eyJhY2Nlc3NLZXlJZCI6IkFLSUE2UERXNFJHNE9KTkNLUEdCIiwic2VjcmV0QWNjZXNzS2V5IjoiSmt0QWttUVhKU1ppdGlucjZQZGw1VGIyOXIvWEltVHFSVXUzcDErZyJ9';
     break;
-  default:
+  }
+
+  case 'production': {
+    userPoolId = 'us-west-2_4GY5EITYm';
+    userPoolClientId = '2mm3lcucrf53da27mjs5p5ei47';
+    domainName = 'alwaysai.co';
+    cloudApiUrl = `https://api.${domainName}`;
+    s3Credentials =
+      'eyJhY2Nlc3NLZXlJZCI6IkFLSUE1WUhIUVRLQ1kyRERDMzc2Iiwic2VjcmV0QWNjZXNzS2V5IjoiOU4vUlpCQVpQOEZIL0cvN1ZuNVBHeG0vc09Nb1BsMUlMeGU0SjZQUiJ9';
+    break;
+  }
+
+  default: {
     throw new Error('Unsupported systemId');
+  }
 }
+
+export const webAuthUrl = `https://auth.${domainName}&redirect_uri=https://dashboard.${domainName}`;
