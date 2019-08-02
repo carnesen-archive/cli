@@ -28,6 +28,8 @@ export function DockerSpawner(): Spawner {
       '--interactive',
       '--volume',
       `${process.cwd()}:${resolvePath()}`,
+      '--user',
+      `${process.getuid()}:${process.getgid()}`,
     ];
 
     if (cmd.expose5000) {
