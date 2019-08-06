@@ -3,7 +3,7 @@ import difference = require('lodash.difference');
 
 import { JsSpawner } from '../spawner/js-spawner';
 
-export async function PackageStreamFromCwd(
+export async function modelVersionPackageGetReadableStreamFromCwd(
   opts: Partial<{ cwd: string; ignoredFileNames: string[] }> = {},
 ) {
   const cwd = resolve(opts.cwd || '');

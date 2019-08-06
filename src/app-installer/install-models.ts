@@ -1,10 +1,11 @@
 import { dirname, posix } from 'path';
+import toReadableStream = require('to-readable-stream');
 
 import { Spawner } from '../spawner/types';
 import { ModelId } from '../util/model-id';
 import { MODEL_CONFIG_FILE_NAME } from '../subcommands/model/model-config-file';
 import { getRandomString } from '../util/get-random-string';
-import { PackageStreamFromCache } from '../model-manager/package-stream-from-cache';
+import { modelVersionPackageCacheGetReadableStream } from '../util/model-version-package-readable-stream-from-cache-or-cloud';
 import { AppConfig } from '../util/app-config-file';
 
 const MODELS_DIR = 'models';
@@ -20,8 +21,8 @@ function runBestEffortBackgroundTask<T extends any[]>(
   })();
 }
 
-export function InstallModels(spawner: Spawner) {
-  return async function installModels(models: AppConfig['models']) {
+export function InstallModelVersionPackages(spawner: Spawner, bearerToken: string) {
+  return async function installModelVersionPackages(models: AppConfig['models']) {
     let changed = false;
     if (models) {
       await Promise.all(
@@ -33,17 +34,13 @@ export function InstallModels(spawner: Spawner) {
     return { changed };
   };
 
-  async function installModel(id: string, version: string) {
+  async function installModel(id: string, version: number) {
     let changed = false;
     const { publisher, name } = ModelId.parse(id);
     const modelDir = posix.join(MODELS_DIR, publisher, name);
-    let installedVersion: string | undefined = undefined;
+    let installedVersion: number | undefined = undefined;
     try {
-      const output = await spawner.run({
-        exe: 'cat',
-        args: [spawner.resolvePath(modelDir, MODEL_CONFIG_FILE_NAME)],
-      });
-      const parsed = JSON.parse(output);
+      const parsed = await readModelJson(modelDir);
       installedVersion = parsed.version;
     } catch (_) {
       // TODO finer-grained error handling
@@ -55,11 +52,18 @@ export function InstallModels(spawner: Spawner) {
       const tmpDir = `${modelDir}.${tmpId}.download`;
       await spawner.mkdirp(tmpDir);
       try {
-        await spawner.untar(await PackageStreamFromCache({ id, version }), tmpDir);
+        await spawner.untar(
+          await modelVersionPackageCacheGetReadableStream({ id, version, bearerToken }),
+          tmpDir,
+        );
         const fileNames = await spawner.readdir(tmpDir);
         if (fileNames.length !== 1 || !fileNames[0]) {
           throw new Error('Expected package to contain single directory');
         }
+        function modelJsonUpdater(modelJson: any) {
+          return { ...modelJson, version };
+        }
+        updateModelJson(posix.join(tmpDir, fileNames[0]), modelJsonUpdater);
         await spawner.rimraf(modelDir);
         await spawner.mkdirp(dirname(modelDir));
         await spawner.run({
@@ -74,5 +78,25 @@ export function InstallModels(spawner: Spawner) {
       }
     }
     return { changed };
+
+    async function readModelJson(dir: string) {
+      const output = await spawner.run({
+        exe: 'cat',
+        args: [spawner.resolvePath(dir, MODEL_CONFIG_FILE_NAME)],
+      });
+      const parsed = JSON.parse(output);
+      return parsed;
+    }
+
+    async function updateModelJson(dir: string, updater: (current: any) => any) {
+      const parsed = readModelJson(dir);
+      const updated = updater(parsed);
+      const serialized = JSON.stringify(updated, null, 2);
+      await spawner.run({
+        exe: 'dd',
+        args: [`of=${spawner.resolvePath(dir, MODEL_CONFIG_FILE_NAME)}`],
+        input: toReadableStream(serialized),
+      });
+    }
   }
 }

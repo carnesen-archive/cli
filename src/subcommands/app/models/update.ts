@@ -14,7 +14,7 @@ export const appModelsUpdate = createLeaf({
   async action() {
     const { models } = appConfigFile.read();
     const rpcClient = await RpcClient();
-    const updates: [string, string, string][] = [];
+    const updates: [string, number, number][] = [];
     if (!models || Object.keys(models).length === 0) {
       return 'No models to update!';
     }

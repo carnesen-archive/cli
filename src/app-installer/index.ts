@@ -1,7 +1,7 @@
 import difference = require('lodash.difference');
 
 import { Spawner } from '../spawner/types';
-import { InstallModels } from './install-models';
+import { InstallModelVersionPackages } from './install-models';
 import { posix } from 'path';
 
 const REQUIREMENTS_FILE_NAME = 'requirements.txt';
@@ -10,8 +10,8 @@ export const ACTIVATE = posix.join(VENV, 'bin', 'activate');
 
 const IGNORED_FILE_NAMES = ['models', 'node_modules', '.git', 'venv'];
 
-export function AppInstaller(target: Spawner) {
-  const installModels = InstallModels(target);
+export function AppInstaller(target: Spawner, bearerToken: string) {
+  const installModels = InstallModelVersionPackages(target, bearerToken);
 
   return {
     installSource,

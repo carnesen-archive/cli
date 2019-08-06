@@ -8,7 +8,7 @@ import chalk from 'chalk';
 export const APP_CONFIG_FILE_NAME = 'alwaysai.app.json';
 
 const codec = t.partial({
-  models: t.record(t.string, t.string, 'models'),
+  models: t.record(t.string, t.any, 'models'),
   scripts: t.record(t.string, t.string, 'scripts'),
 });
 
@@ -34,7 +34,7 @@ export function AppConfigFile(dir = process.cwd()) {
 
   return {
     ...configFile,
-    addModel(id: string, version: string) {
+    addModel(id: string, version: number) {
       return configFile.update(config => {
         config.models = config.models || {};
         config.models[id] = version;

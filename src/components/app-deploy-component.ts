@@ -8,11 +8,16 @@ import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 import { checkForRequiredFilesComponent } from './check-for-required-files-component';
+import { getBearerToken } from '../util/cognito-auth';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
 
   await checkUserIsLoggedInComponent({ yes });
+  const bearerToken = await getBearerToken();
+  if (!bearerToken) {
+    throw new Error('Expected to get bearer token');
+  }
   await checkForRequiredFilesComponent({ yes });
   const appConfig = appConfigFile.read();
   const targetSpawner = targetConfigFile.readSpawner();
@@ -20,7 +25,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
   const sourceSpawner = JsSpawner();
   await spinOnPromise(targetSpawner.mkdirp(), 'Create target directory');
 
-  const appInstaller = AppInstaller(targetSpawner);
+  const appInstaller = AppInstaller(targetSpawner, bearerToken);
 
   // Protocol-specific installation steps
   switch (targetConfig.protocol) {

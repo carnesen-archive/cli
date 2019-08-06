@@ -23,9 +23,7 @@ const configFile = ConfigFile({
   initialValue: {},
 });
 
-configFile.update(() => {
-  // No-op: to write the file if it does not already exist
-});
+configFile.initialize();
 
 const storage: ICognitoStorage = {
   setItem(key: string, value: string) {

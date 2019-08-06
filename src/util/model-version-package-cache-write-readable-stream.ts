@@ -5,19 +5,19 @@ import { Readable } from 'stream';
 import pump = require('pump');
 import rimraf = require('rimraf');
 
-import { getRandomString } from '../util/get-random-string';
-import { ModelPackagePath } from './model-package-path';
+import { getRandomString } from './get-random-string';
+import { modelVersionPackageCacheGetPath } from './model-version-package-path';
 import mkdirp = require('mkdirp');
 import { dirname } from 'path';
 
 const rimrafAsync = promisify(rimraf);
 
-export async function streamPackageToCache(opts: {
+export async function modelVersionPackageCacheWriteReadableStream(opts: {
   id: string;
-  version: string;
+  version: number;
   readable: Readable;
 }) {
-  const packagePath = ModelPackagePath(opts);
+  const packagePath = modelVersionPackageCacheGetPath(opts);
   await promisify(mkdirp)(dirname(packagePath));
 
   const downloadPath = `${packagePath}.${getRandomString()}.download`;

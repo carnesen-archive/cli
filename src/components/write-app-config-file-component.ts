@@ -23,7 +23,7 @@ export async function writeAppConfigFileComponent(props: { yes: boolean }) {
       throw new TerseError('This directory is not an alwaysAI application');
     }
     ora(`Write ${APP_CONFIG_FILE_NAME}`).succeed();
-    appConfigFile.update(() => {});
+    appConfigFile.initialize();
   } else {
     ora(`Found ${APP_CONFIG_FILE_NAME}`).succeed();
   }

@@ -5,6 +5,7 @@ export const CLI_NAME = 'alwaysai';
 export const PACKAGE_DIR = resolve(__dirname, '..');
 export const DOT_ALWAYSAI_DIR = join(homedir(), '.alwaysai');
 export const MODEL_PACKAGE_CACHE_DIR = join(DOT_ALWAYSAI_DIR, 'model-package-cache');
+export const LOCAL_MODEL_VERSION_PACKAGE_NUMBER = 0;
 export const APP_DOT_PY = 'app.py';
 
 export const DOT_SSH_DIR = join(homedir(), '.ssh');
