@@ -8,8 +8,8 @@ export const appExecCliLeaf = createLeaf({
     placeholder: '<command> [<args>]',
     required: true,
   }),
-  action([exe, ...args]) {
-    const spawner = targetConfigFile.readSpawner();
+  async action([exe, ...args]) {
+    const spawner = targetConfigFile.readContainerSpawner();
     spawner.runForegroundSync({ exe, args, cwd: '.' });
   },
 });

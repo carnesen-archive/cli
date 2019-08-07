@@ -14,10 +14,10 @@ export const appStartCliLeaf = createLeaf({
     if (!script) {
       throw new TerseError('This application does not define a "start" script');
     }
-    const spawner = targetConfigFile.readSpawner();
+    const spawner = targetConfigFile.readContainerSpawner();
     const targetConfig = targetConfigFile.read();
 
-    switch (targetConfig.protocol) {
+    switch (targetConfig.targetProtocol) {
       case 'docker:': {
         await spawner.runForeground({
           exe: '/bin/bash',

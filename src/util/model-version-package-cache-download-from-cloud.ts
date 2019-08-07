@@ -1,6 +1,6 @@
 import { rename } from 'fs';
 import { promisify } from 'util';
-import { dirname } from 'path';
+import { dirname, basename } from 'path';
 
 import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
@@ -25,18 +25,19 @@ export async function modelVersionPackageCacheDownloadFromCloud(opts: {
   const packageUrl = `${cloudApiUrl}${CLOUD_API_MODEL_VERSION_PACKAGES_PATH}/${
     modelVersion.uuid
   }`;
-  const packagePath = modelVersionPackageCacheGetPath(opts);
+  const destinationPath = modelVersionPackageCacheGetPath({ id, version });
+  const destinationDir = dirname(destinationPath);
+  await promisify(mkdirp)(destinationDir);
 
-  await promisify(mkdirp)(dirname(packagePath));
-
-  const tmpPath = `${packagePath}.${getRandomString()}.download`;
+  const temporaryDownloadPath = `${destinationPath}.${getRandomString()}.download`;
 
   try {
-    await download(packageUrl, tmpPath, {
+    await download(packageUrl, destinationDir, {
       headers: { Authorization: `Bearer ${bearerToken}` },
+      filename: basename(temporaryDownloadPath),
     });
-    await promisify(rename)(tmpPath, packagePath);
+    await promisify(rename)(temporaryDownloadPath, destinationPath);
   } finally {
-    await rimrafAsync(tmpPath);
+    await rimrafAsync(temporaryDownloadPath);
   }
 }

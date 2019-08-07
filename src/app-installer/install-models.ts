@@ -37,10 +37,10 @@ export function InstallModelVersionPackages(spawner: Spawner, bearerToken: strin
   async function installModel(id: string, version: number) {
     let changed = false;
     const { publisher, name } = ModelId.parse(id);
-    const modelDir = posix.join(MODELS_DIR, publisher, name);
+    const destinationDir = posix.join(MODELS_DIR, publisher, name);
     let installedVersion: number | undefined = undefined;
     try {
-      const parsed = await readModelJson(modelDir);
+      const parsed = await readModelJson(destinationDir);
       installedVersion = parsed.version;
     } catch (_) {
       // TODO finer-grained error handling
@@ -49,7 +49,7 @@ export function InstallModelVersionPackages(spawner: Spawner, bearerToken: strin
     if (installedVersion !== version) {
       changed = true;
       const tmpId = getRandomString();
-      const tmpDir = `${modelDir}.${tmpId}.download`;
+      const tmpDir = `${destinationDir}.${tmpId}.download`;
       await spawner.mkdirp(tmpDir);
       try {
         await spawner.untar(
@@ -64,13 +64,13 @@ export function InstallModelVersionPackages(spawner: Spawner, bearerToken: strin
           return { ...modelJson, version };
         }
         updateModelJson(posix.join(tmpDir, fileNames[0]), modelJsonUpdater);
-        await spawner.rimraf(modelDir);
-        await spawner.mkdirp(dirname(modelDir));
+        await spawner.rimraf(destinationDir);
+        await spawner.mkdirp(dirname(destinationDir));
         await spawner.run({
           exe: 'mv',
           args: [
             spawner.resolvePath(tmpDir, fileNames[0]),
-            spawner.resolvePath(modelDir),
+            spawner.resolvePath(destinationDir),
           ],
         });
       } finally {
@@ -89,7 +89,7 @@ export function InstallModelVersionPackages(spawner: Spawner, bearerToken: strin
     }
 
     async function updateModelJson(dir: string, updater: (current: any) => any) {
-      const parsed = readModelJson(dir);
+      const parsed = await readModelJson(dir);
       const updated = updater(parsed);
       const serialized = JSON.stringify(updated, null, 2);
       await spawner.run({

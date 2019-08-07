@@ -5,12 +5,13 @@ import { ACTIVATE } from '../../app-installer';
 export const appShellCliLeaf = createLeaf({
   name: 'shell',
   description: 'Launch a bash shell in the target directory',
-  action() {
-    const target = targetConfigFile.readSpawner();
+  async action() {
+    const targetSpawner = targetConfigFile.readContainerSpawner();
+
     const targetConfig = targetConfigFile.read();
-    switch (targetConfig.protocol) {
+    switch (targetConfig.targetProtocol) {
       case 'docker:': {
-        target.runForegroundSync({
+        targetSpawner.runForegroundSync({
           exe: '/bin/bash',
           args: ['--rcfile', ACTIVATE],
           tty: true,
@@ -21,7 +22,7 @@ export const appShellCliLeaf = createLeaf({
       }
 
       case 'ssh+docker:': {
-        target.runForegroundSync({
+        targetSpawner.runForegroundSync({
           exe: '/bin/bash',
           args: ['--rcfile', ACTIVATE],
           tty: true,

@@ -7,7 +7,7 @@ import { promisify } from 'util';
 const OPENSSH = 'OpenSSH';
 
 export async function checkForOpensshComponent() {
-  const spinner = ora(`Check for OpenSSH-compatible ssh client`).start();
+  const spinner = ora(`Check OpenSSH-compatible ssh client`).start();
   spinner.start();
   try {
     // Note: ssh -V writes the version string to stderr, not stdout

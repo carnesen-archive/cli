@@ -9,6 +9,13 @@ import { targetPathInputComponent } from './target-path-input-component';
 import { writeAppConfigFileComponent } from './write-app-config-file-component';
 import { writeAppPyFileComponent } from './write-app-py-file-component';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
+import {
+  DOCKER_HUB_EDGEIQ_REPOSITORY_NAME,
+  DOCKER_FALLBACK_TAG_NAME,
+} from '../constants';
+import { writeDockerfileComponent } from './write-dockerfile-component';
+
+const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
 export async function appConfigureComponent(props: {
   yes: boolean;
@@ -20,6 +27,7 @@ export async function appConfigureComponent(props: {
   await checkUserIsLoggedInComponent({ yes });
   await writeAppConfigFileComponent({ yes });
   await writeAppPyFileComponent();
+  await writeDockerfileComponent();
 
   const targetProtocol = yes
     ? props.targetProtocol
@@ -30,7 +38,10 @@ export async function appConfigureComponent(props: {
   switch (targetProtocol) {
     case 'docker:':
       await checkForDockerComponent();
-      targetConfigFile.write({ protocol: targetProtocol });
+      targetConfigFile.write({
+        targetProtocol,
+        dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
+      });
       ora(`Write ${TARGET_CONFIG_FILE_NAME}`).succeed();
       break;
 
@@ -51,9 +62,10 @@ export async function appConfigureComponent(props: {
       });
 
       targetConfigFile.write({
-        protocol: targetProtocol,
-        hostname: targetHostname,
-        path: targetPath,
+        targetProtocol,
+        targetHostname,
+        targetPath,
+        dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
       });
 
       ora(`Write ${TARGET_CONFIG_FILE_NAME}`).succeed();

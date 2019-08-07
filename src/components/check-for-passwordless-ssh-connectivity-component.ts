@@ -4,8 +4,8 @@ import { SshSpawner } from '../spawner/ssh-spawner';
 export async function checkForPasswordlessSshConnectivityComponent(props: {
   targetHostname: string;
 }) {
-  const spinner = ora('Check for passwordless ssh connectivity').start();
-  const spawner = SshSpawner({ hostname: props.targetHostname });
+  const spinner = ora('Check passwordless ssh connectivity').start();
+  const spawner = SshSpawner({ targetHostname: props.targetHostname });
   try {
     await spawner.run({ exe: 'ls' });
     spinner.succeed();

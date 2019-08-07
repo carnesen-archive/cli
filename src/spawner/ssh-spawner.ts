@@ -5,8 +5,8 @@ import { ResolvePosixPath } from '../util/resolve-posix-path';
 import { PRIVATE_KEY_FILE_PATH } from '../constants';
 
 export type SshSpawner = ReturnType<typeof SshSpawner>;
-export function SshSpawner(config: { hostname: string; path?: string }) {
-  const resolvePath = ResolvePosixPath(config.path);
+export function SshSpawner(opts: { targetHostname: string; targetPath?: string }) {
+  const resolvePath = ResolvePosixPath(opts.targetPath);
   return GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
 
   function translate(cmd: Cmd) {
@@ -26,7 +26,7 @@ export function SshSpawner(config: { hostname: string; path?: string }) {
       args.push('-L', '5000:0.0.0.0:5000');
     }
     args.push(
-      config.hostname,
+      opts.targetHostname,
       cmd.cwd ? `cd "${resolvePath(cmd.cwd)}" && ${cmd.exe}` : cmd.exe,
     );
     if (cmd.args) {

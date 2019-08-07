@@ -5,6 +5,7 @@ alwaysai.*.json
 /models
 /app.py
 /venv
+Dockerfile
 
 # Code coverage output
 /coverage

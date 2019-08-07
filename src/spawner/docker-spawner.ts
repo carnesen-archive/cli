@@ -1,13 +1,13 @@
+import { platform } from 'os';
+
 import { Spawner, Cmd } from './types';
 import { SpawnerBase } from './spawner-base';
 import { GnuSpawner } from './gnu-spawner';
-import { platform } from 'os';
 import { ResolvePosixPath } from '../util/resolve-posix-path';
 
-export const IMAGE_NAME = 'alwaysai/edgeiq';
 export const APP_DIR = '/app';
 
-export function DockerSpawner(): Spawner {
+export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
   const resolvePath = ResolvePosixPath(APP_DIR);
   const gnuSpawner = GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
   return {
@@ -49,7 +49,7 @@ export function DockerSpawner(): Spawner {
     }
 
     args.push('--workdir', resolvePath(cmd.cwd));
-    args.push(IMAGE_NAME, cmd.exe);
+    args.push(opts.dockerImageId, cmd.exe);
 
     if (cmd.args) {
       args.push(...cmd.args);

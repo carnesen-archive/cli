@@ -9,6 +9,7 @@ import { echo } from '../util/echo';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 import { checkForRequiredFilesComponent } from './check-for-required-files-component';
 import { getBearerToken } from '../util/cognito-auth';
+import { buildDockerImage } from '../util/build-docker-image';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
@@ -20,18 +21,18 @@ export async function appDeployComponent(props: { yes: boolean }) {
   }
   await checkForRequiredFilesComponent({ yes });
   const appConfig = appConfigFile.read();
-  const targetSpawner = targetConfigFile.readSpawner();
+  const targetHostSpawner = targetConfigFile.readHostSpawner();
   const targetConfig = targetConfigFile.read();
   const sourceSpawner = JsSpawner();
-  await spinOnPromise(targetSpawner.mkdirp(), 'Create target directory');
+  await spinOnPromise(targetHostSpawner.mkdirp(), 'Create target directory');
 
-  const appInstaller = AppInstaller(targetSpawner, bearerToken);
+  const hostAppInstaller = AppInstaller(targetHostSpawner, bearerToken);
 
   // Protocol-specific installation steps
-  switch (targetConfig.protocol) {
+  switch (targetConfig.targetProtocol) {
     case 'ssh+docker:': {
       await spinOnPromise(
-        appInstaller.installSource(sourceSpawner),
+        hostAppInstaller.installSource(sourceSpawner),
         'Copy application to target',
       );
     }
@@ -43,7 +44,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
     if (ids.length > 0) {
       hasModels = true;
       await spinOnPromise(
-        appInstaller.installModels(appConfig.models),
+        hostAppInstaller.installModels(appConfig.models),
         `Model${ids.length > 1 ? 's' : ''} ${ids.join(' ')}`,
       );
     }
@@ -53,6 +54,23 @@ export async function appDeployComponent(props: { yes: boolean }) {
     echo(`${logSymbols.warning} Application has no models`);
   }
 
-  await spinOnPromise(appInstaller.installVirtualenv(), 'Install python virtualenv');
-  await spinOnPromise(appInstaller.installPythonDeps(), 'Install python dependencies');
+  const dockerImageId = await spinOnPromise(
+    buildDockerImage(targetHostSpawner),
+    'Build docker image',
+  );
+
+  targetConfigFile.update(targetConfiguration => {
+    targetConfiguration.dockerImageId = dockerImageId;
+  });
+
+  const targetSpawner = targetConfigFile.readContainerSpawner();
+  const targetAppInstaller = AppInstaller(targetSpawner, bearerToken);
+  await spinOnPromise(
+    targetAppInstaller.installVirtualenv(),
+    'Install python virtualenv',
+  );
+  await spinOnPromise(
+    targetAppInstaller.installPythonDeps(),
+    'Install python dependencies',
+  );
 }

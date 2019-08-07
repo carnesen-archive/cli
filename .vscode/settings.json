@@ -1,17 +1,21 @@
 {
   "cSpell.words": [
+    "alwaysai",
     "alwayscli",
     "cognito",
     "create",
     "deserialize",
+    "edgeiq",
     "executables",
     "keymirror",
     "openssh",
     "passwordless",
+    "promisify",
     "stream",
     "tarbomb",
     "tempy",
     "untar",
+    "virtualenv",
     "workdir"
   ],
   "tslint.enable": true

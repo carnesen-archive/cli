@@ -9,20 +9,24 @@ import { TerseError } from '@alwaysai/alwayscli';
 import { DockerSpawner } from '../spawner/docker-spawner';
 import { TargetProtocol } from './target-protocol';
 import { SshDockerSpawner } from '../spawner/ssh-docker-spawner';
+import { SshSpawner } from '../spawner/ssh-spawner';
+import { JsSpawner } from '../spawner/js-spawner';
 
 export const TARGET_CONFIG_FILE_NAME = 'alwaysai.target.json';
 
 const sshDockerTarget = t.type(
   {
-    protocol: t.literal(TargetProtocol['ssh+docker:']),
-    hostname: t.string,
-    path: t.string,
+    targetProtocol: t.literal(TargetProtocol['ssh+docker:']),
+    targetHostname: t.string,
+    targetPath: t.string,
+    dockerImageId: t.string,
   },
   'SshDockerTarget',
 );
 
 const dockerTarget = t.type({
-  protocol: t.literal(TargetProtocol['docker:']),
+  targetProtocol: t.literal(TargetProtocol['docker:']),
+  dockerImageId: t.string,
 });
 
 const targetConfigCodec = t.taggedUnion('protocol', [dockerTarget, sshDockerTarget]);
@@ -43,7 +47,8 @@ function TargetConfigFile(dir = process.cwd()) {
 
   return {
     ...configFile,
-    readSpawner,
+    readContainerSpawner,
+    readHostSpawner,
     describe,
   };
 
@@ -53,13 +58,13 @@ function TargetConfigFile(dir = process.cwd()) {
       return `Target configuration file "${TARGET_CONFIG_FILE_NAME}" not found`;
     }
     const docker = chalk.bold('docker');
-    switch (config.protocol) {
+    switch (config.targetProtocol) {
       case 'docker:': {
         return `Target: ${docker} container on this host`;
       }
       case 'ssh+docker:': {
-        const hostname = chalk.bold(config.hostname);
-        const path = chalk.bold(config.path);
+        const hostname = chalk.bold(config.targetHostname);
+        const path = chalk.bold(config.targetPath);
         return `Target: ${docker} container on ${hostname}, path ${path}`;
       }
       default:
@@ -67,33 +72,41 @@ function TargetConfigFile(dir = process.cwd()) {
     }
   }
 
-  function readSpawner() {
-    const config = configFile.read();
-    switch (config.protocol) {
+  function readContainerSpawner() {
+    const targetConfiguration = configFile.read();
+    switch (targetConfiguration.targetProtocol) {
       case 'ssh+docker:': {
-        if (!config.hostname) {
-          throw new TerseError(
-            `"hostname" is required for protocol "${
-              config.protocol
-            }". ${DID_YOU_RUN_APP_CONFIGURE}`,
-          );
-        }
-        if (!config.path) {
-          throw new TerseError(
-            `"path" is required for protocol "${
-              config.protocol
-            }". ${DID_YOU_RUN_APP_CONFIGURE}`,
-          );
-        }
-        const spawner = SshDockerSpawner({
-          path: config.path,
-          hostname: config.hostname,
+        const { targetHostname, targetPath, dockerImageId } = targetConfiguration;
+        return SshDockerSpawner({
+          dockerImageId,
+          targetPath,
+          targetHostname,
         });
-        return spawner;
       }
 
       case 'docker:': {
-        return DockerSpawner();
+        const { dockerImageId } = targetConfiguration;
+        return DockerSpawner({ dockerImageId });
+      }
+
+      default:
+        throw new TerseError('Unsupported protocol');
+    }
+  }
+
+  function readHostSpawner() {
+    const targetConfiguration = configFile.read();
+    switch (targetConfiguration.targetProtocol) {
+      case 'ssh+docker:': {
+        const { targetPath, targetHostname } = targetConfiguration;
+        return SshSpawner({
+          targetHostname,
+          targetPath,
+        });
+      }
+
+      case 'docker:': {
+        return JsSpawner();
       }
 
       default:

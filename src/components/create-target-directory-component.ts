@@ -10,8 +10,8 @@ export async function createTargetDirectoryComponent(props: {
   let writable = false;
   try {
     const spawner = SshSpawner({
-      hostname: props.targetHostname,
-      path: props.targetPath,
+      targetHostname: props.targetHostname,
+      targetPath: props.targetPath,
     });
     await spawner.mkdirp();
     writable = true;

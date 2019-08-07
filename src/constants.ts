@@ -7,6 +7,9 @@ export const DOT_ALWAYSAI_DIR = join(homedir(), '.alwaysai');
 export const MODEL_PACKAGE_CACHE_DIR = join(DOT_ALWAYSAI_DIR, 'model-package-cache');
 export const LOCAL_MODEL_VERSION_PACKAGE_NUMBER = 0;
 export const APP_DOT_PY = 'app.py';
+export const DOCKERFILE = 'Dockerfile';
+export const DOCKER_HUB_EDGEIQ_REPOSITORY_NAME = 'alwaysai/edgeiq';
+export const DOCKER_FALLBACK_TAG_NAME = 'latest';
 
 export const DOT_SSH_DIR = join(homedir(), '.ssh');
 export const PRIVATE_KEY_FILE_NAME = 'alwaysai.id_rsa';
