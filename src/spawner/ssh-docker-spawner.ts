@@ -32,6 +32,8 @@ export function SshDockerSpawner(opts: {
       '/dev:/dev',
       '--volume',
       `${expandablePath}:${APP_DIR}`,
+      '--user',
+      '$(id -u ${USER}):$(id -g ${USER})',
     ];
 
     if (cmd.tty) {
