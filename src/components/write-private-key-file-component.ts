@@ -47,10 +47,10 @@ export async function writePrivateKeyFileComponent() {
       encoding: 'utf8',
     });
 
-    if (!keyMaterial.startsWith('-----BEGIN OPENSSH PRIVATE KEY-----')) {
+    if (!keyMaterial.includes('PRIVATE KEY')) {
       spinner.fail();
       throw new TerseError(
-        `"${PRIVATE_KEY_FILE_PRETTY_PATH}" exists but is not an OpenSSH private key. Please remove it and try again.`,
+        `"${PRIVATE_KEY_FILE_PRETTY_PATH}" exists but is not a private key. Please remove it and try again.`,
       );
     }
 
