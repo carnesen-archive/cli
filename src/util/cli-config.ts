@@ -71,4 +71,4 @@ switch (systemId) {
   }
 }
 
-export const webAuthUrl = `https://auth.${domainName}&redirect_uri=https://dashboard.${domainName}`;
+export const webAuthUrl = `https://auth.${domainName}`;
