@@ -1,5 +1,5 @@
 import { cast } from '@alwaysai/codecs';
-import { rpcMethodSpecs, RpcApi, RpcRequest, ErrorCode } from '@alwaysai/cloud-api';
+import { rpcMethodSpecs, RpcApi, RpcRequest } from '@alwaysai/cloud-api';
 import { TerseError } from '@alwaysai/alwayscli';
 
 import { SendRpcData } from './send-rpc-data';
@@ -32,7 +32,7 @@ export async function RpcClient(): Promise<RpcApi> {
         const result = deserializeRpcResponse(responseData);
         return result;
       } catch (err) {
-        if (err.code === ErrorCode.AUTHENTICATION_REQUIRED) {
+        if (err.code === 'AUTHENTICATION_REQUIRED') {
           throw new TerseError(PLEASE_LOG_IN_MESSAGE);
         }
         throw err;

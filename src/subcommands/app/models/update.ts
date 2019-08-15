@@ -2,7 +2,6 @@ import ora = require('ora');
 import logSymbols = require('log-symbols');
 
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
-import { ErrorCode } from '@alwaysai/cloud-api';
 
 import { appConfigFile } from '../../../util/app-config-file';
 import { RpcClient } from '../../../rpc-client';
@@ -27,7 +26,7 @@ export const appModelsUpdate = createLeaf({
         }
       } catch (ex) {
         spinner.fail();
-        if (ex.code === ErrorCode.MODEL_VERSION_NOT_FOUND) {
+        if (ex.code === 'MODEL_VERSION_NOT_FOUND') {
           throw new TerseError(`Model not found: "${id}"`);
         }
         throw ex;
