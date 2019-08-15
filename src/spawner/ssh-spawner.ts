@@ -10,6 +10,9 @@ export function SshSpawner(opts: { targetHostname: string; targetPath?: string }
   return GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
 
   function translate(cmd: Cmd) {
+    if (cmd.superuser) {
+      throw new Error(`${SshSpawner.name} does not support cmd option "superuser"`);
+    }
     const exe = 'ssh';
     const args: string[] = [
       '-i',

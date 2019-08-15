@@ -28,9 +28,11 @@ export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
       '--interactive',
       '--volume',
       `${process.cwd()}:${resolvePath()}`,
-      '--user',
-      `${process.getuid()}:${process.getgid()}`,
     ];
+
+    if (!cmd.superuser) {
+      args.push('--user', `${process.getuid()}:${process.getgid()}`);
+    }
 
     if (cmd.expose5000) {
       if (platform() === 'linux') {

@@ -7,6 +7,7 @@ export type Cmd = {
   tty?: boolean;
   expose5000?: boolean;
   input?: Readable;
+  superuser?: boolean;
 };
 
 export type Translate = (cmd: Cmd) => Cmd;

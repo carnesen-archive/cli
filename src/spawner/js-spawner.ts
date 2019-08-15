@@ -29,6 +29,9 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
   }
 
   function translate(cmd: Cmd) {
+    if (cmd.superuser) {
+      throw new Error(`${JsSpawner.name} does not support cmd option "superuser"`);
+    }
     const translated: Cmd = {
       ...cmd,
     };
