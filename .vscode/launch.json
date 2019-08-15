@@ -22,8 +22,8 @@
       "args": [
         "src",
         "app",
-        "target",
-        "install"
+        "models",
+        "search"
       ],
     },
     {

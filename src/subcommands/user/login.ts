@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { createLeaf, UsageError } from '@alwaysai/alwayscli';
 
-import { getCurrentUser } from '../../util/cognito-auth';
+import { getMaybeCurrentUser } from '../../util/cognito-auth';
 import { alwaysaiUserEmailCliInput } from '../../cli-inputs/alwaysai-user-email-cli-input';
 import { alwaysaiUserPasswordCliInput } from '../../cli-inputs/alwaysai-user-password-cli-input';
 import { yesCliInput } from '../../cli-inputs/yes-cli-input';
@@ -28,7 +28,7 @@ export const userLogin = createLeaf({
         alwaysaiUserPassword: password,
       });
     } else {
-      const cognitoUser = await getCurrentUser();
+      const cognitoUser = await getMaybeCurrentUser();
       if (cognitoUser) {
         echo(`Already logged in as ${chalk.bold(cognitoUser.getUsername())}`);
       } else {

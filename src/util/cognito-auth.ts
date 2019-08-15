@@ -17,7 +17,7 @@ const cognitoUserPool = new CognitoUserPool({
   Storage: credentialsStore,
 });
 
-export function getCurrentUser() {
+export function getMaybeCurrentUser() {
   const cognitoUser = cognitoUserPool.getCurrentUser();
   if (!cognitoUser) {
     return undefined;
@@ -25,8 +25,16 @@ export function getCurrentUser() {
   return cognitoUser;
 }
 
+export function getCurrentUser() {
+  const cognitoUser = getMaybeCurrentUser();
+  if (!cognitoUser) {
+    throw new Error('Expected to get logged in user');
+  }
+  return cognitoUser;
+}
+
 export async function getBearerToken() {
-  const user = await getCurrentUser();
+  const user = await getMaybeCurrentUser();
   if (!user) {
     return undefined;
   }

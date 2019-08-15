@@ -1,13 +1,13 @@
 import ora = require('ora');
 
 import { alwaysaiUserPromptedLoginComponent } from './alwaysai-user-prompted-login-component';
-import { getCurrentUser } from '../util/cognito-auth';
+import { getMaybeCurrentUser } from '../util/cognito-auth';
 import { TerseError } from '@alwaysai/alwayscli';
 
 export async function checkUserIsLoggedInComponent(props: { yes: boolean }) {
   const { yes } = props;
   const spinner = ora('Check user is logged in').start();
-  const cognitoUser = await getCurrentUser();
+  const cognitoUser = await getMaybeCurrentUser();
   if (!cognitoUser) {
     if (yes) {
       spinner.fail();

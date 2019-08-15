@@ -1,6 +1,6 @@
 import { createLeaf } from '@alwaysai/alwayscli';
 
-import { getCurrentUser } from '../../util/cognito-auth';
+import { getMaybeCurrentUser } from '../../util/cognito-auth';
 import chalk from 'chalk';
 
 export const userShow = createLeaf({
@@ -8,7 +8,7 @@ export const userShow = createLeaf({
   description: 'Show the currently logged in user',
   options: {},
   async action() {
-    const user = await getCurrentUser();
+    const user = await getMaybeCurrentUser();
     return user ? `Logged in as ${chalk.bold(user.getUsername())}` : 'Not logged in';
   },
 });
