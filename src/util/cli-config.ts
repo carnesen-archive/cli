@@ -33,7 +33,6 @@ const systemId =
 export let userPoolId: string;
 export let userPoolClientId: string;
 export let cloudApiUrl: string;
-export let s3Credentials: string;
 let domainName: string;
 switch (systemId) {
   case 'local': {
@@ -41,8 +40,6 @@ switch (systemId) {
     userPoolClientId = '3mot5qlvchlui2mqs803fccbvm';
     domainName = 'a6i0.net';
     cloudApiUrl = 'http://localhost:8000';
-    s3Credentials =
-      'eyJhY2Nlc3NLZXlJZCI6IkFLSUE2UERXNFJHNE9KTkNLUEdCIiwic2VjcmV0QWNjZXNzS2V5IjoiSmt0QWttUVhKU1ppdGlucjZQZGw1VGIyOXIvWEltVHFSVXUzcDErZyJ9';
     break;
   }
 
@@ -51,8 +48,6 @@ switch (systemId) {
     userPoolClientId = '3mot5qlvchlui2mqs803fccbvm';
     domainName = 'a6i0.net';
     cloudApiUrl = `https://api.${domainName}`;
-    s3Credentials =
-      'eyJhY2Nlc3NLZXlJZCI6IkFLSUE2UERXNFJHNE9KTkNLUEdCIiwic2VjcmV0QWNjZXNzS2V5IjoiSmt0QWttUVhKU1ppdGlucjZQZGw1VGIyOXIvWEltVHFSVXUzcDErZyJ9';
     break;
   }
 
@@ -61,8 +56,6 @@ switch (systemId) {
     userPoolClientId = '2mm3lcucrf53da27mjs5p5ei47';
     domainName = 'alwaysai.co';
     cloudApiUrl = `https://api.${domainName}`;
-    s3Credentials =
-      'eyJhY2Nlc3NLZXlJZCI6IkFLSUE1WUhIUVRLQ1kyRERDMzc2Iiwic2VjcmV0QWNjZXNzS2V5IjoiOU4vUlpCQVpQOEZIL0cvN1ZuNVBHeG0vc09Nb1BsMUlMeGU0SjZQUiJ9';
     break;
   }
 
