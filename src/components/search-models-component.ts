@@ -33,7 +33,6 @@ export async function searchModelsComponent() {
   });
 
   const publicModelVersions = await rpcClient.listPublicModelVersions();
-  console.log(userData);
   const privateModelVersions = await rpcClient.listPrivateModelVersions({
     publisher: userData.Username,
   });
