@@ -3,7 +3,7 @@ import * as https from 'https';
 import { URL } from 'url';
 import { promisify } from 'util';
 import { stat, createReadStream } from 'fs';
-import { OK } from 'http-status-codes';
+import { NO_CONTENT, OK } from 'http-status-codes';
 
 import { CodedError } from '@carnesen/coded-error';
 import pump = require('pump');
@@ -52,11 +52,15 @@ export async function modelVersionPackageCacheUploadToCloud(opts: {
       });
 
       res.on('end', () => {
-        if (res.statusCode && res.statusCode === OK) {
+        if (res.statusCode && (res.statusCode === NO_CONTENT || res.statusCode === OK)) {
           resolve(responseData);
         } else {
           reject(
-            new CodedError(`Server responded status ${res.statusCode}`, res.statusCode),
+            new CodedError(
+              `Server responded status ${res.statusCode}`,
+              res.statusCode,
+              responseData,
+            ),
           );
         }
       });
