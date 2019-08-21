@@ -1,4 +1,5 @@
 import ora = require('ora');
+import { platform } from 'os';
 
 import { targetProtocolPromptedInputComponent } from './target-protocol-input-component';
 import { TargetProtocol } from '../util/target-protocol';
@@ -14,25 +15,79 @@ import {
   DOCKER_FALLBACK_TAG_NAME,
 } from '../constants';
 import { writeDockerfileComponent } from './write-dockerfile-component';
+import { UsageError } from '@alwaysai/alwayscli';
+import { NotAllowedWithMessage } from '../util/not-allowed-with-message';
+import { RequiredWithYesMessage } from '../util/required-with-yes-message';
+
 
 const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
 export async function appConfigureComponent(props: {
   yes: boolean;
-  targetProtocol: TargetProtocol;
-  targetHostname: string;
-  targetPath: string;
+  targetProtocol?: TargetProtocol;
+  targetHostname?: string;
+  targetPath?: string;
 }) {
   const { yes } = props;
+  switch (props.targetProtocol) {
+    case 'docker:': {
+      if (platform() !== 'linux') {
+        throw new UsageError(
+          `Option "protocol" is not allowed to have value "${
+            props.targetProtocol
+          }" if your operating system platform is "${platform}"`,
+        );
+      }
+      if (props.targetHostname) {
+        throw new UsageError(
+          NotAllowedWithMessage('hostname', 'protocol', props.targetProtocol),
+        );
+      }
+      break;
+    }
+
+    case 'ssh+docker:': {
+      if (props.yes) {
+        if (!props.targetHostname) {
+          throw new UsageError(
+            RequiredWithYesMessage(
+              'hostname',
+              undefined,
+              `If "protocol" is "${props.targetProtocol}"`,
+            ),
+          );
+        }
+      }
+      break;
+    }
+
+    case undefined: {
+      if (props.yes) {
+        throw new UsageError(RequiredWithYesMessage('protocol'))
+      }
+      break;
+    }
+
+    default: {
+      throw new Error(`Unexpected protocol "${props.targetProtocol}"`)
+    }
+  }
+
+  const currentTargetConfiguration = targetConfigFile.readIfExists();
   await checkUserIsLoggedInComponent({ yes });
   await writeAppConfigFileComponent({ yes });
   await writeAppPyFileComponent();
   await writeDockerfileComponent();
 
-  const targetProtocol = yes
-    ? props.targetProtocol
+  let targetProtocol: TargetProtocol;
+  if (yes) {
+    if (!props.targetProtocol) {
+
+    }
+  }
+    
     : await targetProtocolPromptedInputComponent({
-        targetProtocol: props.targetProtocol,
+        targetProtocol: props.targetProtocol || ,
       });
 
   switch (targetProtocol) {

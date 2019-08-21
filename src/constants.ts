@@ -20,3 +20,6 @@ export const PUBLIC_KEY_FILE_PRETTY_PATH = `${PRIVATE_KEY_FILE_PRETTY_PATH}.pub`
 
 // From https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
 export const VALID_EMAIL_REGULAR_EXPRESSION = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+export const PLEASE_REPORT_THIS_ERROR_MESSAGE =
+  'Please report this error to support@alwaysai.co';
