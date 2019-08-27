@@ -1,26 +1,20 @@
 import ora = require('ora');
 import { SshSpawner } from '../spawner/ssh-spawner';
-import { echo } from '../util/echo';
 
 export async function createTargetDirectoryComponent(props: {
   targetHostname: string;
   targetPath: string;
 }) {
   const spinner = ora('Create target directory').start();
-  let writable = false;
   try {
     const spawner = SshSpawner({
       targetHostname: props.targetHostname,
       targetPath: props.targetPath,
     });
     await spawner.mkdirp();
-    writable = true;
     spinner.succeed();
-  } catch (ex) {
+  } catch (exception) {
     spinner.fail();
-    if (ex.message) {
-      echo(ex.message);
-    }
+    throw exception;
   }
-  return writable;
 }

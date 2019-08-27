@@ -12,6 +12,7 @@
     "passwordless",
     "promisify",
     "stream",
+    "subcommands",
     "tarbomb",
     "tempy",
     "untar",

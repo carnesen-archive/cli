@@ -1,8 +1,10 @@
 import { join } from 'path';
 
-import { ALWAYSAI_CONFIG_DIR, ConfigFile } from '@alwaysai/config-nodejs';
 import * as t from 'io-ts';
 import { ICognitoStorage } from 'amazon-cognito-identity-js';
+
+import { ALWAYSAI_CONFIG_DIR, ConfigFile } from '@alwaysai/config-nodejs';
+import { TERSE } from '@alwaysai/alwayscli';
 
 const codec = t.record(t.string, t.any);
 
@@ -11,7 +13,7 @@ export const PLEASE_LOG_IN_MESSAGE =
 
 const ENOENT = {
   message: PLEASE_LOG_IN_MESSAGE,
-  code: 'TERSE',
+  code: TERSE,
 };
 
 const path = join(ALWAYSAI_CONFIG_DIR, 'alwaysai.credentials.json');

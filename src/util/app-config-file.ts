@@ -1,11 +1,11 @@
 import { join } from 'path';
 
 import * as t from 'io-ts';
-import { ConfigFile } from '@alwaysai/config-nodejs';
-import { APP_DOT_PY } from '../constants';
 import chalk from 'chalk';
+import { ConfigFile } from '@alwaysai/config-nodejs';
+import { TERSE } from '@alwaysai/alwayscli';
 
-export const APP_CONFIG_FILE_NAME = 'alwaysai.app.json';
+import { APP_PY_FILE_NAME, APP_JSON_FILE_NAME } from '../constants';
 
 const codec = t.partial({
   models: t.record(t.string, t.any, 'models'),
@@ -15,19 +15,19 @@ const codec = t.partial({
 export type AppConfig = t.TypeOf<typeof codec>;
 
 const ENOENT = {
-  message: `${APP_CONFIG_FILE_NAME} not found. Did you run "alwaysai app configure"?`,
-  code: 'TERSE',
+  message: `${APP_JSON_FILE_NAME} not found. Did you run "alwaysai app configure"?`,
+  code: TERSE,
 };
 
 export function AppConfigFile(dir = process.cwd()) {
   const configFile = ConfigFile({
-    path: join(dir, APP_CONFIG_FILE_NAME),
+    path: join(dir, APP_JSON_FILE_NAME),
     codec,
     ENOENT,
     initialValue: {
       models: {},
       scripts: {
-        start: `python ${APP_DOT_PY}`,
+        start: `python ${APP_PY_FILE_NAME}`,
       },
     },
   });
@@ -51,7 +51,7 @@ export function AppConfigFile(dir = process.cwd()) {
       const config = configFile.readIfExists();
       const MODELS_COLON = 'Models:';
       if (!config) {
-        return `${MODELS_COLON} "${APP_CONFIG_FILE_NAME}" not found`;
+        return `${MODELS_COLON} "${APP_JSON_FILE_NAME}" not found`;
       }
       let description = `${MODELS_COLON} ${chalk.bold('None')}`;
       if (config.models) {
@@ -69,7 +69,7 @@ export function AppConfigFile(dir = process.cwd()) {
       const config = configFile.readIfExists();
       const SCRIPTS_COLON = 'Scripts:';
       if (!config) {
-        return `${SCRIPTS_COLON} "${APP_CONFIG_FILE_NAME}" not found`;
+        return `${SCRIPTS_COLON} "${APP_JSON_FILE_NAME}" not found`;
       }
       let description = `${SCRIPTS_COLON} ${chalk.bold('None')}`;
       if (config.scripts) {

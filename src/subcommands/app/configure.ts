@@ -6,8 +6,8 @@ import { targetProtocolCliInput } from '../../cli-inputs/target-protocol-cli-inp
 import { targetHostnameCliInput } from '../../cli-inputs/target-hostname-cli-input';
 import { targetPathCliInput } from '../../cli-inputs/target-path-cli-input';
 import { NotAllowedWithMessage } from '../../util/not-allowed-with-message';
-import { RequiredWithYesMessage } from '../../util/required-with-yes-message';
 import { platform } from 'os';
+import { TargetProtocol } from '../../util/target-protocol';
 
 export const appConfigureCliLeaf = createLeaf({
   name: 'configure',
@@ -19,43 +19,34 @@ export const appConfigureCliLeaf = createLeaf({
     path: targetPathCliInput,
   },
   async action(_, opts) {
-    switch (opts.protocol) {
-      case 'docker:': {
-        if (platform() !== 'linux') {
-          throw new UsageError(
-            `Option "protocol" is not allowed to have value "${
-              opts.protocol
-            }" if your operating system platform is "${platform}"`,
-          );
-        }
-        if (opts.hostname) {
-          throw new UsageError(
-            NotAllowedWithMessage('hostname', 'protocol', opts.protocol),
-          );
-        }
-        break;
-      }
-      case 'ssh+docker:': {
-        if (opts.yes) {
-          if (!opts.hostname) {
-            throw new UsageError(
-              RequiredWithYesMessage(
-                'hostname',
-                undefined,
-                `If "protocol" is "${opts.protocol}"`,
-              ),
-            );
-          }
-        }
-        break;
-      }
+    const { yes, hostname, path, protocol } = opts;
+
+    // Preliminary checks that don't help us with type narrowing
+    if (protocol === 'docker:' && platform() !== 'linux') {
+      throw new UsageError(
+        `Option "protocol" is not allowed to have value "${
+          TargetProtocol['docker:']
+        }" if your operating system platform is "${platform}"`,
+      );
+    }
+
+    if (protocol === 'docker:' && hostname) {
+      throw new UsageError(
+        NotAllowedWithMessage('hostname', 'protocol', TargetProtocol['docker:']),
+      );
+    }
+
+    if (protocol === 'docker:' && path) {
+      throw new UsageError(
+        NotAllowedWithMessage('path', 'protocol', TargetProtocol['docker:']),
+      );
     }
 
     return await appConfigureComponent({
-      yes: opts.yes,
-      targetProtocol: opts.protocol || 'ssh+docker:',
-      targetHostname: opts.hostname || '',
-      targetPath: opts.path,
+      yes,
+      targetProtocol: protocol,
+      targetHostname: hostname,
+      targetPath: path,
     });
   },
 });

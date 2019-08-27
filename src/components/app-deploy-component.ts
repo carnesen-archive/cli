@@ -1,4 +1,6 @@
 import logSymbols = require('log-symbols');
+import { TerseError } from '@alwaysai/alwayscli';
+import ora = require('ora');
 
 import { appConfigFile } from '../util/app-config-file';
 import { targetConfigFile } from '../util/target-config-file';
@@ -6,31 +8,61 @@ import { JsSpawner } from '../spawner/js-spawner';
 import { AppInstaller } from '../app-installer';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
-import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
-import { checkForRequiredFilesComponent } from './check-for-required-files-component';
 import { getBearerToken } from '../util/cognito-auth';
-import { buildDockerImage } from '../util/build-docker-image';
+import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
+import { TARGET_JSON_FILE_NAME } from '../constants';
+import { targetJsonPromptComponent } from './target-json-prompt-component';
+import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
+import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
+import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
+import { createTargetDirectoryComponent } from './create-target-directory-component';
+import { confirmWriteFileComponent } from './confirm-write-file-component';
+import { buildDockerImageComponent } from './build-docker-image-component';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
 
-  await checkUserIsLoggedInComponent({ yes });
+  await appConfigurePreliminaryStepsComponent({ yes, weAreInAppConfigure: false });
+  let ranTargetJsonPromptComponent = false;
+  if (targetConfigFile.exists()) {
+    ora(`Found ${TARGET_JSON_FILE_NAME}`);
+  } else {
+    if (yes) {
+      throw new TerseError(
+        MissingFilePleaseRunAppConfigureMessage(TARGET_JSON_FILE_NAME),
+      );
+    }
+    await confirmWriteFileComponent({
+      description: 'Target configuration file',
+      yes,
+      fileName: TARGET_JSON_FILE_NAME,
+    });
+    await targetJsonPromptComponent();
+    ranTargetJsonPromptComponent = true;
+  }
+
   const bearerToken = await getBearerToken();
   if (!bearerToken) {
     throw new Error('Expected to get bearer token');
   }
-  await checkForRequiredFilesComponent({ yes });
+
   const appConfig = appConfigFile.read();
   const targetHostSpawner = targetConfigFile.readHostSpawner();
   const targetConfig = targetConfigFile.read();
   const sourceSpawner = JsSpawner();
-  await spinOnPromise(targetHostSpawner.mkdirp(), 'Create target directory');
 
   const hostAppInstaller = AppInstaller(targetHostSpawner, bearerToken);
 
   // Protocol-specific installation steps
   switch (targetConfig.targetProtocol) {
     case 'ssh+docker:': {
+      const { targetHostname, targetPath } = targetConfig;
+      if (!ranTargetJsonPromptComponent) {
+        // If we ran the targetJsonPromptComponent we can skip these checks
+        await findOrWritePrivateKeyFileComponent({ yes, weAreInAppConfigure: false });
+        await checkSshConnectivityComponent({ targetHostname });
+        await createTargetDirectoryComponent({ targetHostname, targetPath });
+      }
       await spinOnPromise(
         hostAppInstaller.installSource(sourceSpawner),
         'Copy application to target',
@@ -54,11 +86,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
     echo(`${logSymbols.warning} Application has no models`);
   }
 
-  const dockerImageId = await spinOnPromise(
-    buildDockerImage(targetHostSpawner),
-    'Build docker image',
-  );
-
+  const dockerImageId = await buildDockerImageComponent({ targetHostSpawner });
   targetConfigFile.update(targetConfiguration => {
     targetConfiguration.dockerImageId = dockerImageId;
   });

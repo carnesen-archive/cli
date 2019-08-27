@@ -1,10 +1,12 @@
 import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
-import { writeDockerfileComponent } from './write-dockerfile-component';
+import { targetHostnamePromptComponent } from './target-hostname-prompt-component';
 
 const leaf = createLeaf({
-  name: writeDockerfileComponent.name,
+  name: targetHostnamePromptComponent.name,
   async action() {
-    return await writeDockerfileComponent();
+    return await targetHostnamePromptComponent({
+      targetHostname: 'localhost',
+    });
   },
 });
 

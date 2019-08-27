@@ -1,33 +1,23 @@
-import { UsageError, TERSE } from '@alwaysai/alwayscli';
+import { TERSE } from '@alwaysai/alwayscli';
 
 import { prompt } from '../util/prompt';
-import { checkForPasswordlessSshConnectivityComponent } from './check-for-passwordless-ssh-connectivity-component';
+import {
+  checkSshConnectivityComponent,
+  TIMED_OUT_CONNECTING_TO,
+} from './check-ssh-connectivity-component';
 import { PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE } from '../spawner/spawner-base/run';
 import { echo } from '../util/echo';
 import { setUpPasswordlessSshComponent } from './set-up-passwordless-ssh-component';
-import { RequiredWithYesMessage } from '../util/required-with-yes-message';
 
-export async function targetHostnameInputComponent(props: {
-  targetHostname?: string;
-  yes: boolean;
-}) {
-  if (props.yes) {
-    if (!props.targetHostname) {
-      throw new UsageError(RequiredWithYesMessage('hostname'));
-    }
-    await checkForPasswordlessSshConnectivityComponent({
-      targetHostname: props.targetHostname,
-    });
-    return props.targetHostname;
-  }
-
+export async function targetHostnamePromptComponent(props: { targetHostname?: string }) {
   let targetHostname: string = props.targetHostname || '';
   let connected = false;
   while (!connected) {
     targetHostname = await promptForTargetHostname();
     try {
-      await checkForPasswordlessSshConnectivityComponent({
+      await checkSshConnectivityComponent({
         targetHostname,
+        warnOrFail: 'warn',
       });
       connected = true;
     } catch (exception) {
@@ -35,7 +25,8 @@ export async function targetHostnameInputComponent(props: {
         exception &&
         exception.code === TERSE &&
         typeof exception.message === 'string' &&
-        exception.message.includes(PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE)
+        (exception.message.includes(PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE) ||
+          exception.message.includes(TIMED_OUT_CONNECTING_TO))
       ) {
         if (exception.message.includes('Permission denied')) {
           await setUpPasswordlessSshComponent({ targetHostname });

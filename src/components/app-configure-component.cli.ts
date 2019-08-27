@@ -6,9 +6,6 @@ const leaf = createLeaf({
   async action() {
     return await appConfigureComponent({
       yes: false,
-      targetProtocol: 'ssh+docker:',
-      targetHostname: 'localhost',
-      targetPath: '',
     });
   },
 });

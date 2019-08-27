@@ -5,7 +5,7 @@ import { prompt, getNonInteractiveStreamName } from '../util/prompt';
 import { UsageError } from '@alwaysai/alwayscli';
 import { TargetProtocol } from '../util/target-protocol';
 
-export async function targetProtocolPromptedInputComponent(props: {
+export async function targetProtocolPromptComponent(props: {
   targetProtocol?: TargetProtocol;
   developerHostPlatform?: NodeJS.Platform;
 }) {

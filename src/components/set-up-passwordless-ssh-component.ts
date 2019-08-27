@@ -2,12 +2,11 @@ import { createReadStream } from 'fs';
 
 import { echo } from '../util/echo';
 import { run } from '../spawner/spawner-base/run';
-import { checkForPasswordlessSshConnectivityComponent } from './check-for-passwordless-ssh-connectivity-component';
-import { writePrivateKeyFileComponent } from './write-private-key-file-component';
+import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { PUBLIC_KEY_FILE_PATH, PUBLIC_KEY_FILE_PRETTY_PATH } from '../constants';
 import logSymbols = require('log-symbols');
 
-// The following shell script is from the openSSH utility "ssh-copy-id"
+// The following shell script is derived from the openSSH utility "ssh-copy-id"
 //   * Create the .ssh directory with appropriate permissions if it does not exist
 //   * Append \n to authorized_keys if it exists but does not end in \n (?)
 //   * Append to authorized_keys from stdin using cat
@@ -16,7 +15,6 @@ const SHELL_SCRIPT_FOR_APPENDING_TO_AUTHORIZED_KEYS = `exec sh -c 'cd ; umask 07
 
 export async function setUpPasswordlessSshComponent(props: { targetHostname: string }) {
   echo('We need to set up your system to enable passwordless ssh.');
-  await writePrivateKeyFileComponent();
   echo(`Please enter the ssh password for "${props.targetHostname}" when prompted.`);
   try {
     await run({
@@ -36,7 +34,7 @@ export async function setUpPasswordlessSshComponent(props: { targetHostname: str
     echo(`${logSymbols.error} Copy "${PUBLIC_KEY_FILE_PRETTY_PATH}" to authorized_keys`);
     throw exception;
   }
-  await checkForPasswordlessSshConnectivityComponent({
+  await checkSshConnectivityComponent({
     targetHostname: props.targetHostname,
   });
 }

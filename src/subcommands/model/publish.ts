@@ -10,7 +10,7 @@ import { RpcClient } from '../../rpc-client';
 
 export const modelPublish = createLeaf({
   name: 'publish',
-  description: 'Publish a new version of a model to the alwaysAI cloud',
+  description: 'Publish a new version of a model to the alwaysAI Cloud',
   async action() {
     const modelConfiguration = modelConfigFile.read();
     const { id } = modelConfiguration;

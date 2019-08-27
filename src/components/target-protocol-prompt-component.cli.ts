@@ -1,12 +1,11 @@
 import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
-import { targetHostnameInputComponent } from './target-hostname-input-component';
+import { targetProtocolPromptComponent } from './target-protocol-prompt-component';
 
 const leaf = createLeaf({
-  name: targetHostnameInputComponent.name,
+  name: targetProtocolPromptComponent.name,
   async action() {
-    return await targetHostnameInputComponent({
-      targetHostname: 'localhost',
-      yes: false,
+    return await targetProtocolPromptComponent({
+      developerHostPlatform: 'linux',
     });
   },
 });

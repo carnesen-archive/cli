@@ -42,6 +42,6 @@ const raw = createLeaf({
 
 export const rpc = createBranch({
   name: 'rpc',
-  description: 'Call the alwaysAI cloud API RPC interface',
+  description: 'Call the alwaysAI Cloud API RPC interface',
   subcommands: [...methods, raw],
 });

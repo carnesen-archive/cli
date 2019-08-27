@@ -4,15 +4,14 @@ import chalk from 'chalk';
 import * as t from 'io-ts';
 
 import { ConfigFile } from '@alwaysai/config-nodejs';
-import { TerseError } from '@alwaysai/alwayscli';
+import { TerseError, TERSE } from '@alwaysai/alwayscli';
 
 import { DockerSpawner } from '../spawner/docker-spawner';
 import { TargetProtocol } from './target-protocol';
 import { SshDockerSpawner } from '../spawner/ssh-docker-spawner';
 import { SshSpawner } from '../spawner/ssh-spawner';
 import { JsSpawner } from '../spawner/js-spawner';
-
-export const TARGET_CONFIG_FILE_NAME = 'alwaysai.target.json';
+import { TARGET_JSON_FILE_NAME } from '../constants';
 
 const sshDockerTarget = t.type(
   {
@@ -35,14 +34,14 @@ export type TargetConfig = t.TypeOf<typeof targetConfigCodec>;
 const DID_YOU_RUN_APP_CONFIGURE = 'Did you run "alwaysai app configure"?';
 
 const ENOENT = {
-  message: `${TARGET_CONFIG_FILE_NAME} not found. ${DID_YOU_RUN_APP_CONFIGURE}`,
-  code: 'TERSE',
+  message: `${TARGET_JSON_FILE_NAME} not found. ${DID_YOU_RUN_APP_CONFIGURE}`,
+  code: TERSE,
 };
 
 export const targetConfigFile = TargetConfigFile();
 
 function TargetConfigFile(dir = process.cwd()) {
-  const filePath = join(dir, TARGET_CONFIG_FILE_NAME);
+  const filePath = join(dir, TARGET_JSON_FILE_NAME);
   const configFile = ConfigFile({ path: filePath, codec: targetConfigCodec, ENOENT });
 
   return {
@@ -55,7 +54,7 @@ function TargetConfigFile(dir = process.cwd()) {
   function describe() {
     const config = configFile.readIfExists();
     if (!config) {
-      return `Target configuration file "${TARGET_CONFIG_FILE_NAME}" not found`;
+      return `Target configuration file "${TARGET_JSON_FILE_NAME}" not found`;
     }
     const docker = chalk.bold('docker');
     switch (config.targetProtocol) {
