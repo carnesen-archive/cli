@@ -1,24 +1,22 @@
-import ora = require('ora');
-
 import { alwaysaiUserPromptedLoginComponent } from './alwaysai-user-prompted-login-component';
 import { getMaybeCurrentUser } from '../util/cognito-auth';
 import { TerseError } from '@alwaysai/alwayscli';
+import { echo } from '../util/echo';
+import logSymbols = require('log-symbols');
+
+const YOU_MUST_BE_LOGGED_IN = 'You must be logged in to run this command.';
 
 export async function checkUserIsLoggedInComponent(props: { yes: boolean }) {
   const { yes } = props;
-  const spinner = ora('Check user is logged in').start();
-  const cognitoUser = await getMaybeCurrentUser();
+  const cognitoUser = getMaybeCurrentUser();
   if (!cognitoUser) {
     if (yes) {
-      spinner.fail();
       throw new TerseError(
-        'Authentication required. Please either re-run this command without the "yes" flag, or run "alwaysai user login" and try again.',
+        `${YOU_MUST_BE_LOGGED_IN} Please either re-run this command without the "yes" flag, or run "alwaysai user login" and try again.`,
       );
     } else {
-      spinner.warn();
+      echo(`${logSymbols.warning} ${YOU_MUST_BE_LOGGED_IN}`);
       await alwaysaiUserPromptedLoginComponent();
     }
-  } else {
-    spinner.succeed();
   }
 }

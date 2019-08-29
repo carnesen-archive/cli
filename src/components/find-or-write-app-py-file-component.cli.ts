@@ -9,15 +9,13 @@ const leaf = createLeaf({
   options: {
     yes: yesCliInput,
     rm: createFlagInput({ description: `Remove ${APP_PY_FILE_NAME} first` }),
-    we: createFlagInput({ description: 'Set "weAreInAppConfigure" to true' }),
   },
-  async action(_, { yes, rm, we }) {
+  async action(_, { yes, rm }) {
     if (rm) {
       rimraf.sync(APP_PY_FILE_NAME);
     }
     await findOrWriteAppPyFileComponent({
       yes,
-      weAreInAppConfigure: we,
     });
   },
 });

@@ -1,6 +1,6 @@
+import { existsSync } from 'fs';
 import logSymbols = require('log-symbols');
 import { TerseError } from '@alwaysai/alwayscli';
-import ora = require('ora');
 
 import { appConfigFile } from '../util/app-config-file';
 import { targetConfigFile } from '../util/target-config-file';
@@ -9,34 +9,41 @@ import { AppInstaller } from '../app-installer';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
 import { getBearerToken } from '../util/cognito-auth';
-import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
-import { TARGET_JSON_FILE_NAME } from '../constants';
+import { TARGET_JSON_FILE_NAME, DOCKERFILE } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
-import { confirmWriteFileComponent } from './confirm-write-file-component';
+import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { buildDockerImageComponent } from './build-docker-image-component';
+import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
 
-  await appConfigurePreliminaryStepsComponent({ yes, weAreInAppConfigure: false });
+  await checkUserIsLoggedInComponent({ yes });
+  if (!appConfigFile.exists()) {
+    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appConfigFile.name));
+  }
+  if (!existsSync(DOCKERFILE)) {
+    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
+  }
+
   let ranTargetJsonPromptComponent = false;
-  if (targetConfigFile.exists()) {
-    ora(`Found ${TARGET_JSON_FILE_NAME}`);
-  } else {
+  if (!targetConfigFile.exists()) {
     if (yes) {
       throw new TerseError(
         MissingFilePleaseRunAppConfigureMessage(TARGET_JSON_FILE_NAME),
       );
     }
-    await confirmWriteFileComponent({
-      description: 'Target configuration file',
-      yes,
-      fileName: TARGET_JSON_FILE_NAME,
+    const confirmed = await confirmWriteFilePromptComponent({
+      fileName: undefined,
+      description: 'Target configuration',
     });
+    if (!confirmed) {
+      throw new TerseError('Unable to proceed without a target configuration');
+    }
     await targetJsonPromptComponent();
     ranTargetJsonPromptComponent = true;
   }

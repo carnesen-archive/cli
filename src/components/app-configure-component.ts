@@ -5,10 +5,12 @@ import {
   THIS_SHOULD_NEVER_HAPPEN_MESSAGE,
 } from '../constants';
 import { UsageError } from '@alwaysai/alwayscli';
+import { findOrWriteAppJsonFileComponent } from './find-or-write-app-json-file-component';
+import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
+import { findOrWriteDockerfileComponent } from './find-or-write-dockerfile-component';
 import { RequiredWithYesMessage } from '../util/required-with-yes-message';
 import { targetJsonYesComponent } from './target-json-yes-component';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
-import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
 
 const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
@@ -19,7 +21,9 @@ export async function appConfigureComponent(props: {
   targetPath?: string;
 }) {
   const { yes, targetHostname, targetPath, targetProtocol } = props;
-  await appConfigurePreliminaryStepsComponent({ yes: false, weAreInAppConfigure: true });
+  await checkUserIsLoggedInComponent({ yes });
+  await findOrWriteAppJsonFileComponent({ yes });
+  await findOrWriteDockerfileComponent({ yes });
 
   if (yes) {
     switch (targetProtocol) {

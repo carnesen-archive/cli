@@ -8,15 +8,13 @@ const leaf = createLeaf({
   options: {
     yes: yesCliInput,
     rm: createFlagInput({ description: 'Remove the config file first' }),
-    we: createFlagInput({ description: 'Set "weAreInAppConfigure" to true' }),
   },
-  async action(_, { yes, rm, we }) {
+  async action(_, { yes, rm }) {
     if (rm) {
       appConfigFile.remove();
     }
     await findOrWriteAppJsonFileComponent({
       yes,
-      weAreInAppConfigure: we,
     });
   },
 });

@@ -34,6 +34,7 @@ export function AppConfigFile(dir = process.cwd()) {
 
   return {
     ...configFile,
+    name: APP_JSON_FILE_NAME,
     addModel(id: string, version: number) {
       return configFile.update(config => {
         config.models = config.models || {};

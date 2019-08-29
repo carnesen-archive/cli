@@ -10,8 +10,9 @@ import {
   PUBLIC_KEY_FILE_PATH,
   PUBLIC_KEY_FILE_PRETTY_PATH,
 } from '../constants';
-import { confirmWriteFileComponent } from './confirm-write-file-component';
+import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
+import { UnableToProceedWithoutMessage } from '../util/unable-to-proceed-without-message';
 
 const WRITE_MESSAGE = `Write ${PRIVATE_KEY_FILE_PRETTY_PATH}`;
 const FOUND_MESSAGE = `Found ${PRIVATE_KEY_FILE_PRETTY_PATH}`;
@@ -28,12 +29,16 @@ export async function findOrWritePrivateKeyFileComponent(props: {
     // was created with ssh-keygen. It might not be if the private key was
     // copied to this host from elsewhere.
     if (!existsSync(PUBLIC_KEY_FILE_PATH)) {
-      await confirmWriteFileComponent({
-        yes,
-        fileName: PUBLIC_KEY_FILE_PRETTY_PATH,
-        description: 'Public key file',
-      });
-      const spinner = ora().start(`Write ${PUBLIC_KEY_FILE_PRETTY_PATH}`);
+      const confirmed =
+        yes ||
+        (await confirmWriteFilePromptComponent({
+          fileName: PUBLIC_KEY_FILE_PRETTY_PATH,
+          description: 'Public key file',
+        }));
+      if (!confirmed) {
+        throw new TerseError(UnableToProceedWithoutMessage(PUBLIC_KEY_FILE_PATH));
+      }
+      const spinner = ora(`Write ${PUBLIC_KEY_FILE_PRETTY_PATH}`).start();
       try {
         const { stdout } = await promisify(execFile)('ssh-keygen', [
           '-y',
@@ -57,11 +62,15 @@ export async function findOrWritePrivateKeyFileComponent(props: {
         MissingFilePleaseRunAppConfigureMessage(PRIVATE_KEY_FILE_PRETTY_PATH),
       );
     }
-    await confirmWriteFileComponent({
-      yes,
-      fileName: PRIVATE_KEY_FILE_PRETTY_PATH,
-      description: 'Private key file',
-    });
+    const confirmed =
+      yes ||
+      (await confirmWriteFilePromptComponent({
+        fileName: PRIVATE_KEY_FILE_PRETTY_PATH,
+        description: 'Private key file',
+      }));
+    if (!confirmed) {
+      throw new TerseError(UnableToProceedWithoutMessage(PRIVATE_KEY_FILE_PRETTY_PATH));
+    }
     // ssh-keygen creates the private key file and the corresponding .pub file
     const spinner = ora(WRITE_MESSAGE).start();
     try {

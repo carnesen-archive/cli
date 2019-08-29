@@ -2,33 +2,29 @@ import { writeFileSync, existsSync } from 'fs';
 import ora = require('ora');
 import { compare, valid } from 'semver';
 import download = require('download');
-
 import {
   DOCKERFILE,
   DOCKER_HUB_EDGEIQ_REPOSITORY_NAME,
   DOCKER_FALLBACK_TAG_NAME,
 } from '../constants';
-import { confirmWriteFileComponent } from './confirm-write-file-component';
+import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { TerseError } from '@alwaysai/alwayscli';
-import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
+import { UnableToProceedWithoutMessage } from '../util/unable-to-proceed-without-message';
 
 const WRITE_MESSAGE = `Write ${DOCKERFILE}`;
 const FOUND_MESSAGE = `Found ${DOCKERFILE}`;
-const fileName = DOCKERFILE;
-export async function findOrWriteDockerfileComponent(props: {
-  yes: boolean;
-  weAreInAppConfigure: boolean;
-}) {
-  const { yes, weAreInAppConfigure } = props;
-  if (existsSync(fileName)) {
+
+export async function findOrWriteDockerfileComponent(props: { yes: boolean }) {
+  const { yes } = props;
+  if (existsSync(DOCKERFILE)) {
     ora(FOUND_MESSAGE).succeed();
   } else {
     // !exists
-    if (yes && !weAreInAppConfigure) {
-      throw new TerseError(MissingFilePleaseRunAppConfigureMessage(fileName));
+    const confirmed =
+      yes || (await confirmWriteFilePromptComponent({ fileName: DOCKERFILE }));
+    if (!confirmed) {
+      throw new TerseError(UnableToProceedWithoutMessage(DOCKERFILE));
     }
-    await confirmWriteFileComponent({ yes, fileName });
-    // At this point we are either yes or confirmed
     const spinner = ora(WRITE_MESSAGE).start();
     const buffer = await download(
       `https://registry.hub.docker.com/v1/repositories/${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}/tags`,
@@ -41,7 +37,7 @@ export async function findOrWriteDockerfileComponent(props: {
     const greatestSemver = sortedSemverNames.slice(-1)[0] || DOCKER_FALLBACK_TAG_NAME;
     try {
       writeFileSync(
-        fileName,
+        DOCKERFILE,
         `FROM ${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${greatestSemver}\n`,
         {
           flag: 'wx',

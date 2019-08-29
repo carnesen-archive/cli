@@ -10,15 +10,13 @@ const leaf = createLeaf({
   options: {
     yes: yesCliInput,
     rm: createFlagInput({ description: `Remove ${DOCKERFILE} first` }),
-    we: createFlagInput({ description: 'Set "weAreInAppConfigure" to true' }),
   },
-  async action(_, { yes, rm, ...rest }) {
+  async action(_, { yes, rm }) {
     if (rm) {
       rimraf.sync(DOCKERFILE);
     }
     await findOrWriteDockerfileComponent({
       yes,
-      weAreInAppConfigure: rest['we'],
     });
   },
 });
