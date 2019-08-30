@@ -8,9 +8,8 @@ const yes = true;
 
 export async function targetJsonYesComponent(props: {
   targetConfig: Parameters<typeof writeTargetConfigFileComponent>[0];
-  weAreInAppConfigure: boolean;
 }) {
-  const { targetConfig, weAreInAppConfigure } = props;
+  const { targetConfig } = props;
   switch (targetConfig.targetProtocol) {
     case 'docker:':
       await checkForDockerComponent();
@@ -19,7 +18,7 @@ export async function targetJsonYesComponent(props: {
 
     case 'ssh+docker:':
       const { targetHostname, targetPath } = targetConfig;
-      await findOrWritePrivateKeyFileComponent({ yes, weAreInAppConfigure });
+      await findOrWritePrivateKeyFileComponent({ yes });
       await checkSshConnectivityComponent({
         targetHostname,
       });

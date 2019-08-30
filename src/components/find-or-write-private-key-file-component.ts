@@ -11,20 +11,13 @@ import {
   PUBLIC_KEY_FILE_PRETTY_PATH,
 } from '../constants';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
-import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
 import { UnableToProceedWithoutMessage } from '../util/unable-to-proceed-without-message';
 
 const WRITE_MESSAGE = `Write ${PRIVATE_KEY_FILE_PRETTY_PATH}`;
-const FOUND_MESSAGE = `Found ${PRIVATE_KEY_FILE_PRETTY_PATH}`;
 
-export async function findOrWritePrivateKeyFileComponent(props: {
-  yes: boolean;
-  weAreInAppConfigure: boolean;
-}) {
-  const { yes, weAreInAppConfigure } = props;
+export async function findOrWritePrivateKeyFileComponent(props: { yes: boolean }) {
+  const { yes } = props;
   if (existsSync(PRIVATE_KEY_FILE_PATH)) {
-    ora(FOUND_MESSAGE).succeed();
-
     // Make sure that the public part of the key is in place. It should be if it
     // was created with ssh-keygen. It might not be if the private key was
     // copied to this host from elsewhere.
@@ -57,11 +50,6 @@ export async function findOrWritePrivateKeyFileComponent(props: {
     }
   } else {
     // !exists
-    if (yes && !weAreInAppConfigure) {
-      throw new TerseError(
-        MissingFilePleaseRunAppConfigureMessage(PRIVATE_KEY_FILE_PRETTY_PATH),
-      );
-    }
     const confirmed =
       yes ||
       (await confirmWriteFilePromptComponent({

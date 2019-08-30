@@ -20,9 +20,8 @@ const leaf = createLeaf({
     'rm-pub': createFlagInput({
       description: `Remove ${PUBLIC_KEY_FILE_PRETTY_PATH} first`,
     }),
-    we: createFlagInput({ description: 'Set "weAreInAppConfigure" to true' }),
   },
-  async action(_, { yes, we, rm, ...rest }) {
+  async action(_, { yes, rm, ...rest }) {
     if (rm) {
       rimraf.sync(PRIVATE_KEY_FILE_PATH);
       rimraf.sync(PUBLIC_KEY_FILE_PATH);
@@ -32,7 +31,6 @@ const leaf = createLeaf({
     }
     await findOrWritePrivateKeyFileComponent({
       yes,
-      weAreInAppConfigure: we,
     });
   },
 });

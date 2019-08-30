@@ -6,6 +6,7 @@ import { targetHostnamePromptComponent } from './target-hostname-prompt-componen
 import { targetPathPromptComponent } from './target-path-prompt-component';
 import { DOCKER_IMAGE_ID_INITIAL_VALUE } from '../constants';
 import { writeTargetConfigFileComponent } from './write-target-config-file-component';
+import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 
 export async function targetJsonPromptComponent(
   props: {
@@ -31,6 +32,7 @@ export async function targetJsonPromptComponent(
       break;
 
     case 'ssh+docker:':
+      await findOrWritePrivateKeyFileComponent({ yes: false });
       let currentTargetHostname: string | undefined;
       let currentTargetPath: string | undefined;
       if (

@@ -37,7 +37,6 @@ export async function appConfigureComponent(props: {
             targetProtocol,
             dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
           },
-          weAreInAppConfigure: true,
         });
         break;
       }
@@ -68,7 +67,6 @@ export async function appConfigureComponent(props: {
             targetPath,
             dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
           },
-          weAreInAppConfigure: true,
         });
         break;
       }

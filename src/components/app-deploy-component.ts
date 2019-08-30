@@ -12,12 +12,12 @@ import { getBearerToken } from '../util/cognito-auth';
 import { TARGET_JSON_FILE_NAME, DOCKERFILE } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
-import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { buildDockerImageComponent } from './build-docker-image-component';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
+import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
@@ -66,7 +66,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
       const { targetHostname, targetPath } = targetConfig;
       if (!ranTargetJsonPromptComponent) {
         // If we ran the targetJsonPromptComponent we can skip these checks
-        await findOrWritePrivateKeyFileComponent({ yes, weAreInAppConfigure: false });
+        await findOrWritePrivateKeyFileComponent({ yes });
         await checkSshConnectivityComponent({ targetHostname });
         await createTargetDirectoryComponent({ targetHostname, targetPath });
       }
