@@ -9,7 +9,7 @@ import { AppInstaller } from '../app-installer';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
 import { getBearerToken } from '../util/cognito-auth';
-import { TARGET_JSON_FILE_NAME, DOCKERFILE } from '../constants';
+import { TARGET_JSON_FILE_NAME, DOCKERFILE, DOCKER_TEST_IMAGE_ID } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
@@ -17,6 +17,7 @@ import { createTargetDirectoryComponent } from './create-target-directory-compon
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { buildDockerImageComponent } from './build-docker-image-component';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
+import ora = require('ora');
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 
 export async function appDeployComponent(props: { yes: boolean }) {
@@ -70,10 +71,31 @@ export async function appDeployComponent(props: { yes: boolean }) {
         await checkSshConnectivityComponent({ targetHostname });
         await createTargetDirectoryComponent({ targetHostname, targetPath });
       }
-      await spinOnPromise(
-        hostAppInstaller.installSource(sourceSpawner),
-        'Copy application to target',
-      );
+      const spinner = ora('Copy application to target').start();
+      try {
+        await hostAppInstaller.installSource(sourceSpawner);
+        await targetHostSpawner.run({
+          exe: 'docker',
+          args: [
+            'run',
+            '--rm',
+            '--workdir',
+            '/app',
+            '--volume',
+            '$(pwd):/app',
+            DOCKER_TEST_IMAGE_ID,
+            'chown',
+            '-R',
+            '$(id -u ${USER}):$(id -g ${USER})',
+            '/app',
+          ],
+          cwd: '.',
+        });
+        spinner.succeed();
+      } catch (exception) {
+        spinner.fail();
+        throw exception;
+      }
     }
   }
 
