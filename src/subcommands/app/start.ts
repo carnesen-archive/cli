@@ -32,7 +32,6 @@ export const appStartCliLeaf = createLeaf({
         await spawner.runForeground({
           exe: '/bin/bash',
           args: ['-t', '-c', `. ${ACTIVATE} && ${script}`],
-          tty: true,
           cwd: '.',
           expose5000: true,
           superuser: !opts['no-superuser'],
@@ -45,7 +44,6 @@ export const appStartCliLeaf = createLeaf({
         await spawner.runForeground({
           exe: '/bin/bash',
           args: ['-t', '-c', `'. ${ACTIVATE} && ${script}'`],
-          tty: true,
           cwd: '.',
           expose5000: true,
           superuser: !opts['no-superuser'],
