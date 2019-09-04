@@ -6,15 +6,13 @@ export function GnuSpawner(context: {
   resolvePath: Spawner['resolvePath'];
   run: Spawner['run'];
   runForegroundSync: Spawner['runForegroundSync'];
-  runForeground: Spawner['runForeground'];
   runStreaming: Spawner['runStreaming'];
 }): Spawner {
-  const { resolvePath, run, runForegroundSync, runForeground, runStreaming } = context;
+  const { resolvePath, run, runForegroundSync, runStreaming } = context;
 
   return {
     run,
     runForegroundSync,
-    runForeground,
     runStreaming,
     resolvePath,
     readdir,

@@ -56,7 +56,6 @@
     "log-symbols": "3.0.0",
     "mkdirp": "0.5.1",
     "node-fetch": "2.6.0",
-    "open": "6.4.0",
     "ora": "3.4.0",
     "prompts": "2.2.1",
     "pump": "3.0.0",

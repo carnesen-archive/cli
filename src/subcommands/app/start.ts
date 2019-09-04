@@ -29,7 +29,7 @@ export const appStartCliLeaf = createLeaf({
 
     switch (targetConfig.targetProtocol) {
       case 'docker:': {
-        await spawner.runForeground({
+        spawner.runForegroundSync({
           exe: '/bin/bash',
           args: ['-t', '-c', `. ${ACTIVATE} && ${script}`],
           cwd: '.',
@@ -41,7 +41,7 @@ export const appStartCliLeaf = createLeaf({
 
       // This case differs from "docker:"" only in the extra single quotes around the command
       case 'ssh+docker:': {
-        await spawner.runForeground({
+        spawner.runForegroundSync({
           exe: '/bin/bash',
           args: ['-t', '-c', `'. ${ACTIVATE} && ${script}'`],
           cwd: '.',

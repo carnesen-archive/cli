@@ -15,7 +15,6 @@ export type Translate = (cmd: Cmd) => Cmd;
 export type Spawner = {
   run: (cmd: Cmd) => Promise<string>;
   runForegroundSync: (cmd: Cmd) => void;
-  runForeground: (cmd: Cmd) => Promise<void>;
   runStreaming: (cmd: Cmd) => Promise<Readable>;
   resolvePath: (...paths: (string | undefined)[]) => string;
   readdir: (path?: string) => Promise<string[]>;
