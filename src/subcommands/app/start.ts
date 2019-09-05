@@ -29,10 +29,11 @@ export const appStartCliLeaf = createLeaf({
 
     switch (targetConfig.targetProtocol) {
       case 'docker:': {
-        spawner.runForegroundSync({
+        await spawner.runForeground({
           exe: '/bin/bash',
-          args: ['-t', '-c', `. ${ACTIVATE} && ${script}`],
+          args: ['-o', 'onecmd', '-O', 'huponexit', '-c', `. ${ACTIVATE} && ${script}`],
           cwd: '.',
+          tty: true,
           expose5000: true,
           superuser: !opts['no-superuser'],
         });
@@ -41,10 +42,11 @@ export const appStartCliLeaf = createLeaf({
 
       // This case differs from "docker:"" only in the extra single quotes around the command
       case 'ssh+docker:': {
-        spawner.runForegroundSync({
+        await spawner.runForeground({
           exe: '/bin/bash',
-          args: ['-t', '-c', `'. ${ACTIVATE} && ${script}'`],
+          args: ['-o', 'onecmd', '-O', 'huponexit', '-c', `'. ${ACTIVATE} && ${script}'`],
           cwd: '.',
+          tty: true,
           expose5000: true,
           superuser: !opts['no-superuser'],
         });
