@@ -63,7 +63,7 @@ export function InstallModelVersionPackages(spawner: Spawner, bearerToken: strin
         function modelJsonUpdater(modelJson: any) {
           return { ...modelJson, version };
         }
-        updateModelJson(posix.join(tmpDir, fileNames[0]), modelJsonUpdater);
+        await updateModelJson(posix.join(tmpDir, fileNames[0]), modelJsonUpdater);
         await spawner.rimraf(destinationDir);
         await spawner.mkdirp(dirname(destinationDir));
         await spawner.run({
