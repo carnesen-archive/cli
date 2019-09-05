@@ -41,7 +41,7 @@
     "@types/prompts": "2.4.0",
     "@types/pump": "1.1.0",
     "@types/rimraf": "2.0.2",
-    "@types/semver": "6.0.1",
+    "@types/semver": "6.0.2",
     "@types/signal-exit": "3.0.0",
     "@types/tar": "4.0.3",
     "amazon-cognito-identity-js": "3.0.15",
