@@ -39,7 +39,7 @@ export function SshDockerSpawner(opts: {
     }
 
     if (cmd.tty) {
-      sshArgs.push('-t');
+      sshArgs.push('-t', '-t');
       dockerArgs.push('--tty');
     }
 
