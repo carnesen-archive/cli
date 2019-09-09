@@ -1,14 +1,25 @@
 import { join } from 'path';
 
 import * as t from 'io-ts';
-import * as c from '@alwaysai/codecs';
 
 import { ConfigFile, ALWAYSAI_CONFIG_DIR } from '@alwaysai/config-nodejs';
 import { TERSE } from '@alwaysai/alwayscli';
 import { CLI_NAME } from '../constants';
+import KeyMirror = require('keymirror');
+
+export const SystemId = KeyMirror({
+  local: null,
+  development: null,
+  qa: null,
+  production: null,
+});
+
+export type SystemId = keyof typeof SystemId;
+
+export const SYSTEM_IDS = Object.keys(SystemId) as SystemId[];
 
 const props = {
-  systemId: c.systemId,
+  systemId: t.keyof(SystemId),
 };
 
 const codec = t.partial(props);
@@ -47,6 +58,14 @@ switch (systemId) {
     userPoolId = 'us-west-2_1qn5QzXzP';
     userPoolClientId = '3mot5qlvchlui2mqs803fccbvm';
     domainName = 'a6i0.net';
+    cloudApiUrl = `https://api.${domainName}`;
+    break;
+  }
+
+  case 'qa': {
+    userPoolId = 'us-west-2_R6z7U5NYX';
+    userPoolClientId = '1l5f4j6lues6lgaoil43v4fc8n';
+    domainName = 'a6i1.net';
     cloudApiUrl = `https://api.${domainName}`;
     break;
   }

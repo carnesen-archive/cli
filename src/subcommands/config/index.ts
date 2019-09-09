@@ -4,9 +4,8 @@ import {
   createOneOfInput,
   createFlagInput,
 } from '@alwaysai/alwayscli';
-import { cliConfigFile } from '../../util/cli-config';
+import { cliConfigFile, SYSTEM_IDS } from '../../util/cli-config';
 import { CLI_NAME } from '../../constants';
-import { SYSTEM_IDS } from '@alwaysai/codecs';
 
 const show = createLeaf({
   name: 'show',
