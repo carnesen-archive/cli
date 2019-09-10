@@ -5,7 +5,7 @@ import { basename } from 'path';
 import tempy = require('tempy');
 import { modelVersionPackageCacheGetReadableStream } from './model-version-package-readable-stream-from-cache-or-cloud';
 import { modelVersionPackageGetReadableStreamFromCwd } from './model-version-package-readable-stream-from-cwd';
-import { getBearerToken } from './cognito-auth';
+import { authenticationClient } from './authentication-client';
 
 describe(__dirname, () => {
   it('downloads models from the cloud', () => {
@@ -22,10 +22,7 @@ describe(__dirname, () => {
       readable: fromCwd,
     });
     const target = JsSpawner({ path: tempy.directory() });
-    const bearerToken = await getBearerToken();
-    if (!bearerToken) {
-      throw new Error('Expected bearer token');
-    }
+    const bearerToken = await authenticationClient.getAccessJwt();
     const fromCache = await modelVersionPackageCacheGetReadableStream({
       id,
       version,

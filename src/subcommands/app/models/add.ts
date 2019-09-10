@@ -5,12 +5,11 @@ import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 
 import { appConfigFile } from '../../../util/app-config-file';
 import { modelIdsCliInput } from '../../../cli-inputs/model-ids-cli-input';
-import { RpcClient } from '../../../rpc-client';
 import { echo } from '../../../util/echo';
 import { modelVersionPackageCacheDownloadFromCloud } from '../../../util/model-version-package-cache-download-from-cloud';
 import { modelVersionPackageCacheGetPath } from '../../../util/model-version-package-path';
-import { getBearerToken } from '../../../util/cognito-auth';
 import { checkUserIsLoggedInComponent } from '../../../components/check-user-is-logged-in-component';
+import { rpcClient } from '../../../util/rpc-client';
 
 export const addModelsAddCliLeaf = createLeaf({
   name: 'add',
@@ -19,11 +18,6 @@ export const addModelsAddCliLeaf = createLeaf({
   async action(modelIds) {
     appConfigFile.read();
     await checkUserIsLoggedInComponent({ yes: false });
-    const bearerToken = await getBearerToken();
-    if (!bearerToken) {
-      throw new Error('Expected user to be logged in');
-    }
-    const rpcClient = await RpcClient();
     const fetched: [string, number][] = [];
     for (const modelId of modelIds) {
       const spinner = ora(`Fetch model "${modelId}"`).start();
@@ -33,7 +27,6 @@ export const addModelsAddCliLeaf = createLeaf({
           await modelVersionPackageCacheDownloadFromCloud({
             id: modelId,
             version,
-            bearerToken,
           });
         }
         fetched.push([modelId, version]);

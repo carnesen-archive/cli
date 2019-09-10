@@ -12,15 +12,15 @@ import { cloudApiUrl } from './cli-config';
 import { modelVersionPackageCacheGetPath } from './model-version-package-path';
 import { CLOUD_API_MODEL_VERSION_PACKAGES_PATH } from '@alwaysai/cloud-api';
 import { LOCAL_MODEL_VERSION_PACKAGE_NUMBER } from '../constants';
+import { authenticationClient } from './authentication-client';
 
 export async function modelVersionPackageCacheUploadToCloud(opts: {
   id: string;
   uuid: string;
-  bearerToken: string;
 }) {
-  const { id, bearerToken, uuid } = opts;
+  const { id, uuid } = opts;
   const { protocol, hostname, port } = new URL(cloudApiUrl);
-
+  const bearerToken = await authenticationClient.getAccessJwt();
   const headers: http.OutgoingHttpHeaders = {
     'Content-Type': 'application/gzip',
     Authorization: `Bearer ${bearerToken}`,

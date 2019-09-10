@@ -8,7 +8,6 @@ import { JsSpawner } from '../spawner/js-spawner';
 import { AppInstaller } from '../app-installer';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
-import { getBearerToken } from '../util/cognito-auth';
 import { TARGET_JSON_FILE_NAME, DOCKERFILE, DOCKER_TEST_IMAGE_ID } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
@@ -49,17 +48,12 @@ export async function appDeployComponent(props: { yes: boolean }) {
     ranTargetJsonPromptComponent = true;
   }
 
-  const bearerToken = await getBearerToken();
-  if (!bearerToken) {
-    throw new Error('Expected to get bearer token');
-  }
-
   const appConfig = appConfigFile.read();
   const targetHostSpawner = targetConfigFile.readHostSpawner();
   const targetConfig = targetConfigFile.read();
   const sourceSpawner = JsSpawner();
 
-  const hostAppInstaller = AppInstaller(targetHostSpawner, bearerToken);
+  const hostAppInstaller = AppInstaller(targetHostSpawner);
 
   // Protocol-specific installation steps
   switch (targetConfig.targetProtocol) {
@@ -121,7 +115,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
   });
 
   const targetSpawner = targetConfigFile.readContainerSpawner();
-  const targetAppInstaller = AppInstaller(targetSpawner, bearerToken);
+  const targetAppInstaller = AppInstaller(targetSpawner);
   await spinOnPromise(
     targetAppInstaller.installVirtualenv(),
     'Install python virtualenv',

@@ -14,6 +14,12 @@ import { targetJsonPromptComponent } from './target-json-prompt-component';
 
 const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
+async function appConfigurePreliminaryStepsComponent(props: { yes: boolean }) {
+  const { yes } = props;
+  await checkUserIsLoggedInComponent({ yes });
+  await findOrWriteAppJsonFileComponent({ yes });
+  await findOrWriteDockerfileComponent({ yes });
+}
 export async function appConfigureComponent(props: {
   yes: boolean;
   targetProtocol?: TargetProtocol;
@@ -21,9 +27,6 @@ export async function appConfigureComponent(props: {
   targetPath?: string;
 }) {
   const { yes, targetHostname, targetPath, targetProtocol } = props;
-  await checkUserIsLoggedInComponent({ yes });
-  await findOrWriteAppJsonFileComponent({ yes });
-  await findOrWriteDockerfileComponent({ yes });
 
   if (yes) {
     switch (targetProtocol) {
@@ -32,6 +35,7 @@ export async function appConfigureComponent(props: {
       }
 
       case 'docker:': {
+        await appConfigurePreliminaryStepsComponent({ yes });
         await targetJsonYesComponent({
           targetConfig: {
             targetProtocol,
@@ -60,6 +64,7 @@ export async function appConfigureComponent(props: {
             ),
           );
         }
+        await appConfigurePreliminaryStepsComponent({ yes });
         await targetJsonYesComponent({
           targetConfig: {
             targetProtocol,
@@ -77,6 +82,7 @@ export async function appConfigureComponent(props: {
     }
   } else {
     // !yes: run the prompted interface
+    await appConfigurePreliminaryStepsComponent({ yes });
     await targetJsonPromptComponent({
       targetHostname,
       targetPath,

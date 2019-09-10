@@ -5,23 +5,23 @@ import { dirname, basename } from 'path';
 import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
 
-import { RpcClient } from '../rpc-client';
 import { getRandomString } from './get-random-string';
 import { modelVersionPackageCacheGetPath } from './model-version-package-path';
 import { cloudApiUrl } from './cli-config';
 import { CLOUD_API_MODEL_VERSION_PACKAGES_PATH } from '@alwaysai/cloud-api';
 import download = require('download');
+import { rpcClient } from './rpc-client';
+import { authenticationClient } from './authentication-client';
 
 const rimrafAsync = promisify(rimraf);
 
 export async function modelVersionPackageCacheDownloadFromCloud(opts: {
   id: string;
   version: number;
-  bearerToken: string;
 }) {
-  const { id, version, bearerToken } = opts;
-  const rpcApi = await RpcClient();
-  const modelVersion = await rpcApi.getModelVersion({ id, version });
+  const { id, version } = opts;
+  const bearerToken = await authenticationClient.getAccessJwt();
+  const modelVersion = await rpcClient.getModelVersion({ id, version });
   const packageUrl = `${cloudApiUrl}${CLOUD_API_MODEL_VERSION_PACKAGES_PATH}/${
     modelVersion.uuid
   }`;

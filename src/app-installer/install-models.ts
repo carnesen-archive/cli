@@ -21,7 +21,7 @@ function runBestEffortBackgroundTask<T extends any[]>(
   })();
 }
 
-export function InstallModelVersionPackages(spawner: Spawner, bearerToken: string) {
+export function InstallModelVersionPackages(spawner: Spawner) {
   return async function installModelVersionPackages(models: AppConfig['models']) {
     let changed = false;
     if (models) {
@@ -53,7 +53,7 @@ export function InstallModelVersionPackages(spawner: Spawner, bearerToken: strin
       await spawner.mkdirp(tmpDir);
       try {
         await spawner.untar(
-          await modelVersionPackageCacheGetReadableStream({ id, version, bearerToken }),
+          await modelVersionPackageCacheGetReadableStream({ id, version }),
           tmpDir,
         );
         const fileNames = await spawner.readdir(tmpDir);

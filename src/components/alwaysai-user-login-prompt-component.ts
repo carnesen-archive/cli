@@ -1,9 +1,9 @@
 import { getNonInteractiveStreamName, prompt } from '../util/prompt';
 import { TerseError } from '@alwaysai/alwayscli';
 import { VALID_EMAIL_REGULAR_EXPRESSION } from '../constants';
-import { alwaysaiUserLoginComponent } from './alwaysai-user-login-component';
+import { alwaysaiUserLoginYesComponent } from './alwaysai-user-login-yes-component';
 
-export async function alwaysaiUserPromptedLoginComponent(
+export async function alwaysaiUserLoginPromptComponent(
   props: {
     alwaysaiUserEmail?: string;
     alwaysaiUserPassword?: string;
@@ -35,7 +35,7 @@ export async function alwaysaiUserPromptedLoginComponent(
     },
   ]);
 
-  await alwaysaiUserLoginComponent({
+  await alwaysaiUserLoginYesComponent({
     alwaysaiUserEmail: answers.email,
     alwaysaiUserPassword: answers.password,
   });

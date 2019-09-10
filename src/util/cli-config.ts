@@ -38,7 +38,7 @@ export const cliConfigFile = ConfigFile({
 });
 
 const maybeConfig = cliConfigFile.readIfExists();
-const systemId =
+export const systemId =
   maybeConfig && maybeConfig.systemId ? maybeConfig.systemId : 'production';
 
 export let userPoolId: string;

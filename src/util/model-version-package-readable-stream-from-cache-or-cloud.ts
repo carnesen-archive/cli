@@ -5,12 +5,11 @@ import { modelVersionPackageCacheDownloadFromCloud } from './model-version-packa
 export async function modelVersionPackageCacheGetReadableStream(opts: {
   id: string;
   version: number;
-  bearerToken: string;
 }) {
-  const { id, version, bearerToken } = opts;
+  const { id, version } = opts;
   const modelPackagePath = modelVersionPackageCacheGetPath({ id, version });
   if (!existsSync(modelPackagePath)) {
-    await modelVersionPackageCacheDownloadFromCloud({ id, version, bearerToken });
+    await modelVersionPackageCacheDownloadFromCloud({ id, version });
   }
   return createReadStream(modelPackagePath);
 }

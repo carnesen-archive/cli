@@ -1,14 +1,13 @@
 import ora = require('ora');
+import { authenticationClient } from '../util/authentication-client';
 
-import { authenticateUser } from '../util/cognito-auth';
-
-export async function alwaysaiUserLoginComponent(props: {
+export async function alwaysaiUserLoginYesComponent(props: {
   alwaysaiUserEmail: string;
   alwaysaiUserPassword: string;
 }) {
   const spinner = ora(`Log in ${props.alwaysaiUserEmail}`).start();
   try {
-    const cognitoUser = await authenticateUser(
+    const cognitoUser = await authenticationClient.signIn(
       props.alwaysaiUserEmail,
       props.alwaysaiUserPassword,
     );

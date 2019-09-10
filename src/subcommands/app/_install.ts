@@ -8,7 +8,6 @@ import { JsSpawner } from '../../spawner/js-spawner';
 import { AppInstaller } from '../../app-installer';
 import { echo } from '../../util/echo';
 import { checkUserIsLoggedInComponent } from '../../components/check-user-is-logged-in-component';
-import { getBearerToken } from '../../util/cognito-auth';
 
 export const appUnderscoreInstallCliLeaf = createLeaf({
   name: '_install',
@@ -17,9 +16,8 @@ export const appUnderscoreInstallCliLeaf = createLeaf({
   async action() {
     const appConfig = appConfigFile.read();
     await checkUserIsLoggedInComponent({ yes: false });
-    const bearerToken = await getBearerToken();
     const target = JsSpawner();
-    const appInstaller = AppInstaller(target, bearerToken!);
+    const appInstaller = AppInstaller(target);
 
     let hasModels = false;
     if (appConfig.models) {
