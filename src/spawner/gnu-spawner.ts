@@ -1,6 +1,7 @@
-import { Readable } from 'stream';
 import { Spawner } from './types';
 import { CodedError } from '@carnesen/coded-error';
+import { writeFile } from 'fs';
+import toReadableStream = require('to-readable-stream');
 
 export function GnuSpawner(context: {
   resolvePath: Spawner['resolvePath'];
@@ -18,6 +19,20 @@ export function GnuSpawner(context: {
     runStreaming,
     resolvePath,
     readdir,
+    async readFile(path) {
+      const output = await run({
+        exe: 'cat',
+        args: [resolvePath(path)],
+      });
+      return output;
+    },
+    async writeFile(path, data) {
+      await run({
+        exe: 'dd',
+        args: [`of=${resolvePath(path)}`],
+        input: toReadableStream(data),
+      });
+    },
     mkdirp,
     rimraf,
     tar,
@@ -64,7 +79,7 @@ export function GnuSpawner(context: {
     });
   }
 
-  async function untar(input: Readable, cwd = '.') {
+  async function untar(input: NodeJS.ReadableStream, cwd = '.') {
     await run({
       exe: 'tar',
       args: ['-xz'],

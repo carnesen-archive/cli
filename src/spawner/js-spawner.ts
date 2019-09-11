@@ -1,6 +1,10 @@
-import { readdir as fsReaddir, access } from 'fs';
+import {
+  readdir as fsReaddir,
+  access as fsAccess,
+  readFile as fsReadFile,
+  writeFile as fsWriteFile,
+} from 'fs';
 
-import { Readable } from 'stream';
 import { promisify } from 'util';
 import { isAbsolute, resolve } from 'path';
 
@@ -18,6 +22,12 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
     ...gnuSpawner,
     resolvePath,
     readdir,
+    async readFile(path) {
+      return await promisify(fsReadFile)(resolvePath(path), { encoding: 'utf8' });
+    },
+    async writeFile(path, data) {
+      await promisify(fsWriteFile)(resolvePath(path), data, { encoding: 'utf8' });
+    },
     mkdirp,
     rimraf,
     tar,
@@ -64,7 +74,7 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
     const packageStream = (tarJs.create(
       { sync: true, gzip: true, cwd: resolvePath() },
       paths,
-    ) as unknown) as Readable;
+    ) as unknown) as NodeJS.ReadableStream;
     // ^^ The @types for tar.create are not correct
     return packageStream;
   }
@@ -74,7 +84,7 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
       throw new Error('path is mandatory');
     }
     try {
-      await promisify(access)(resolvePath(path));
+      await promisify(fsAccess)(resolvePath(path));
       return true;
     } catch (ex) {
       return false;

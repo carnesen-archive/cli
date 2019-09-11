@@ -1,6 +1,6 @@
 import { createLeaf, createFlagInput, TerseError } from '@alwaysai/alwayscli';
 import { targetConfigFile } from '../../util/target-config-file';
-import { ACTIVATE } from '../../app-installer';
+import { VENV_BIN_ACTIVATE } from '../../constants';
 
 export const appShellCliLeaf = createLeaf({
   name: 'shell',
@@ -20,7 +20,7 @@ export const appShellCliLeaf = createLeaf({
       case 'docker:': {
         targetConfigFile.readContainerSpawner().runForegroundSync({
           exe: '/bin/bash',
-          args: ['--rcfile', ACTIVATE],
+          args: ['--rcfile', VENV_BIN_ACTIVATE],
           tty: true,
           cwd: '.',
           expose5000: true,
@@ -43,7 +43,7 @@ export const appShellCliLeaf = createLeaf({
         } else {
           targetConfigFile.readContainerSpawner().runForegroundSync({
             exe: '/bin/bash',
-            args: ['--rcfile', ACTIVATE],
+            args: ['--rcfile', VENV_BIN_ACTIVATE],
             tty: true,
             cwd: '.',
             expose5000: true,

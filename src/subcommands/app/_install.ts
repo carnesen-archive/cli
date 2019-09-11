@@ -5,9 +5,9 @@ import { createLeaf } from '@alwaysai/alwayscli';
 import { appConfigFile } from '../../util/app-config-file';
 import { spinOnPromise } from '../../util/spin-on-promise';
 import { JsSpawner } from '../../spawner/js-spawner';
-import { AppInstaller } from '../../app-installer';
 import { echo } from '../../util/echo';
 import { checkUserIsLoggedInComponent } from '../../components/check-user-is-logged-in-component';
+import { appInstallModels } from '../../util/app-install-models';
 
 export const appUnderscoreInstallCliLeaf = createLeaf({
   name: '_install',
@@ -16,8 +16,7 @@ export const appUnderscoreInstallCliLeaf = createLeaf({
   async action() {
     const appConfig = appConfigFile.read();
     await checkUserIsLoggedInComponent({ yes: false });
-    const target = JsSpawner();
-    const appInstaller = AppInstaller(target);
+    const targetSpawner = JsSpawner();
 
     let hasModels = false;
     if (appConfig.models) {
@@ -25,7 +24,7 @@ export const appUnderscoreInstallCliLeaf = createLeaf({
       if (ids.length > 0) {
         hasModels = true;
         await spinOnPromise(
-          appInstaller.installModels(appConfig.models),
+          appInstallModels(targetSpawner),
           `Model${ids.length > 1 ? 's' : ''} ${ids.join(' ')}`,
         );
       }
@@ -35,7 +34,7 @@ export const appUnderscoreInstallCliLeaf = createLeaf({
       echo(`${LogSymbols.warning} Application has no models`);
     }
 
-    await spinOnPromise(appInstaller.installVirtualenv(), 'Python virtualenv');
-    await spinOnPromise(appInstaller.installPythonDeps(), 'Python dependencies');
+    // await spinOnPromise(appInstaller.installVirtualenv(), 'Python virtualenv');
+    // await spinOnPromise(appInstaller.installPythonDeps(), 'Python dependencies');
   },
 });

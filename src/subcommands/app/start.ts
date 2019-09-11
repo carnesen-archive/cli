@@ -2,7 +2,7 @@ import { createLeaf, TerseError, createFlagInput } from '@alwaysai/alwayscli';
 
 import { appConfigFile } from '../../util/app-config-file';
 import { targetConfigFile } from '../../util/target-config-file';
-import { ACTIVATE } from '../../app-installer';
+import { VENV_BIN_ACTIVATE } from '../../constants';
 
 // Currently we run the "start" command as a superuser because otherwise we
 // cannot connect to the NCS accelerator. It ~should~ be possible to connect to
@@ -31,7 +31,14 @@ export const appStartCliLeaf = createLeaf({
       case 'docker:': {
         await spawner.runForeground({
           exe: '/bin/bash',
-          args: ['-o', 'onecmd', '-O', 'huponexit', '-c', `. ${ACTIVATE} && ${script}`],
+          args: [
+            '-o',
+            'onecmd',
+            '-O',
+            'huponexit',
+            '-c',
+            `. ${VENV_BIN_ACTIVATE} && ${script}`,
+          ],
           cwd: '.',
           tty: true,
           expose5000: true,
@@ -44,7 +51,14 @@ export const appStartCliLeaf = createLeaf({
       case 'ssh+docker:': {
         await spawner.runForeground({
           exe: '/bin/bash',
-          args: ['-o', 'onecmd', '-O', 'huponexit', '-c', `'. ${ACTIVATE} && ${script}'`],
+          args: [
+            '-o',
+            'onecmd',
+            '-O',
+            'huponexit',
+            '-c',
+            `'. ${VENV_BIN_ACTIVATE} && ${script}'`,
+          ],
           cwd: '.',
           tty: true,
           expose5000: true,

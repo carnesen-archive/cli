@@ -1,4 +1,4 @@
-import { resolve, join } from 'path';
+import { resolve, join, posix } from 'path';
 import { homedir } from 'os';
 
 export const CLI_NAME = 'alwaysai';
@@ -15,6 +15,8 @@ export const DOCKER_FALLBACK_TAG_NAME = 'latest';
 export const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 export const DOCKER_TEST_IMAGE_ID = 'busybox';
 
+export const VENV = 'venv';
+export const VENV_BIN_ACTIVATE = posix.join(VENV, 'bin', 'activate');
 export const APP_JSON_FILE_NAME = 'alwaysai.app.json';
 
 export const DOT_SSH_DIR = join(homedir(), '.ssh');

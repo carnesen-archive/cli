@@ -1,7 +1,7 @@
 import { posix } from 'path';
 
 import { Spawner } from './types';
-import { getRandomString } from '../util/get-random-string';
+import { RandomString } from '../util/get-random-string';
 
 type SpawnerFactory<T extends any[]> = (...args: T) => Spawner;
 
@@ -16,8 +16,12 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
     run,
     readdir,
     runForegroundSync,
+    runForeground,
     tar,
+    exists,
     untar,
+    readFile,
+    writeFile,
   } = spawner;
 
   describe(factory.name, () => {
@@ -51,7 +55,7 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
       });
 
       it('makes a context-path-relative directory if one is provided', async () => {
-        const tmpId = getRandomString();
+        const tmpId = RandomString();
         await spawner.mkdirp(tmpId);
         expect(await spawner.exists(join(resolvePath(), tmpId))).toBe(true);
       });
@@ -59,7 +63,7 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
 
     describe(rimraf.name, () => {
       it('removes an context-relative directory if one is provided', async () => {
-        const tmpId = getRandomString();
+        const tmpId = RandomString();
         await spawner.mkdirp(tmpId);
         expect(await spawner.exists(join(resolvePath(), tmpId))).toBe(true);
         await spawner.rimraf(tmpId);
@@ -86,10 +90,17 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
       });
     });
 
+    describe(runForeground.name, () => {
+      it('runs a command synchronously with inherited I/O', async () => {
+        const tmpDir = await run({ exe: 'mktemp', args: ['-d'] });
+        await runForeground({ exe: 'ls', cwd: tmpDir });
+      });
+    });
+
     describe(`${tar.name} and ${untar.name}`, () => {
       it('does tarring and untarring', async () => {
-        const tmpDir0 = getRandomString();
-        const tmpDir1 = getRandomString();
+        const tmpDir0 = RandomString();
+        const tmpDir1 = RandomString();
         await mkdirp(tmpDir0);
         await mkdirp(tmpDir1);
         await run({ exe: 'touch', args: ['foo'], cwd: tmpDir0 });
@@ -97,6 +108,16 @@ export function testASpawner<T extends any[]>(factory: SpawnerFactory<T>, ...arg
         await untar(stream, tmpDir1);
         const fileNames = await readdir(tmpDir1);
         expect(fileNames).toEqual([tmpDir0]);
+      });
+    });
+
+    describe(`${readFile.name} and ${writeFile.name}`, () => {
+      it('reads and writes', async () => {
+        const path = RandomString();
+        const data = RandomString();
+        await writeFile(path, data);
+        expect(await exists(path)).toBe(true);
+        expect(await readFile(path)).toBe(data);
       });
     });
   });

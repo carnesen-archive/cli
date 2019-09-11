@@ -1,12 +1,11 @@
 import { spawn } from 'child_process';
-import { Readable } from 'stream';
 
 import signalExit = require('signal-exit');
 
 import { Cmd } from '../types';
 
 export function runStreaming(cmd: Cmd) {
-  return new Promise<Readable>((resolve, reject) => {
+  return new Promise<NodeJS.ReadableStream>((resolve, reject) => {
     const child = spawn(cmd.exe, cmd.args || [], {
       cwd: cmd.cwd,
     });

@@ -1,12 +1,10 @@
-import { Readable } from 'stream';
-
 export type Cmd = {
   exe: string;
   args?: string[];
   cwd?: string;
   tty?: boolean;
   expose5000?: boolean;
-  input?: Readable;
+  input?: NodeJS.ReadableStream;
   superuser?: boolean;
 };
 
@@ -16,12 +14,14 @@ export type Spawner = {
   run: (cmd: Cmd) => Promise<string>;
   runForegroundSync: (cmd: Cmd) => void;
   runForeground: (cmd: Cmd) => Promise<void>;
-  runStreaming: (cmd: Cmd) => Promise<Readable>;
+  runStreaming: (cmd: Cmd) => Promise<NodeJS.ReadableStream>;
   resolvePath: (...paths: (string | undefined)[]) => string;
   readdir: (path?: string) => Promise<string[]>;
+  readFile: (path: string) => Promise<string>;
+  writeFile: (path: string, data: string) => Promise<void>;
   mkdirp: (path?: string) => Promise<void>;
   rimraf: (path?: string) => Promise<void>;
-  tar: (...paths: string[]) => Promise<Readable>;
-  untar: (input: Readable, cwd?: string) => Promise<void>;
+  tar: (...paths: string[]) => Promise<NodeJS.ReadableStream>;
+  untar: (input: NodeJS.ReadableStream, cwd?: string) => Promise<void>;
   exists: (path: string) => Promise<boolean>;
 };

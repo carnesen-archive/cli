@@ -5,10 +5,14 @@ import { TerseError } from '@alwaysai/alwayscli';
 import { appConfigFile } from '../util/app-config-file';
 import { targetConfigFile } from '../util/target-config-file';
 import { JsSpawner } from '../spawner/js-spawner';
-import { AppInstaller } from '../app-installer';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
-import { TARGET_JSON_FILE_NAME, DOCKERFILE, DOCKER_TEST_IMAGE_ID } from '../constants';
+import {
+  TARGET_JSON_FILE_NAME,
+  DOCKERFILE,
+  DOCKER_TEST_IMAGE_ID,
+  VENV_BIN_ACTIVATE,
+} from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
@@ -18,6 +22,13 @@ import { buildDockerImageComponent } from './build-docker-image-component';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 import ora = require('ora');
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
+import {
+  REQUIREMENTS_FILE_NAME,
+  appInstallPythonDependencies,
+} from '../util/app-install-python-dependencies';
+import { appInstallVirtualenv } from '../util/app-install-virtualenv';
+import { appCopyFiles } from '../util/app-copy-files';
+import { appInstallModels } from '../util/app-install-models';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
@@ -53,7 +64,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
   const targetConfig = targetConfigFile.read();
   const sourceSpawner = JsSpawner();
 
-  const hostAppInstaller = AppInstaller(targetHostSpawner);
+  const targetSpawner = targetConfigFile.readContainerSpawner();
 
   // Protocol-specific installation steps
   switch (targetConfig.targetProtocol) {
@@ -67,7 +78,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
       }
       const spinner = ora('Copy application to target').start();
       try {
-        await hostAppInstaller.installSource(sourceSpawner);
+        await appCopyFiles(sourceSpawner, targetSpawner);
         await targetHostSpawner.run({
           exe: 'docker',
           args: [
@@ -99,7 +110,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
     if (ids.length > 0) {
       hasModels = true;
       await spinOnPromise(
-        hostAppInstaller.installModels(appConfig.models),
+        appInstallModels(targetSpawner),
         `Model${ids.length > 1 ? 's' : ''} ${ids.join(' ')}`,
       );
     }
@@ -114,14 +125,14 @@ export async function appDeployComponent(props: { yes: boolean }) {
     targetConfiguration.dockerImageId = dockerImageId;
   });
 
-  const targetSpawner = targetConfigFile.readContainerSpawner();
-  const targetAppInstaller = AppInstaller(targetSpawner);
-  await spinOnPromise(
-    targetAppInstaller.installVirtualenv(),
-    'Install python virtualenv',
-  );
-  await spinOnPromise(
-    targetAppInstaller.installPythonDeps(),
-    'Install python dependencies',
-  );
+  if (!(await targetSpawner.exists(VENV_BIN_ACTIVATE))) {
+    await spinOnPromise(appInstallVirtualenv(targetSpawner), 'Install python virtualenv');
+  }
+
+  if (sourceSpawner.exists(REQUIREMENTS_FILE_NAME)) {
+    await spinOnPromise(
+      appInstallPythonDependencies(targetSpawner),
+      'Install python dependencies',
+    );
+  }
 }
