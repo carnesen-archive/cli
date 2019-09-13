@@ -1,6 +1,6 @@
 import { createLeaf, TerseError, createFlagInput } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../../util/app-json-file';
+import { AppJsonFile } from '../../util/app-json-file';
 import { targetConfigFile } from '../../util/target-config-file';
 import { VENV_BIN_ACTIVATE } from '../../constants';
 
@@ -19,8 +19,9 @@ export const appStartCliLeaf = createLeaf({
   },
   description: 'Run this application "start" script on the target',
   async action(_, opts) {
-    const appConfig = appConfigFile.read();
-    const script = appConfig.scripts && appConfig.scripts.start;
+    const appJsonFile = AppJsonFile(process.cwd());
+    const appJson = appJsonFile.read();
+    const script = appJson.scripts && appJson.scripts.start;
     if (!script) {
       throw new TerseError('This application does not define a "start" script');
     }

@@ -1,7 +1,7 @@
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 import { execSync } from 'child_process';
 
-import { appConfigFile } from '../../util/app-json-file';
+import { AppJsonFile } from '../../util/app-json-file';
 import { VENV_BIN_ACTIVATE } from '../../constants';
 
 export const appUnderscoreStartCliLeaf = createLeaf({
@@ -9,8 +9,9 @@ export const appUnderscoreStartCliLeaf = createLeaf({
   hidden: true,
   description: 'Run this application\'s "start" script',
   action() {
-    const appConfig = appConfigFile.read();
-    const script = appConfig.scripts && appConfig.scripts.start;
+    const appJsonFile = AppJsonFile(process.cwd());
+    const appJson = appJsonFile.read();
+    const script = appJson.scripts && appJson.scripts.start;
     if (!script) {
       throw new TerseError('This application does not define a "start" script');
     }

@@ -19,7 +19,7 @@ const ENOENT = {
   code: TERSE,
 };
 
-export function AppJsonFile(dir = process.cwd()) {
+export function AppJsonFile(dir: string) {
   const configFile = ConfigFile({
     path: join(dir, APP_JSON_FILE_NAME),
     codec,
@@ -85,5 +85,3 @@ export function AppJsonFile(dir = process.cwd()) {
     },
   };
 }
-
-export const appConfigFile = AppJsonFile();

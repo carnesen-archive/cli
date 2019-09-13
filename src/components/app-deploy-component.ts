@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import logSymbols = require('log-symbols');
 import { TerseError } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../util/app-json-file';
+import { AppJsonFile } from '../util/app-json-file';
 import { targetConfigFile } from '../util/target-config-file';
 import { JsSpawner } from '../util/spawner/js-spawner';
 import { spinOnPromise } from '../util/spin-on-promise';
@@ -29,10 +29,10 @@ import { appInstallModels } from '../util/app-install-models';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
-
+  const appJsonFile = AppJsonFile(process.cwd());
   await checkUserIsLoggedInComponent({ yes });
-  if (!appConfigFile.exists()) {
-    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appConfigFile.name));
+  if (!appJsonFile.exists()) {
+    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appJsonFile.name));
   }
   if (!existsSync(DOCKERFILE)) {
     throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
@@ -56,7 +56,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
     ranTargetJsonPromptComponent = true;
   }
 
-  const appConfig = appConfigFile.read();
+  const appConfig = appJsonFile.read();
   const targetHostSpawner = targetConfigFile.readHostSpawner();
   const targetConfig = targetConfigFile.read();
   const sourceSpawner = JsSpawner();

@@ -2,23 +2,25 @@ import { createLeaf, createJsonInput, createBranch } from '@alwaysai/alwayscli';
 import { rpcMethodSpecs } from '@alwaysai/cloud-api';
 import { rpcClient } from '../util/rpc-client';
 
-const methods = Object.entries(rpcMethodSpecs).map(([methodName, { description }]) => {
-  return createLeaf({
-    name: methodName,
-    description,
-    args: createJsonInput({
-      placeholder: '<args>',
-      description: 'Method arguments array as a JSON string',
-    }),
-    async action(args) {
-      const method = (rpcClient as any)[methodName];
-      const result = await method(...(args || []));
-      return result;
-    },
-  });
-});
+const rpcMethodCliLeaves = Object.entries(rpcMethodSpecs).map(
+  ([methodName, { description }]) => {
+    return createLeaf({
+      name: methodName,
+      description,
+      args: createJsonInput({
+        placeholder: '<args>',
+        description: 'Method arguments array as a JSON string',
+      }),
+      async action(args) {
+        const method = (rpcClient as any)[methodName];
+        const result = await method(...(args || []));
+        return result;
+      },
+    });
+  },
+);
 
-const raw = createLeaf({
+const rpcRawCliLeaf = createLeaf({
   name: 'raw',
   args: createJsonInput({
     required: true,
@@ -31,6 +33,7 @@ const raw = createLeaf({
 
 export const rpc = createBranch({
   name: 'rpc',
+  hidden: true,
   description: 'Call the alwaysAI Cloud API RPC interface',
-  subcommands: [...methods, raw],
+  subcommands: [...rpcMethodCliLeaves, rpcRawCliLeaf],
 });

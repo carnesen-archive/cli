@@ -1,5 +1,5 @@
 import ora = require('ora');
-import { appConfigFile } from '../util/app-json-file';
+import { AppJsonFile } from '../util/app-json-file';
 import { APP_JSON_FILE_NAME } from '../constants';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { findOrWriteAppPyFileComponent } from './find-or-write-app-py-file-component';
@@ -11,7 +11,8 @@ const FOUND_MESSAGE = `Found ${APP_JSON_FILE_NAME}`;
 
 export async function findOrWriteAppJsonFileComponent(props: { yes: boolean }) {
   const { yes } = props;
-  if (appConfigFile.exists()) {
+  const appJsonFile = AppJsonFile(process.cwd());
+  if (appJsonFile.exists()) {
     ora(FOUND_MESSAGE).succeed();
   } else {
     // !exists
@@ -25,7 +26,7 @@ export async function findOrWriteAppJsonFileComponent(props: { yes: boolean }) {
       throw new TerseError(UnableToProceedWithoutMessage(APP_JSON_FILE_NAME));
     }
     try {
-      appConfigFile.initialize();
+      appJsonFile.initialize();
       ora(WRITE_MESSAGE).succeed();
     } catch (exception) {
       ora(WRITE_MESSAGE).fail();

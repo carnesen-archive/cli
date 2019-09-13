@@ -1,16 +1,16 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-import { appConfigFile } from '../../util/app-json-file';
+import { AppJsonFile } from '../../util/app-json-file';
 import { echo } from '../../util/echo';
 import { targetConfigFile } from '../../util/target-config-file';
 
 export const appShowCliLeaf = createLeaf({
   name: 'show',
-  description: "Show this application's configuration",
-  options: {},
+  description: 'Show the application configuration of your current directory',
   action() {
-    echo(appConfigFile.describeModels());
+    const appJsonFile = AppJsonFile(process.cwd());
+    echo(appJsonFile.describeModels());
     echo();
-    echo(appConfigFile.describeScripts());
+    echo(appJsonFile.describeScripts());
     echo();
     echo(targetConfigFile.describe());
   },

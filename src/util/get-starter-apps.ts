@@ -4,17 +4,20 @@ import { authenticationClient } from './authentication-client';
 import { TerseError } from '@alwaysai/alwayscli';
 import tempy = require('tempy');
 import pump = require('pump');
-import { renameSync, readdirSync } from 'fs';
+import { renameSync, readdirSync, existsSync } from 'fs';
 import * as tar from 'tar';
 import { systemId } from './cli-config';
 import { join } from 'path';
-import { PLEASE_REPORT_THIS_ERROR_MESSAGE } from '../constants';
+import { PLEASE_REPORT_THIS_ERROR_MESSAGE, ALWAYSAI_STARTER_APPS } from '../constants';
 
 const systemDomainName = SystemDomainName(systemId);
-export const ALWAYSAI_STARTER_APPS = 'alwaysai-starter-apps';
 const starterAppsUrl = `https://dashboard.${systemDomainName}/docs/${ALWAYSAI_STARTER_APPS}.tar.gz`;
 
-export async function downloadStarterApps(dir: string) {
+export async function getStarterApps(dir: string) {
+  const destinationDir = join(dir, ALWAYSAI_STARTER_APPS);
+  if (existsSync(destinationDir)) {
+    throw new TerseError(`Directory "${destinationDir}" already exists`);
+  }
   const authorizationHeader = await authenticationClient.getAuthorizationHeader();
   const jwt = authorizationHeader.Authorization.split(' ')[1];
   const cookieHeader = {
@@ -43,5 +46,5 @@ export async function downloadStarterApps(dir: string) {
       `Expected ${ALWAYSAI_STARTER_APPS} package to contain a single directory. ${PLEASE_REPORT_THIS_ERROR_MESSAGE}`,
     );
   }
-  await renameSync(join(tmpDir, fileNames[0]), join(dir, ALWAYSAI_STARTER_APPS));
+  await renameSync(join(tmpDir, fileNames[0]), destinationDir);
 }

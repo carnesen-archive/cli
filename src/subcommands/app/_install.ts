@@ -2,7 +2,7 @@ import LogSymbols = require('log-symbols');
 
 import { createLeaf } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../../util/app-json-file';
+import { AppJsonFile } from '../../util/app-json-file';
 import { spinOnPromise } from '../../util/spin-on-promise';
 import { JsSpawner } from '../../util/spawner/js-spawner';
 import { echo } from '../../util/echo';
@@ -14,13 +14,14 @@ export const appUnderscoreInstallCliLeaf = createLeaf({
   hidden: true,
   description: "Install this application's dependencies",
   async action() {
-    const appConfig = appConfigFile.read();
+    const appJsonFile = AppJsonFile(process.cwd());
+    const appJson = appJsonFile.read();
     await checkUserIsLoggedInComponent({ yes: false });
     const targetSpawner = JsSpawner();
 
     let hasModels = false;
-    if (appConfig.models) {
-      const ids = Object.keys(appConfig.models);
+    if (appJson.models) {
+      const ids = Object.keys(appJson.models);
       if (ids.length > 0) {
         hasModels = true;
         await spinOnPromise(

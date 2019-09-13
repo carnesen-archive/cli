@@ -38,9 +38,9 @@ const ENOENT = {
   code: TERSE,
 };
 
-export const targetConfigFile = TargetConfigFile();
+export const targetConfigFile = TargetConfigFile(process.cwd());
 
-function TargetConfigFile(dir = process.cwd()) {
+function TargetConfigFile(dir: string) {
   const filePath = join(dir, TARGET_JSON_FILE_NAME);
   const configFile = ConfigFile({ path: filePath, codec: targetConfigCodec, ENOENT });
 

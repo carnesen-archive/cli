@@ -10,6 +10,6 @@ export const appModelsUpdateCliLeaf = createLeaf({
     yes: yesCliInput,
   },
   async action(_, { yes }) {
-    await appModelsUpdateComponent({ yes });
+    await appModelsUpdateComponent({ yes, dir: process.cwd() });
   },
 });
