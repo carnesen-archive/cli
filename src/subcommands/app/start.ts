@@ -29,7 +29,7 @@ export const appStartCliLeaf = createLeaf({
 
     switch (targetConfig.targetProtocol) {
       case 'docker:': {
-        await spawner.runForeground({
+        const exitCode = await spawner.runForeground({
           exe: '/bin/bash',
           args: ['-o', 'onecmd', '-O', 'huponexit', '-c', `. ${ACTIVATE} && ${script}`],
           cwd: '.',
@@ -37,12 +37,15 @@ export const appStartCliLeaf = createLeaf({
           expose5000: true,
           superuser: !opts['no-superuser'],
         });
-        return;
+        if (exitCode) {
+          process.exit(exitCode);
+        }
+        break;
       }
 
       // This case differs from "docker:"" only in the extra single quotes around the command
       case 'ssh+docker:': {
-        await spawner.runForeground({
+        const exitCode = await spawner.runForeground({
           exe: '/bin/bash',
           args: ['-o', 'onecmd', '-O', 'huponexit', '-c', `'. ${ACTIVATE} && ${script}'`],
           cwd: '.',
@@ -50,7 +53,10 @@ export const appStartCliLeaf = createLeaf({
           expose5000: true,
           superuser: !opts['no-superuser'],
         });
-        return;
+        if (exitCode) {
+          process.exit(exitCode);
+        }
+        break;
       }
 
       default: {
