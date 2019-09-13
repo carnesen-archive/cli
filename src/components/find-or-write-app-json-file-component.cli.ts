@@ -1,6 +1,6 @@
 import { runAndExit, createCli, createLeaf, createFlagInput } from '@alwaysai/alwayscli';
 import { findOrWriteAppJsonFileComponent } from './find-or-write-app-json-file-component';
-import { appConfigFile } from '../util/app-config-file';
+import { appConfigFile } from '../util/app-json-file';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
 
 const leaf = createLeaf({

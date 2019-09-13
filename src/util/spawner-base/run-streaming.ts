@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 
 import signalExit = require('signal-exit');
 
-import { Cmd } from '../types';
+import { Cmd } from '../spawner/types';
 
 export function runStreaming(cmd: Cmd) {
   return new Promise<NodeJS.ReadableStream>((resolve, reject) => {

@@ -1,5 +1,5 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-import { appConfigFile } from '../../util/app-config-file';
+import { appConfigFile } from '../../util/app-json-file';
 import { echo } from '../../util/echo';
 import { targetConfigFile } from '../../util/target-config-file';
 

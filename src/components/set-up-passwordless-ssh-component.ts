@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs';
 
 import { echo } from '../util/echo';
-import { run } from '../spawner/spawner-base/run';
+import { run } from '../util/spawner-base/run';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { PUBLIC_KEY_FILE_PATH, PUBLIC_KEY_FILE_PRETTY_PATH } from '../constants';
 import logSymbols = require('log-symbols');

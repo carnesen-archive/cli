@@ -2,9 +2,9 @@ import { existsSync } from 'fs';
 import logSymbols = require('log-symbols');
 import { TerseError } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../util/app-config-file';
+import { appConfigFile } from '../util/app-json-file';
 import { targetConfigFile } from '../util/target-config-file';
-import { JsSpawner } from '../spawner/js-spawner';
+import { JsSpawner } from '../util/spawner/js-spawner';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
 import {
@@ -12,9 +12,9 @@ import {
   DOCKERFILE,
   DOCKER_TEST_IMAGE_ID,
   VENV_BIN_ACTIVATE,
+  PYTHON_REQUIREMENTS_FILE_NAME,
 } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
-import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
@@ -22,10 +22,7 @@ import { buildDockerImageComponent } from './build-docker-image-component';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 import ora = require('ora');
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
-import {
-  REQUIREMENTS_FILE_NAME,
-  appInstallPythonDependencies,
-} from '../util/app-install-python-dependencies';
+import { appInstallPythonDependencies } from '../util/app-install-python-dependencies';
 import { appInstallVirtualenv } from '../util/app-install-virtualenv';
 import { appCopyFiles } from '../util/app-copy-files';
 import { appInstallModels } from '../util/app-install-models';
@@ -129,10 +126,14 @@ export async function appDeployComponent(props: { yes: boolean }) {
     await spinOnPromise(appInstallVirtualenv(targetSpawner), 'Install python virtualenv');
   }
 
-  if (sourceSpawner.exists(REQUIREMENTS_FILE_NAME)) {
+  if (sourceSpawner.exists(PYTHON_REQUIREMENTS_FILE_NAME)) {
     await spinOnPromise(
       appInstallPythonDependencies(targetSpawner),
       'Install python dependencies',
     );
   }
+}
+
+function MissingFilePleaseRunAppConfigureMessage(fileName: string) {
+  return `Missing file "${fileName}". Please run \`alwaysai app configure\` to set up this directory as an alwaysAI application.`;
 }

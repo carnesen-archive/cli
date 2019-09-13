@@ -1,6 +1,6 @@
 import ora = require('ora');
 import delay = require('delay');
-import { SshSpawner } from '../spawner/ssh-spawner';
+import { SshSpawner } from '../util/spawner/ssh-spawner';
 import { TerseError } from '@alwaysai/alwayscli';
 
 const TEN_SECONDS = 10 * 1000;

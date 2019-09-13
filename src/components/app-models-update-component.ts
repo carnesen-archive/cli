@@ -2,7 +2,7 @@ import ora = require('ora');
 import logSymbols = require('log-symbols');
 import { TerseError } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../util/app-config-file';
+import { appConfigFile } from '../util/app-json-file';
 import { rpcClient } from '../util/rpc-client';
 import { echo } from '../util/echo';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';

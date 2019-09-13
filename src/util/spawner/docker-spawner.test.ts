@@ -1,10 +1,10 @@
 import { testASpawner } from './test-a-spawner';
 import { DockerSpawner } from './docker-spawner';
-import { DOCKER_HUB_EDGEIQ_REPOSITORY_NAME } from '../constants';
+import { DOCKER_EDGEIQ_REPOSITORY_NAME } from '../../constants';
 
 if (process.env.TEST_DOCKER_SPAWNER) {
   jest.setTimeout(15000);
-  testASpawner(DockerSpawner, { dockerImageId: DOCKER_HUB_EDGEIQ_REPOSITORY_NAME });
+  testASpawner(DockerSpawner, { dockerImageId: DOCKER_EDGEIQ_REPOSITORY_NAME });
 }
 
 it(DockerSpawner.name, () => {

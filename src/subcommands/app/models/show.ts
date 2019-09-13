@@ -1,5 +1,5 @@
 import { appShowCliLeaf as appShow } from '../show';
-import { appConfigFile } from '../../../util/app-config-file';
+import { appConfigFile } from '../../../util/app-json-file';
 
 export const showModels: typeof appShow = {
   ...appShow,

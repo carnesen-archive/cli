@@ -1,11 +1,11 @@
 import { posix } from 'path';
 
 import { Cmd } from './types';
-import { SpawnerBase } from './spawner-base';
+import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { APP_DIR } from './docker-spawner';
-import { ResolvePosixPath } from '../util/resolve-posix-path';
-import { PRIVATE_KEY_FILE_PATH } from '../constants';
+import { ResolvePosixPath } from '../resolve-posix-path';
+import { PRIVATE_KEY_FILE_PATH } from '../../constants';
 
 export function SshDockerSpawner(opts: {
   targetPath: string;

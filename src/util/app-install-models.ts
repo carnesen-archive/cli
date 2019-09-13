@@ -1,15 +1,13 @@
 import { dirname, posix } from 'path';
 
-import { Spawner } from '../spawner/types';
+import { Spawner } from './spawner/types';
 import { ModelId } from './model-id';
 import { MODEL_JSON_FILE_NAME } from './model-json-file';
 import { RandomString } from './get-random-string';
-import { AppConfig } from './app-config-file';
+import { AppConfig } from './app-json-file';
 import { modelPackageCache } from './model-package-cache';
 import { downloadModelPackageToCache } from './download-model-package-to-cache';
-import { APP_JSON_FILE_NAME } from '../constants';
-
-const MODELS_DIR = 'models';
+import { APP_JSON_FILE_NAME, APP_MODELS_DIRECTORY_NAME } from '../constants';
 
 export async function appInstallModels(target: Spawner) {
   const appConfigFileContents = await target.readFile(APP_JSON_FILE_NAME);
@@ -18,13 +16,15 @@ export async function appInstallModels(target: Spawner) {
 
   if (models) {
     await Promise.all(
-      Object.entries(models).map(([id, version]) => installModel(id, version)),
+      Object.entries(models).map(([id, version]) => appInstallModel(id, version)),
     );
   }
 
-  async function installModel(id: string, version: number) {
+  return undefined;
+
+  async function appInstallModel(id: string, version: number) {
     const { publisher, name } = ModelId.parse(id);
-    const destinationDir = posix.join(MODELS_DIR, publisher, name);
+    const destinationDir = posix.join(APP_MODELS_DIRECTORY_NAME, publisher, name);
     let installedVersion: number | undefined = undefined;
     try {
       const parsed = await readModelJson(destinationDir);
@@ -44,13 +44,18 @@ export async function appInstallModels(target: Spawner) {
         const modelPackageStream = await modelPackageCache.read(id, version);
         await target.untar(modelPackageStream, tmpDir);
         const fileNames = await target.readdir(tmpDir);
+
+        // Sanity check
         if (fileNames.length !== 1 || !fileNames[0]) {
           throw new Error('Expected package to contain single directory');
         }
-        function modelJsonUpdater(modelJson: any) {
-          return { ...modelJson, version };
-        }
-        await updateModelJson(posix.join(tmpDir, fileNames[0]), modelJsonUpdater);
+
+        // The model json file in the package does not have the version number,
+        // so we write it into the json file during install
+        await updateModelJson(posix.join(tmpDir, fileNames[0]), modelJson => ({
+          ...modelJson,
+          version,
+        }));
         await target.rimraf(destinationDir);
         await target.mkdirp(dirname(destinationDir));
         await target.run({

@@ -1,7 +1,7 @@
 import { posix } from 'path';
 
 import { Spawner } from './types';
-import { RandomString } from '../util/get-random-string';
+import { RandomString } from '../get-random-string';
 
 type SpawnerFactory<T extends any[]> = (...args: T) => Spawner;
 

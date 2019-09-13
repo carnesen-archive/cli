@@ -4,7 +4,7 @@ import chalk from 'chalk';
 
 import { TerseError } from '@alwaysai/alwayscli';
 
-import { Cmd } from '../types';
+import { Cmd } from '../spawner/types';
 
 export const PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE =
   'Process exited with non-zero status code';

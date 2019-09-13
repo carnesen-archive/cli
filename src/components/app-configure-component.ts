@@ -1,8 +1,8 @@
 import { TargetProtocol } from '../util/target-protocol';
 import {
-  DOCKER_HUB_EDGEIQ_REPOSITORY_NAME,
+  DOCKER_EDGEIQ_REPOSITORY_NAME,
   DOCKER_FALLBACK_TAG_NAME,
-  THIS_SHOULD_NEVER_HAPPEN_MESSAGE,
+  PLEASE_REPORT_THIS_ERROR_MESSAGE,
 } from '../constants';
 import { UsageError } from '@alwaysai/alwayscli';
 import { findOrWriteAppJsonFileComponent } from './find-or-write-app-json-file-component';
@@ -12,7 +12,7 @@ import { RequiredWithYesMessage } from '../util/required-with-yes-message';
 import { targetJsonYesComponent } from './target-json-yes-component';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 
-const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_HUB_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
+const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
 async function appConfigurePreliminaryStepsComponent(props: { yes: boolean }) {
   const { yes } = props;
@@ -77,7 +77,7 @@ export async function appConfigureComponent(props: {
       }
 
       default: {
-        throw new Error(THIS_SHOULD_NEVER_HAPPEN_MESSAGE);
+        throw new Error(PLEASE_REPORT_THIS_ERROR_MESSAGE);
       }
     }
   } else {

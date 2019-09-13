@@ -13,7 +13,7 @@ import * as mkdirpJs from 'mkdirp';
 import * as rimrafJs from 'rimraf';
 
 import { Spawner, Cmd } from './types';
-import { SpawnerBase } from './spawner-base';
+import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 
 export function JsSpawner(context: { path?: string } = {}): Spawner {

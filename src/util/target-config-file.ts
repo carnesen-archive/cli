@@ -6,11 +6,11 @@ import * as t from 'io-ts';
 import { ConfigFile } from '@alwaysai/config-nodejs';
 import { TerseError, TERSE } from '@alwaysai/alwayscli';
 
-import { DockerSpawner } from '../spawner/docker-spawner';
+import { DockerSpawner } from './spawner/docker-spawner';
 import { TargetProtocol } from './target-protocol';
-import { SshDockerSpawner } from '../spawner/ssh-docker-spawner';
-import { SshSpawner } from '../spawner/ssh-spawner';
-import { JsSpawner } from '../spawner/js-spawner';
+import { SshDockerSpawner } from './spawner/ssh-docker-spawner';
+import { SshSpawner } from './spawner/ssh-spawner';
+import { JsSpawner } from './spawner/js-spawner';
 import { TARGET_JSON_FILE_NAME } from '../constants';
 
 const sshDockerTarget = t.type(

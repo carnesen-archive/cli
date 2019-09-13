@@ -1,6 +1,6 @@
 import difference = require('lodash.difference');
 
-import { Spawner } from '../spawner/types';
+import { Spawner } from './spawner/types';
 
 const IGNORED_FILE_NAMES = ['models', 'node_modules', '.git', 'venv'];
 

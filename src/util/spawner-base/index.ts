@@ -2,7 +2,7 @@ import { run } from './run';
 import { runForegroundSync } from './run-foreground-sync';
 import { runForeground } from './run-foreground';
 import { runStreaming } from './run-streaming';
-import { Cmd } from '../types';
+import { Cmd } from '../spawner/types';
 
 export function SpawnerBase(translate: (cmd: Cmd) => Cmd) {
   return {

@@ -1,6 +1,6 @@
 import { createLeaf, TerseError, createFlagInput } from '@alwaysai/alwayscli';
 
-import { appConfigFile } from '../../util/app-config-file';
+import { appConfigFile } from '../../util/app-json-file';
 import { targetConfigFile } from '../../util/target-config-file';
 import { VENV_BIN_ACTIVATE } from '../../constants';
 

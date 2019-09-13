@@ -1,5 +1,5 @@
 import { createLeaf } from '@alwaysai/alwayscli';
-import { appConfigFile } from '../../../util/app-config-file';
+import { appConfigFile } from '../../../util/app-json-file';
 import { modelIdsCliInput } from '../../../cli-inputs/model-ids-cli-input';
 import logSymbols = require('log-symbols');
 import { echo } from '../../../util/echo';

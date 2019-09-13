@@ -1,5 +1,5 @@
 import ora = require('ora');
-import { appConfigFile } from '../util/app-config-file';
+import { appConfigFile } from '../util/app-json-file';
 import { APP_JSON_FILE_NAME } from '../constants';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { findOrWriteAppPyFileComponent } from './find-or-write-app-py-file-component';

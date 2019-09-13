@@ -18,6 +18,7 @@
     "subcommands",
     "tarbomb",
     "tempy",
+    "totp",
     "untar",
     "venv",
     "virtualenv",

@@ -1,7 +1,7 @@
 import { Cmd } from './types';
-import { SpawnerBase } from './spawner-base';
+import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
-import { ResolvePosixPath } from '../util/resolve-posix-path';
+import { ResolvePosixPath } from '../resolve-posix-path';
 
 // This ChildSpawner isn't really used anywhere in the CLI, but it provides a
 // convenient way to test the GNU spawner which is used extensively by the SSH

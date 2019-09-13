@@ -1,7 +1,7 @@
 import { createLeaf, TerseError } from '@alwaysai/alwayscli';
 import { execSync } from 'child_process';
 
-import { appConfigFile } from '../../util/app-config-file';
+import { appConfigFile } from '../../util/app-json-file';
 import { VENV_BIN_ACTIVATE } from '../../constants';
 
 export const appUnderscoreStartCliLeaf = createLeaf({

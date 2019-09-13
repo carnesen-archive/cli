@@ -1,4 +1,4 @@
-import { Spawner } from '../spawner/types';
+import { Spawner } from './spawner/types';
 
 export async function buildDockerImage(hostSpawner: Spawner) {
   const output = await hostSpawner.run({

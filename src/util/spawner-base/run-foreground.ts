@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 
-import { Cmd } from '../types';
+import { Cmd } from '../spawner/types';
 
 import signalExit = require('signal-exit');
 import { TerseError } from '@alwaysai/alwayscli';

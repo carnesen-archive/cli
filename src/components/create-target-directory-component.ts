@@ -1,5 +1,5 @@
 import ora = require('ora');
-import { SshSpawner } from '../spawner/ssh-spawner';
+import { SshSpawner } from '../util/spawner/ssh-spawner';
 
 export async function createTargetDirectoryComponent(props: {
   targetHostname: string;

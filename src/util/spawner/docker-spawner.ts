@@ -1,9 +1,9 @@
 import { platform } from 'os';
 
 import { Spawner, Cmd } from './types';
-import { SpawnerBase } from './spawner-base';
+import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
-import { ResolvePosixPath } from '../util/resolve-posix-path';
+import { ResolvePosixPath } from '../resolve-posix-path';
 
 export const APP_DIR = '/app';
 

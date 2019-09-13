@@ -4,7 +4,7 @@ import * as t from 'io-ts';
 
 import { ALWAYSAI_CONFIG_DIR, ConfigFile } from '@alwaysai/config-nodejs';
 import { TERSE } from '@alwaysai/alwayscli';
-import { AuthenticationStorage } from '@alwaysai/cloud-clients';
+import { AuthenticationStorage } from '@alwaysai/cloud-api';
 
 const codec = t.record(t.string, t.any);
 

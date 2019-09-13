@@ -5,7 +5,7 @@ import {
   checkSshConnectivityComponent,
   TIMED_OUT_CONNECTING_TO,
 } from './check-ssh-connectivity-component';
-import { PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE } from '../spawner/spawner-base/run';
+import { PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE } from '../util/spawner-base/run';
 import { echo } from '../util/echo';
 import { setUpPasswordlessSshComponent } from './set-up-passwordless-ssh-component';
 

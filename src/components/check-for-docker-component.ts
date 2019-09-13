@@ -1,7 +1,7 @@
 import ora = require('ora');
 
-import { SshSpawner } from '../spawner/ssh-spawner';
-import { JsSpawner } from '../spawner/js-spawner';
+import { SshSpawner } from '../util/spawner/ssh-spawner';
+import { JsSpawner } from '../util/spawner/js-spawner';
 import { echo } from '../util/echo';
 import { TerseError } from '@alwaysai/alwayscli';
 import { DOCKER_TEST_IMAGE_ID } from '../constants';

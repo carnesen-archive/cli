@@ -1,5 +1,5 @@
 import { buildDockerImage } from '../util/build-docker-image';
-import { Spawner } from '../spawner/types';
+import { Spawner } from '../util/spawner/types';
 import ora = require('ora');
 
 export async function buildDockerImageComponent(props: { targetHostSpawner: Spawner }) {
