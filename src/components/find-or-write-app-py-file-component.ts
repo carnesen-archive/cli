@@ -1,7 +1,7 @@
 import { writeFileSync, existsSync } from 'fs';
-import ora = require('ora');
 import { APP_PY_FILE_NAME } from '../constants';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
+import { Spinner } from '../util/spinner';
 
 const APPLICATION_SOURCE_CODE = `import cv2
 import edgeiq
@@ -20,7 +20,7 @@ const FOUND_MESSAGE = `Found ${APP_PY_FILE_NAME}`;
 export async function findOrWriteAppPyFileComponent(props: { yes: boolean }) {
   const { yes } = props;
   if (existsSync(APP_PY_FILE_NAME)) {
-    ora(FOUND_MESSAGE).succeed();
+    Spinner(FOUND_MESSAGE).succeed();
   } else {
     // !exists
     const confirmed =
@@ -32,13 +32,13 @@ export async function findOrWriteAppPyFileComponent(props: { yes: boolean }) {
     if (confirmed) {
       try {
         writeFileSync(APP_PY_FILE_NAME, APPLICATION_SOURCE_CODE, { flag: 'wx' });
-        ora(WRITE_MESSAGE).succeed();
+        Spinner(WRITE_MESSAGE).succeed();
       } catch (exception) {
         if (exception.code === 'EEXIST') {
           // Unlikely scenario that the file did not exist but now does
-          ora(FOUND_MESSAGE).succeed();
+          Spinner(FOUND_MESSAGE).succeed();
         } else {
-          ora(WRITE_MESSAGE).fail();
+          Spinner(WRITE_MESSAGE).fail();
           throw exception;
         }
       }

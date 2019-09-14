@@ -2,6 +2,7 @@ import { appModelsUpdateComponent } from './app-models-update-component';
 import tempy = require('tempy');
 import { AppJsonFile } from '../util/app-json-file';
 import { rpcClient } from '../util/rpc-client';
+import { runAndCatch, TERSE } from '@alwaysai/alwayscli';
 
 describe(appModelsUpdateComponent.name, () => {
   const yes = true;
@@ -25,6 +26,13 @@ describe(appModelsUpdateComponent.name, () => {
     const { version } = await rpcClient.getModelVersion({ id });
     expect(appJsonFile.read().models![id]).toBe(version);
 
-    // TODO: Throws if the model id does not exist
+    // Operation is idempotent
+    await appModelsUpdateComponent({ yes, dir });
+
+    // Throws if the model id does not exist
+    appJsonFile.write({ models: { foo: 'bar' } });
+    const exception = await runAndCatch(appModelsUpdateComponent, { yes, dir });
+    expect(exception.code).toBe(TERSE);
+    expect(exception.message).toMatch(/model not found/i);
   });
 });

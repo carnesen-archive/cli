@@ -23,12 +23,12 @@ export async function appModelsUpdateComponent(props: { yes: boolean; dir: strin
         if (currentVersion !== latestVersion) {
           updates.push([id, currentVersion, latestVersion]);
         }
-      } catch (ex) {
+      } catch (exception) {
         spinner.fail();
-        if (ex.code === 'MODEL_VERSION_NOT_FOUND') {
+        if (exception.code === 'MODEL_VERSION_NOT_FOUND') {
           throw new TerseError(`Model not found: "${id}"`);
         }
-        throw ex;
+        throw exception;
       }
     }
     spinner.succeed();

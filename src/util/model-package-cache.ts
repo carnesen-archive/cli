@@ -46,6 +46,19 @@ export const modelPackageCache = {
       }
     }
   },
+
+  async remove(id: string, version: number) {
+    const modelPackagePath = ModelPackagePath(id, version);
+    await new Promise((resolve, reject) => {
+      rimraf(modelPackagePath, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  },
 };
 
 function ModelPackagePath(id: string, version: number) {

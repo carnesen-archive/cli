@@ -1,5 +1,3 @@
-import ora = require('ora');
-
 import { TerseError } from '@alwaysai/alwayscli';
 
 import { AppJsonFile } from '../util/app-json-file';
@@ -8,6 +6,7 @@ import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-componen
 import { rpcClient } from '../util/rpc-client';
 import { downloadModelPackageToCache } from '../util/download-model-package-to-cache';
 import { modelPackageCache } from '../util/model-package-cache';
+import { Spinner } from '../util/spinner';
 
 export async function appModelsAddComponent(props: {
   yes: boolean;
@@ -20,7 +19,7 @@ export async function appModelsAddComponent(props: {
   await checkUserIsLoggedInComponent({ yes });
   const fetched: [string, number][] = [];
   for (const id of ids) {
-    const spinner = ora(`Fetch model "${id}"`).start();
+    const spinner = Spinner(`Fetch model "${id}"`);
     try {
       const { version } = await rpcClient.getModelVersion({ id });
       if (!modelPackageCache.has(id, version)) {
