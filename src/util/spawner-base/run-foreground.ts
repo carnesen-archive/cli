@@ -3,9 +3,8 @@ import { spawn } from 'child_process';
 import { Cmd } from '../spawner/types';
 
 import signalExit = require('signal-exit');
-import { TerseError } from '@alwaysai/alwayscli';
 
-export async function runForeground(cmd: Cmd): Promise<void> {
+export async function runForeground(cmd: Cmd) {
   const childProcess = spawn(cmd.exe, cmd.args || [], {
     cwd: cmd.cwd,
     stdio: 'inherit',
@@ -16,14 +15,14 @@ export async function runForeground(cmd: Cmd): Promise<void> {
     childProcess.kill();
   });
 
-  await new Promise<void>((resolve, reject) => {
+  return await new Promise<number | undefined>((resolve, reject) => {
     childProcess.on('error', err => {
       reject(err);
     });
 
     childProcess.on('exit', code => {
       if (code) {
-        reject(new TerseError(`Child process exited with code "${code}"`));
+        resolve(code);
       } else {
         resolve();
       }
