@@ -12,6 +12,6 @@ export const modelPublish = createLeaf({
   },
   async action(_, { yes }) {
     await checkUserIsLoggedInComponent({ yes });
-    await modelPackageCloudClient.publish(process.cwd());
+    await modelPackageCloudClient.publish();
   },
 });

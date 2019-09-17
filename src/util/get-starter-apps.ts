@@ -13,7 +13,7 @@ import { PLEASE_REPORT_THIS_ERROR_MESSAGE, ALWAYSAI_STARTER_APPS } from '../cons
 const systemDomainName = SystemDomainName(systemId);
 const starterAppsUrl = `https://dashboard.${systemDomainName}/docs/${ALWAYSAI_STARTER_APPS}.tar.gz`;
 
-export async function getStarterApps(dir: string) {
+export async function getStarterApps(dir = process.cwd()) {
   const destinationDir = join(dir, ALWAYSAI_STARTER_APPS);
   if (existsSync(destinationDir)) {
     throw new TerseError(`Directory "${destinationDir}" already exists`);

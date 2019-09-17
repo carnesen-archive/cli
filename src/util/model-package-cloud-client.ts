@@ -27,7 +27,7 @@ export const modelPackageCloudClient = {
     return response.body;
   },
 
-  async publish(dir: string) {
+  async publish(dir = process.cwd()) {
     const modelJson = ModelJsonFile(dir).read();
     const { uuid } = await rpcClient.createModelVersion(modelJson);
 

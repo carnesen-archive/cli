@@ -1,11 +1,11 @@
 import { targetProtocolPromptComponent } from './target-protocol-prompt-component';
 import { TargetProtocol } from '../util/target-protocol';
 import { checkForDockerComponent } from './check-for-docker-component';
-import { targetConfigFile } from '../util/target-config-file';
+import { TargetJsonFile } from '../util/target-json-file';
 import { targetHostnamePromptComponent } from './target-hostname-prompt-component';
 import { targetPathPromptComponent } from './target-path-prompt-component';
 import { DOCKER_IMAGE_ID_INITIAL_VALUE } from '../constants';
-import { writeTargetConfigFileComponent } from './write-target-config-file-component';
+import { writeTargetJsonFileComponent } from './write-target-config-file-component';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 
 export async function targetJsonPromptComponent(
@@ -15,17 +15,16 @@ export async function targetJsonPromptComponent(
     targetPath?: string;
   } = {},
 ) {
-  const currentTargetConfiguration = targetConfigFile.readIfExists();
+  const currentTargetJson = TargetJsonFile().readIfExists();
   const targetProtocol = await targetProtocolPromptComponent({
     targetProtocol:
-      props.targetProtocol ||
-      (currentTargetConfiguration && currentTargetConfiguration.targetProtocol),
+      props.targetProtocol || (currentTargetJson && currentTargetJson.targetProtocol),
   });
 
   switch (targetProtocol) {
     case 'docker:':
       await checkForDockerComponent();
-      writeTargetConfigFileComponent({
+      writeTargetJsonFileComponent({
         targetProtocol,
         dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
       });
@@ -35,12 +34,9 @@ export async function targetJsonPromptComponent(
       await findOrWritePrivateKeyFileComponent({ yes: false });
       let currentTargetHostname: string | undefined;
       let currentTargetPath: string | undefined;
-      if (
-        currentTargetConfiguration &&
-        currentTargetConfiguration.targetProtocol === 'ssh+docker:'
-      ) {
-        currentTargetHostname = currentTargetConfiguration.targetHostname;
-        currentTargetPath = currentTargetConfiguration.targetPath;
+      if (currentTargetJson && currentTargetJson.targetProtocol === 'ssh+docker:') {
+        currentTargetHostname = currentTargetJson.targetHostname;
+        currentTargetPath = currentTargetJson.targetPath;
       }
       const targetHostname = await targetHostnamePromptComponent({
         targetHostname: props.targetHostname || currentTargetHostname,
@@ -53,7 +49,7 @@ export async function targetJsonPromptComponent(
         targetPath: props.targetPath || currentTargetPath,
       });
 
-      await writeTargetConfigFileComponent({
+      await writeTargetJsonFileComponent({
         targetProtocol,
         targetHostname,
         targetPath,

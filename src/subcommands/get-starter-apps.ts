@@ -15,7 +15,7 @@ export const getStarterAppsCliLeaf = createLeaf({
     await checkUserIsLoggedInComponent({ yes });
     const spinner = Spinner(`Get ${ALWAYSAI_STARTER_APPS}`);
     try {
-      await getStarterApps(process.cwd());
+      await getStarterApps();
       spinner.succeed();
     } catch (exception) {
       spinner.fail();

@@ -5,7 +5,7 @@ export const showModels: typeof appShow = {
   ...appShow,
   description: 'Show this application\'s "models" configuration',
   async action() {
-    const appJsonFile = AppJsonFile(process.cwd());
+    const appJsonFile = AppJsonFile();
     return appJsonFile.describeModels();
   },
 };

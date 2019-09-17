@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { runAndExit } from '@alwaysai/alwayscli';
-import { aai } from './aai';
+import { cli } from './cli';
 
 if (module === require.main) {
-  runAndExit(aai, ...process.argv.slice(2));
+  runAndExit(cli, ...process.argv.slice(2));
 }
 
 export {};

@@ -10,10 +10,10 @@ import { Spinner } from '../util/spinner';
 
 export async function appModelsAddComponent(props: {
   yes: boolean;
-  dir: string;
+  dir?: string;
   ids: string[];
 }) {
-  const { yes, dir, ids } = props;
+  const { yes, dir = process.cwd(), ids } = props;
   const appJsonFile = AppJsonFile(dir);
   appJsonFile.read();
   await checkUserIsLoggedInComponent({ yes });

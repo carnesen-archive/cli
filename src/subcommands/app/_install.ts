@@ -14,7 +14,7 @@ export const appUnderscoreInstallCliLeaf = createLeaf({
   hidden: true,
   description: "Install this application's dependencies",
   async action() {
-    const appJsonFile = AppJsonFile(process.cwd());
+    const appJsonFile = AppJsonFile();
     const appJson = appJsonFile.read();
     await checkUserIsLoggedInComponent({ yes: false });
     const targetSpawner = JsSpawner();

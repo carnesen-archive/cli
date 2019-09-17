@@ -11,7 +11,7 @@ const FOUND_MESSAGE = `Found ${APP_JSON_FILE_NAME}`;
 
 export async function findOrWriteAppJsonFileComponent(props: { yes: boolean }) {
   const { yes } = props;
-  const appJsonFile = AppJsonFile(process.cwd());
+  const appJsonFile = AppJsonFile();
   if (appJsonFile.exists()) {
     ora(FOUND_MESSAGE).succeed();
   } else {

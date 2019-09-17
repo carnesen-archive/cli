@@ -4,7 +4,7 @@ import {
   createFlagInput,
   TerseError,
 } from '@alwaysai/alwayscli';
-import { targetConfigFile } from '../../util/target-config-file';
+import { TargetJsonFile } from '../../util/target-json-file';
 
 export const appExecCliLeaf = createLeaf({
   name: 'exec',
@@ -20,13 +20,14 @@ export const appExecCliLeaf = createLeaf({
     required: true,
   }),
   async action([exe, ...args], opts) {
+    const targetJsonFile = TargetJsonFile();
     if (opts['no-container']) {
       if (opts.superuser) {
         throw new TerseError('--superuser is not yet supported with --no-container');
       }
-      targetConfigFile.readHostSpawner().runForegroundSync({ exe, args, cwd: '.' });
+      targetJsonFile.readHostSpawner().runForegroundSync({ exe, args, cwd: '.' });
     } else {
-      targetConfigFile
+      targetJsonFile
         .readContainerSpawner()
         .runForegroundSync({ exe, args, cwd: '.', superuser: opts.superuser });
     }

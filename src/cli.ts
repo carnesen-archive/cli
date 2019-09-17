@@ -11,9 +11,9 @@ const root = createBranch({
   subcommands,
 });
 
-const cli = createCli(root);
+const createdCli = createCli(root);
 
-export async function aai(...argv: string[]) {
+export async function cli(...argv: string[]) {
   if (ALWAYSAI_AUDIT_LOG) {
     try {
       await openAuditLog(ALWAYSAI_AUDIT_LOG);
@@ -25,7 +25,7 @@ export async function aai(...argv: string[]) {
   }
 
   audit(`start "${argv.join(' ')}"`);
-  const returnValue = await cli(...argv);
+  const returnValue = await createdCli(...argv);
   await new Promise(resolve => {
     audit(`end "${returnValue}"`, () => {
       resolve();

@@ -7,8 +7,8 @@ import { echo } from '../util/echo';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 import { Spinner } from '../util/spinner';
 
-export async function appModelsUpdateComponent(props: { yes: boolean; dir: string }) {
-  const { yes, dir } = props;
+export async function appModelsUpdateComponent(props: { yes: boolean; dir?: string }) {
+  const { yes, dir = process.cwd() } = props;
   await checkUserIsLoggedInComponent({ yes });
   const appJsonFile = AppJsonFile(dir);
   const { models } = appJsonFile.read();

@@ -1,30 +1,29 @@
 import { checkForDockerComponent } from './check-for-docker-component';
-import { writeTargetConfigFileComponent } from './write-target-config-file-component';
+import { writeTargetJsonFileComponent } from './write-target-config-file-component';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
+import { TargetJson } from '../util/target-json-file';
 
 const yes = true;
 
-export async function targetJsonYesComponent(props: {
-  targetConfig: Parameters<typeof writeTargetConfigFileComponent>[0];
-}) {
-  const { targetConfig } = props;
-  switch (targetConfig.targetProtocol) {
+export async function targetJsonYesComponent(props: { targetJson: TargetJson }) {
+  const { targetJson } = props;
+  switch (targetJson.targetProtocol) {
     case 'docker:':
       await checkForDockerComponent();
-      writeTargetConfigFileComponent(targetConfig);
+      writeTargetJsonFileComponent(targetJson);
       break;
 
     case 'ssh+docker:':
-      const { targetHostname, targetPath } = targetConfig;
+      const { targetHostname, targetPath } = targetJson;
       await findOrWritePrivateKeyFileComponent({ yes });
       await checkSshConnectivityComponent({
         targetHostname,
       });
       await checkForDockerComponent({ targetHostname });
       await createTargetDirectoryComponent({ targetHostname, targetPath });
-      await writeTargetConfigFileComponent(targetConfig);
+      await writeTargetJsonFileComponent(targetJson);
       break;
 
     default:

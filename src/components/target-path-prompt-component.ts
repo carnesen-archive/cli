@@ -5,26 +5,27 @@ import { TERSE } from '@alwaysai/alwayscli';
 import { prompt } from '../util/prompt';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
 import { echo } from '../util/echo';
+import { TargetPathDefaultValue } from '../util/target-path-default-value';
 
 export async function targetPathPromptComponent(props: {
   targetHostname: string;
   targetPath?: string;
 }) {
-  const DEFAULT_TARGET_PATH = posix.join('alwaysai', basename(process.cwd()));
   let writable = false;
   let targetPath: string;
   let skipPromptForTargetPath: boolean;
+  const targetPathDefaultValue = TargetPathDefaultValue();
   if (props.targetPath) {
     // Existing value or command-line input
     targetPath = props.targetPath;
     skipPromptForTargetPath = false;
   } else {
-    targetPath = DEFAULT_TARGET_PATH;
+    targetPath = targetPathDefaultValue;
     ({ skipPromptForTargetPath } = await prompt([
       {
         type: 'confirm',
         name: 'skipPromptForTargetPath',
-        message: `Would you like to use the default installation directory "${DEFAULT_TARGET_PATH}"?`,
+        message: `Would you like to use the default installation directory "${targetPathDefaultValue}"?`,
         initial: true,
       },
     ]));
@@ -37,7 +38,7 @@ export async function targetPathPromptComponent(props: {
           type: 'text',
           name: 'targetPath',
           message: 'Where do you want to run the app? Enter a filesystem path:',
-          initial: targetPath || DEFAULT_TARGET_PATH,
+          initial: targetPath || targetPathDefaultValue,
           validate: value => (!value ? 'Value is required' : true),
         },
       ]));

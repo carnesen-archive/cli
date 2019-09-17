@@ -11,6 +11,6 @@ export const addModelsAddCliLeaf = createLeaf({
     yes: yesCliInput,
   },
   async action(ids, { yes }) {
-    await appModelsAddComponent({ dir: process.cwd(), ids, yes });
+    await appModelsAddComponent({ ids, yes });
   },
 });

@@ -13,7 +13,7 @@ import { SshSpawner } from './spawner/ssh-spawner';
 import { JsSpawner } from './spawner/js-spawner';
 import { TARGET_JSON_FILE_NAME } from '../constants';
 
-const sshDockerTarget = t.type(
+const sshDockerTargetJsonCodec = t.type(
   {
     targetProtocol: t.literal(TargetProtocol['ssh+docker:']),
     targetHostname: t.string,
@@ -23,13 +23,17 @@ const sshDockerTarget = t.type(
   'SshDockerTarget',
 );
 
-const dockerTarget = t.type({
+const dockerTargetJsonCodec = t.type({
   targetProtocol: t.literal(TargetProtocol['docker:']),
   dockerImageId: t.string,
 });
 
-const targetConfigCodec = t.taggedUnion('protocol', [dockerTarget, sshDockerTarget]);
-export type TargetConfig = t.TypeOf<typeof targetConfigCodec>;
+const targetJsonCodec = t.taggedUnion('protocol', [
+  dockerTargetJsonCodec,
+  sshDockerTargetJsonCodec,
+]);
+
+export type TargetJson = t.TypeOf<typeof targetJsonCodec>;
 
 const DID_YOU_RUN_APP_CONFIGURE = 'Did you run "alwaysai app configure"?';
 
@@ -38,11 +42,9 @@ const ENOENT = {
   code: TERSE,
 };
 
-export const targetConfigFile = TargetConfigFile(process.cwd());
-
-function TargetConfigFile(dir: string) {
-  const filePath = join(dir, TARGET_JSON_FILE_NAME);
-  const configFile = ConfigFile({ path: filePath, codec: targetConfigCodec, ENOENT });
+export function TargetJsonFile(cwd = process.cwd()) {
+  const filePath = join(cwd, TARGET_JSON_FILE_NAME);
+  const configFile = ConfigFile({ path: filePath, codec: targetJsonCodec, ENOENT });
 
   return {
     ...configFile,
@@ -72,10 +74,10 @@ function TargetConfigFile(dir: string) {
   }
 
   function readContainerSpawner() {
-    const targetConfiguration = configFile.read();
-    switch (targetConfiguration.targetProtocol) {
+    const targetJson = configFile.read();
+    switch (targetJson.targetProtocol) {
       case 'ssh+docker:': {
-        const { targetHostname, targetPath, dockerImageId } = targetConfiguration;
+        const { targetHostname, targetPath, dockerImageId } = targetJson;
         return SshDockerSpawner({
           dockerImageId,
           targetPath,
@@ -84,7 +86,7 @@ function TargetConfigFile(dir: string) {
       }
 
       case 'docker:': {
-        const { dockerImageId } = targetConfiguration;
+        const { dockerImageId } = targetJson;
         return DockerSpawner({ dockerImageId });
       }
 
@@ -94,10 +96,10 @@ function TargetConfigFile(dir: string) {
   }
 
   function readHostSpawner() {
-    const targetConfiguration = configFile.read();
-    switch (targetConfiguration.targetProtocol) {
+    const targetJson = configFile.read();
+    switch (targetJson.targetProtocol) {
       case 'ssh+docker:': {
-        const { targetPath, targetHostname } = targetConfiguration;
+        const { targetPath, targetHostname } = targetJson;
         return SshSpawner({
           targetHostname,
           targetPath,

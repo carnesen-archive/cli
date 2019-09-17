@@ -3,7 +3,7 @@ import logSymbols = require('log-symbols');
 import { TerseError } from '@alwaysai/alwayscli';
 
 import { AppJsonFile } from '../util/app-json-file';
-import { targetConfigFile } from '../util/target-config-file';
+import { TargetJsonFile } from '../util/target-json-file';
 import { JsSpawner } from '../util/spawner/js-spawner';
 import { spinOnPromise } from '../util/spin-on-promise';
 import { echo } from '../util/echo';
@@ -26,10 +26,11 @@ import { appInstallPythonDependencies } from '../util/app-install-python-depende
 import { appInstallVirtualenv } from '../util/app-install-virtualenv';
 import { appCopyFiles } from '../util/app-copy-files';
 import { appInstallModels } from '../util/app-install-models';
+import { Spinner } from '../util/spinner';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
-  const appJsonFile = AppJsonFile(process.cwd());
+  const appJsonFile = AppJsonFile();
   await checkUserIsLoggedInComponent({ yes });
   if (!appJsonFile.exists()) {
     throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appJsonFile.name));
@@ -39,7 +40,8 @@ export async function appDeployComponent(props: { yes: boolean }) {
   }
 
   let ranTargetJsonPromptComponent = false;
-  if (!targetConfigFile.exists()) {
+  const targetJsonFile = TargetJsonFile();
+  if (!targetJsonFile.exists()) {
     if (yes) {
       throw new TerseError(
         MissingFilePleaseRunAppConfigureMessage(TARGET_JSON_FILE_NAME),
@@ -56,17 +58,17 @@ export async function appDeployComponent(props: { yes: boolean }) {
     ranTargetJsonPromptComponent = true;
   }
 
-  const appConfig = appJsonFile.read();
-  const targetHostSpawner = targetConfigFile.readHostSpawner();
-  const targetConfig = targetConfigFile.read();
+  const appJson = appJsonFile.read();
+  const targetHostSpawner = targetJsonFile.readHostSpawner();
+  const targetJson = targetJsonFile.read();
   const sourceSpawner = JsSpawner();
 
-  const targetSpawner = targetConfigFile.readContainerSpawner();
+  const targetSpawner = targetJsonFile.readContainerSpawner();
 
   // Protocol-specific installation steps
-  switch (targetConfig.targetProtocol) {
+  switch (targetJson.targetProtocol) {
     case 'ssh+docker:': {
-      const { targetHostname, targetPath } = targetConfig;
+      const { targetHostname, targetPath } = targetJson;
       if (!ranTargetJsonPromptComponent) {
         // If we ran the targetJsonPromptComponent we can skip these checks
         await findOrWritePrivateKeyFileComponent({ yes });
@@ -102,8 +104,8 @@ export async function appDeployComponent(props: { yes: boolean }) {
   }
 
   let hasModels = false;
-  if (appConfig.models) {
-    const ids = Object.keys(appConfig.models);
+  if (appJson.models) {
+    const ids = Object.keys(appJson.models);
     if (ids.length > 0) {
       hasModels = true;
       await spinOnPromise(
@@ -118,15 +120,26 @@ export async function appDeployComponent(props: { yes: boolean }) {
   }
 
   const dockerImageId = await buildDockerImageComponent({ targetHostSpawner });
-  targetConfigFile.update(targetConfiguration => {
-    targetConfiguration.dockerImageId = dockerImageId;
+  targetJsonFile.update(targetJson => {
+    targetJson.dockerImageId = dockerImageId;
   });
 
-  if (!(await targetSpawner.exists(VENV_BIN_ACTIVATE))) {
-    await spinOnPromise(appInstallVirtualenv(targetSpawner), 'Install python virtualenv');
+  {
+    const spinner = Spinner('Install python virtualenv');
+    try {
+      if (await targetSpawner.exists(VENV_BIN_ACTIVATE)) {
+        spinner.succeed('Found python virtualenv');
+      } else {
+        await appInstallVirtualenv(targetSpawner);
+        spinner.succeed();
+      }
+    } catch (exception) {
+      spinner.fail();
+      throw exception;
+    }
   }
 
-  if (sourceSpawner.exists(PYTHON_REQUIREMENTS_FILE_NAME)) {
+  if (await sourceSpawner.exists(PYTHON_REQUIREMENTS_FILE_NAME)) {
     await spinOnPromise(
       appInstallPythonDependencies(targetSpawner),
       'Install python dependencies',

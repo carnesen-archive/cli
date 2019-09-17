@@ -9,7 +9,7 @@ export const appUnderscoreStartCliLeaf = createLeaf({
   hidden: true,
   description: 'Run this application\'s "start" script',
   action() {
-    const appJsonFile = AppJsonFile(process.cwd());
+    const appJsonFile = AppJsonFile();
     const appJson = appJsonFile.read();
     const script = appJson.scripts && appJson.scripts.start;
     if (!script) {

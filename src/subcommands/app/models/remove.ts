@@ -10,7 +10,7 @@ export const removeModels = createLeaf({
   options: {},
   args: modelIdsCliInput,
   async action(ids) {
-    const appJsonFile = AppJsonFile(process.cwd());
+    const appJsonFile = AppJsonFile();
     appJsonFile.read();
     for (const id of ids) {
       appJsonFile.removeModel(id);

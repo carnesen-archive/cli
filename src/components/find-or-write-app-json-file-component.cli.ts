@@ -10,7 +10,7 @@ const leaf = createLeaf({
     rm: createFlagInput({ description: 'Remove the config file first' }),
   },
   async action(_, { yes, rm }) {
-    const appJsonFile = AppJsonFile(process.cwd());
+    const appJsonFile = AppJsonFile();
     if (rm) {
       appJsonFile.remove();
     }

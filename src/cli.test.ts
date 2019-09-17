@@ -1,10 +1,10 @@
 import { runAndCatch } from '@alwaysai/alwayscli';
 
-import { aai } from './aai';
+import { cli } from './cli';
 
-describe(aai.name, () => {
+describe(cli.name, () => {
   it('is the main cli function', async () => {
-    const exception = await runAndCatch(aai, '--help');
+    const exception = await runAndCatch(cli, '--help');
     expect(exception).toMatch('Usage');
   });
 });

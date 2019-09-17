@@ -11,6 +11,7 @@ import { findOrWriteDockerfileComponent } from './find-or-write-dockerfile-compo
 import { RequiredWithYesMessage } from '../util/required-with-yes-message';
 import { targetJsonYesComponent } from './target-json-yes-component';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
+import { TargetPathDefaultValue } from '../util/target-path-default-value';
 
 const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
@@ -37,7 +38,7 @@ export async function appConfigureComponent(props: {
       case 'docker:': {
         await appConfigurePreliminaryStepsComponent({ yes });
         await targetJsonYesComponent({
-          targetConfig: {
+          targetJson: {
             targetProtocol,
             dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
           },
@@ -55,21 +56,12 @@ export async function appConfigureComponent(props: {
             ),
           );
         }
-        if (!targetPath) {
-          throw new UsageError(
-            RequiredWithYesMessage(
-              'path',
-              undefined,
-              `If "protocol" is "${TargetProtocol['ssh+docker:']}"`,
-            ),
-          );
-        }
         await appConfigurePreliminaryStepsComponent({ yes });
         await targetJsonYesComponent({
-          targetConfig: {
+          targetJson: {
             targetProtocol,
             targetHostname,
-            targetPath,
+            targetPath: targetPath || TargetPathDefaultValue(),
             dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
           },
         });
