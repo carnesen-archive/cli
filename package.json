@@ -30,9 +30,9 @@
   },
   "dependencies": {
     "@alwaysai/alwayscli": "0.0.0",
-    "@alwaysai/cloud-api": "0.0.1",
+    "@alwaysai/cloud-api": "0.1.0",
     "@alwaysai/codecs": "0.0.0-6",
-    "@alwaysai/config-nodejs": "0.0.0",
+    "@alwaysai/config-nodejs": "0.0.1",
     "@carnesen/coded-error": "0.1.0",
     "@types/download": "6.2.4",
     "@types/keymirror": "0.1.1",

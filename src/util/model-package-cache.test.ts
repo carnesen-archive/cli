@@ -21,5 +21,7 @@ describe('model package cache', () => {
     expect(dataOut).toBe(dataIn);
     expect(modelPackageCache.has(id, version)).toBe(true);
     expect(modelPackageCache.has(id, version + 12)).toBe(false);
+    await modelPackageCache.clear();
+    expect(modelPackageCache.has(id, version)).toBe(false);
   });
 });

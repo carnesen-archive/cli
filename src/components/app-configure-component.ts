@@ -21,6 +21,7 @@ async function appConfigurePreliminaryStepsComponent(props: { yes: boolean }) {
   await findOrWriteAppJsonFileComponent({ yes });
   await findOrWriteDockerfileComponent({ yes });
 }
+
 export async function appConfigureComponent(props: {
   yes: boolean;
   targetProtocol?: TargetProtocol;

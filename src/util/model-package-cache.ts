@@ -11,6 +11,8 @@ import mkdirp = require('mkdirp');
 import { ModelId } from './model-id';
 import { systemId } from './cli-config';
 
+const SYSTEM_MODEL_PACKAGE_CACHE_DIR = join(MODEL_PACKAGE_CACHE_DIR, systemId);
+
 export const modelPackageCache = {
   has(id: string, version: number) {
     const modelPackagePath = ModelPackagePath(id, version);
@@ -20,6 +22,18 @@ export const modelPackageCache = {
   read(id: string, version: number) {
     const modelPackagePath = ModelPackagePath(id, version);
     return createReadStream(modelPackagePath);
+  },
+
+  async clear() {
+    await new Promise((resolve, reject) => {
+      rimraf(SYSTEM_MODEL_PACKAGE_CACHE_DIR, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   },
 
   async write(id: string, version: number, readable: NodeJS.ReadableStream) {
@@ -63,5 +77,5 @@ export const modelPackageCache = {
 
 function ModelPackagePath(id: string, version: number) {
   const { publisher, name } = ModelId.parse(id);
-  return join(MODEL_PACKAGE_CACHE_DIR, systemId, publisher, name, `${version}.tar.gz`);
+  return join(SYSTEM_MODEL_PACKAGE_CACHE_DIR, publisher, name, `${version}.tar.gz`);
 }
