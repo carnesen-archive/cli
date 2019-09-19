@@ -1,7 +1,8 @@
 import { resolve, join, posix } from 'path';
 import { homedir } from 'os';
 
-export const CLI_NAME = 'aai';
+export const ALWAYSAI_CLI_EXECUTABLE_NAME = 'aai';
+export const ALWAYSAI_DESKTOP_SOFTWARE_NAME = 'alwaysAI Desktop';
 export const PACKAGE_DIR = resolve(__dirname, '..');
 export const DOT_ALWAYSAI_DIR = join(homedir(), '.alwaysai');
 export const MODEL_PACKAGE_CACHE_DIR = join(DOT_ALWAYSAI_DIR, 'model-package-cache');

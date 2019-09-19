@@ -1,14 +1,14 @@
+import { dirname, basename } from 'path';
+import { stat, createReadStream } from 'fs';
 import fetch, { Response } from 'node-fetch';
-import { CLOUD_API_MODEL_VERSION_PACKAGES_PATH } from '@alwaysai/cloud-api';
+import { CLOUD_API_MODEL_VERSION_PACKAGES_PATH, CloudApiUrl } from '@alwaysai/cloud-api';
 import { CodedError } from '@carnesen/coded-error';
 import * as tar from 'tar';
-import { CloudApiUrl } from '@alwaysai/cloud-api';
+
 import { rpcClient } from './rpc-client';
 import { authenticationClient } from './authentication-client';
 import { ModelJsonFile } from './model-json-file';
-import { dirname, basename } from 'path';
 import { promisify } from 'util';
-import { stat, createReadStream } from 'fs';
 import tempy = require('tempy');
 import { systemId } from './cli-config';
 

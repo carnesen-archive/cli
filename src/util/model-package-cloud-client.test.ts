@@ -1,12 +1,12 @@
 import tempy = require('tempy');
 import { runAndCatch } from '@carnesen/run-and-catch';
-import { modelPackageCloudClient } from './model-package-cloud-client';
 import { TERSE } from '@alwaysai/alwayscli';
 import pump = require('pump');
 import { createWriteStream } from 'fs';
 import * as tar from 'tar';
+
+import { modelPackageCloudClient } from './model-package-cloud-client';
 import { ModelJsonFile } from './model-json-file';
-import { rpcClient } from './rpc-client';
 import { join, basename } from 'path';
 import { MockModel } from './mock-model';
 

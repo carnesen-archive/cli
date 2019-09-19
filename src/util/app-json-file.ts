@@ -5,7 +5,11 @@ import chalk from 'chalk';
 import { ConfigFile } from '@alwaysai/config-nodejs';
 import { TERSE } from '@alwaysai/alwayscli';
 
-import { APP_PY_FILE_NAME, APP_JSON_FILE_NAME } from '../constants';
+import {
+  APP_PY_FILE_NAME,
+  APP_JSON_FILE_NAME,
+  ALWAYSAI_CLI_EXECUTABLE_NAME,
+} from '../constants';
 
 const codec = t.partial({
   models: t.record(t.string, t.any, 'models'),
@@ -15,7 +19,7 @@ const codec = t.partial({
 export type AppConfig = t.TypeOf<typeof codec>;
 
 const ENOENT = {
-  message: `${APP_JSON_FILE_NAME} not found. Did you run "alwaysai app configure"?`,
+  message: `${APP_JSON_FILE_NAME} not found. Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app configure"?`,
   code: TERSE,
 };
 

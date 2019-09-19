@@ -1,6 +1,5 @@
 import { Spawner } from './types';
 import { CodedError } from '@carnesen/coded-error';
-import { writeFile } from 'fs';
 import toReadableStream = require('to-readable-stream');
 
 export function GnuSpawner(context: {

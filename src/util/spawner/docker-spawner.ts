@@ -42,6 +42,7 @@ export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
       }
     }
 
+    // Note: We do not fully support docker spawner except on Linux
     if (platform() !== 'win32') {
       args.push('--volume', '/dev:/dev');
     }

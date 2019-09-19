@@ -1,12 +1,12 @@
 import { createBranch, createCli } from '@alwaysai/alwayscli';
 import { subcommands } from './subcommands';
-import { CLI_NAME } from './constants';
+import { ALWAYSAI_CLI_EXECUTABLE_NAME } from './constants';
 import { audit, openAuditLog } from './util/audit';
 import { ALWAYSAI_AUDIT_LOG } from './environment';
 import logSymbols = require('log-symbols');
 
 const root = createBranch({
-  name: CLI_NAME,
+  name: ALWAYSAI_CLI_EXECUTABLE_NAME,
   description: 'Manage your alwaysAI assets and environment',
   subcommands,
 });

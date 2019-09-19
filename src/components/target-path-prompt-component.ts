@@ -1,5 +1,3 @@
-import { posix, basename } from 'path';
-
 import { TERSE } from '@alwaysai/alwayscli';
 
 import { promptForInput } from '../util/prompt-for-input';

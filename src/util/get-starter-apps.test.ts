@@ -17,5 +17,5 @@ describe(getStarterApps.name, () => {
     expect(appJson.models).toBeTruthy();
     // Throws a TERSE error if the directory already exists
     expect((await runAndCatch(getStarterApps, tmpDir)).code).toBe(TERSE);
-  });
+  }, 15000);
 });

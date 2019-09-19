@@ -3,7 +3,7 @@ import * as t from 'io-ts';
 import { ConfigFile, ALWAYSAI_CONFIG_DIR } from '@alwaysai/config-nodejs';
 import { TERSE } from '@alwaysai/alwayscli';
 import KeyMirror = require('keymirror');
-import { CLI_NAME } from '../constants';
+import { ALWAYSAI_CLI_EXECUTABLE_NAME } from '../constants';
 
 export const SystemId = KeyMirror({
   local: null,
@@ -30,7 +30,7 @@ export const cliConfigFile = ConfigFile({
   codec,
   ENOENT: {
     code: TERSE,
-    message: `File not found ${CLI_JSON_FILE_NAME}. Run command "${CLI_NAME} config set" to set configuration values.`,
+    message: `File not found ${CLI_JSON_FILE_NAME}. Run command "${ALWAYSAI_CLI_EXECUTABLE_NAME} config set" to set configuration values.`,
   },
   initialValue: {},
 });

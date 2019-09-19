@@ -5,6 +5,7 @@ import {
   DOCKER_EDGEIQ_REPOSITORY_NAME,
   DOCKER_FALLBACK_TAG_NAME,
   PLEASE_REPORT_THIS_ERROR_MESSAGE,
+  ALWAYSAI_DESKTOP_SOFTWARE_NAME,
 } from '../constants';
 import { findOrWriteAppJsonFileComponent } from './find-or-write-app-json-file-component';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
@@ -15,6 +16,7 @@ import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { TargetPathDefaultValue } from '../util/target-path-default-value';
 import { TargetJsonFile } from '../util/target-json-file';
 import { runWithSpinner } from '../util/run-with-spinner';
+import { ALWAYSAI_HOME } from '../environment';
 
 const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
@@ -43,9 +45,9 @@ export async function appConfigureComponent(props: {
   if (yes) {
     switch (targetProtocol) {
       case undefined: {
-        if (nodejsPlatform !== 'win32') {
+        if (!ALWAYSAI_HOME) {
           throw new UsageError(
-            `The --protocol option is required on your current operating system platform "${nodejsPlatform}"`,
+            `The --protocol option is required unless the environment variable ALWAYSAI_HOME is set to the location of an ${ALWAYSAI_DESKTOP_SOFTWARE_NAME} installation.`,
           );
         }
         if (targetHostname) {
