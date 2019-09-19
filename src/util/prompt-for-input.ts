@@ -3,7 +3,7 @@ import { TerseError } from '@alwaysai/alwayscli';
 
 type Questions<T extends string> = prompts.PromptObject<T>[];
 
-export function getNonInteractiveStreamName() {
+function getNonInteractiveStreamName() {
   for (const streamName of ['stdin' as const, 'stdout' as const]) {
     if (!process[streamName].isTTY) {
       return streamName;
@@ -12,19 +12,25 @@ export function getNonInteractiveStreamName() {
   return undefined;
 }
 
-export function checkTerminalIsInteractive() {
+export async function promptForInput<T extends string>(props: {
+  purpose: string;
+  alternative?: string;
+  questions: Questions<T>;
+}) {
+  const {
+    questions,
+    purpose,
+    alternative = 'use the --yes flag to disable interactive prompts',
+  } = props;
   const streamName = getNonInteractiveStreamName();
   if (streamName) {
     throw new TerseError(
-      `This feature is disabled when standard ${
+      `We were about to prompt you ${purpose}, but standard ${
         streamName === 'stdin' ? 'input' : 'output'
-      } (${streamName}) is not a TTY`,
+      } (${streamName}) is not a TTY. Please re-run this command in a fully interactive terminal, or ${alternative}.`,
     );
   }
-}
 
-export async function prompt<T extends string>(questions: Questions<T>) {
-  checkTerminalIsInteractive();
   let canceled = false;
   const answers = await prompts(questions, {
     onCancel() {

@@ -14,11 +14,11 @@ export const appCliBranch = createBranch({
   subcommands: [
     appConfigureCliLeaf,
     appDeployCliLeaf,
+    appInstallCliLeaf,
     appExecCliLeaf,
     appModelsCliBranch,
     appShellCliLeaf,
     appShowCliLeaf,
     appStartCliLeaf,
-    appInstallCliLeaf,
   ],
 });

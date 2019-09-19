@@ -1,50 +1,48 @@
 import { platform } from 'os';
-import { Choice } from 'prompts';
 
-import { prompt, getNonInteractiveStreamName } from '../util/prompt';
-import { UsageError } from '@alwaysai/alwayscli';
 import { TargetProtocol } from '../util/target-protocol';
+import { destinationPromptComponent, Destination } from './destination-prompt-component';
 
 export async function targetProtocolPromptComponent(props: {
   targetProtocol?: TargetProtocol;
-  developerHostPlatform?: NodeJS.Platform;
+  nodejsPlatform?: NodeJS.Platform;
 }) {
-  const developerHostPlatform = props.developerHostPlatform || platform();
+  const { targetProtocol, nodejsPlatform = platform() } = props;
+  let answer: TargetProtocol | undefined;
+  switch (nodejsPlatform) {
+    case 'linux': {
+      const destination = await destinationPromptComponent({
+        destination:
+          targetProtocol === TargetProtocol['ssh+docker:']
+            ? Destination.REMOTE_DEVICE
+            : Destination.YOUR_LOCAL_COMPUTER,
+      });
+      answer =
+        destination === Destination.REMOTE_DEVICE
+          ? TargetProtocol['ssh+docker:']
+          : TargetProtocol['docker:'];
+      break;
+    }
 
-  if (developerHostPlatform !== 'linux') {
-    return TargetProtocol['ssh+docker:'];
+    case 'win32': {
+      const destination = await destinationPromptComponent({
+        destination:
+          targetProtocol === TargetProtocol['ssh+docker:']
+            ? Destination.REMOTE_DEVICE
+            : Destination.YOUR_LOCAL_COMPUTER,
+      });
+      answer =
+        destination === Destination.REMOTE_DEVICE
+          ? TargetProtocol['ssh+docker:']
+          : undefined;
+      break;
+    }
+
+    default: {
+      // Presumably we are on Mac OS. Might be something exotic.
+      answer = TargetProtocol['ssh+docker:'];
+    }
   }
 
-  const nonInteractiveStreamName = getNonInteractiveStreamName();
-  if (nonInteractiveStreamName) {
-    throw new UsageError(
-      `We were about to prompt you to choose whether you want to run your application here on this computer or on a remote device, but this shell is not fully interactive. ("${nonInteractiveStreamName}" is not a TTY.) You can re-run this command in a fully interactive shell, or you can provide the "protocol" command-line option together with the "yes" flag, which disables interactive prompts.`,
-    );
-  }
-
-  const choices: Choice[] = [
-    { title: 'Your local computer', value: TargetProtocol['docker:'] },
-    {
-      title: 'Remote device',
-      value: TargetProtocol['ssh+docker:'],
-    },
-  ];
-
-  const foundChoiceIndex = choices.findIndex(
-    choice => choice.value === props.targetProtocol,
-  );
-  const initial = foundChoiceIndex > -1 ? foundChoiceIndex : 0;
-
-  const answer = await prompt([
-    {
-      type: 'select',
-      name: 'protocol',
-      message: 'What is the destination?',
-      initial,
-      choices,
-    },
-  ]);
-
-  const protocol: TargetProtocol = answer.protocol;
-  return protocol;
+  return answer;
 }

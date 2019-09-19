@@ -5,7 +5,7 @@ const leaf = createLeaf({
   name: targetProtocolPromptComponent.name,
   async action() {
     return await targetProtocolPromptComponent({
-      developerHostPlatform: 'linux',
+      nodejsPlatform: 'linux',
     });
   },
 });

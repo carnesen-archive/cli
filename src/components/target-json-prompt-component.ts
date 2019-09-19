@@ -5,23 +5,34 @@ import { TargetJsonFile } from '../util/target-json-file';
 import { targetHostnamePromptComponent } from './target-hostname-prompt-component';
 import { targetPathPromptComponent } from './target-path-prompt-component';
 import { DOCKER_IMAGE_ID_INITIAL_VALUE } from '../constants';
-import { writeTargetJsonFileComponent } from './write-target-config-file-component';
+import { writeTargetJsonFileComponent } from './write-target-json-file-component';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
+import { runWithSpinner } from '../util/run-with-spinner';
 
 export async function targetJsonPromptComponent(
   props: {
     targetProtocol?: TargetProtocol;
     targetHostname?: string;
     targetPath?: string;
+    nodejsPlatform?: NodeJS.Platform;
   } = {},
 ) {
   const currentTargetJson = TargetJsonFile().readIfExists();
   const targetProtocol = await targetProtocolPromptComponent({
+    nodejsPlatform: props.nodejsPlatform,
     targetProtocol:
       props.targetProtocol || (currentTargetJson && currentTargetJson.targetProtocol),
   });
 
   switch (targetProtocol) {
+    case undefined: {
+      const targetJsonFile = TargetJsonFile();
+      if (targetJsonFile.exists()) {
+        runWithSpinner(targetJsonFile.remove, [], 'Remove target configuration file');
+      }
+      break;
+    }
+
     case 'docker:':
       await checkForDockerComponent();
       writeTargetJsonFileComponent({

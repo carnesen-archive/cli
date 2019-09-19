@@ -1,5 +1,5 @@
 import { checkForDockerComponent } from './check-for-docker-component';
-import { writeTargetJsonFileComponent } from './write-target-config-file-component';
+import { writeTargetJsonFileComponent } from './write-target-json-file-component';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
