@@ -4,6 +4,8 @@ import { rpcClient } from '../util/rpc-client';
 import { appModelsAddComponent } from './app-models-add-component';
 import { modelPackageCache } from '../util/model-package-cache';
 import { runAndCatch, TERSE } from '@alwaysai/alwayscli';
+import { RandomString } from '../util/get-random-string';
+import { authenticationClient } from '../util/authentication-client';
 
 const EMPTY_MODEL_ID = 'alwaysai/empty';
 
@@ -14,6 +16,7 @@ describe(appModelsAddComponent.name, () => {
     const dir = tempy.directory();
     const appJsonFile = AppJsonFile(dir);
     appJsonFile.write({ models: {} });
+    const { username } = await authenticationClient.getInfo();
 
     // We'll add the "empty" model
     const { version } = await rpcClient.getModelVersion({ id: EMPTY_MODEL_ID });
@@ -34,7 +37,7 @@ describe(appModelsAddComponent.name, () => {
     const exception = await runAndCatch(appModelsAddComponent, {
       yes,
       dir,
-      ids: ['foo/bar'],
+      ids: [`${username}/${RandomString()}`],
     });
     expect(exception.code).toBe(TERSE);
     expect(exception.message).toMatch(/model not found/i);

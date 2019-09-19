@@ -3,12 +3,15 @@ import tempy = require('tempy');
 import { AppJsonFile } from '../util/app-json-file';
 import { rpcClient } from '../util/rpc-client';
 import { runAndCatch, TERSE } from '@alwaysai/alwayscli';
+import { authenticationClient } from '../util/authentication-client';
+import { RandomString } from '../util/get-random-string';
 
 describe(appModelsUpdateComponent.name, () => {
   const yes = true;
   it('big test of all the features', async () => {
     const dir = tempy.directory();
     const appJsonFile = AppJsonFile(dir);
+    const { username } = await authenticationClient.getInfo();
 
     // Does nothing if there are no models
     appJsonFile.write({ models: {} });
@@ -29,8 +32,8 @@ describe(appModelsUpdateComponent.name, () => {
     // Operation is idempotent
     await appModelsUpdateComponent({ yes, dir });
 
-    // Throws if the model id does not exist
-    appJsonFile.write({ models: { 'foo/bar': 1 } });
+    // Throws "model not found" if the model id does not exist
+    appJsonFile.write({ models: { [`${username}/${RandomString()}`]: 1 } });
     const exception = await runAndCatch(appModelsUpdateComponent, { yes, dir });
     expect(exception.code).toBe(TERSE);
     expect(exception.message).toMatch(/model not found/i);
