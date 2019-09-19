@@ -7,6 +7,7 @@ alwaysai.*.json
 /venv
 Dockerfile
 alwaysai-starter-apps/
+scratch-app/
 
 # Code coverage output
 /coverage

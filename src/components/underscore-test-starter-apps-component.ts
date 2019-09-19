@@ -1,4 +1,3 @@
-import { cli } from '../cli';
 import * as t from 'io-ts';
 import { ALWAYSAI_STARTER_APPS } from '../constants';
 import { readdirSync, existsSync } from 'fs';
@@ -8,12 +7,8 @@ import rimraf = require('rimraf');
 import { ConfigFile } from '@alwaysai/config-nodejs';
 import { confirmPromptComponent } from './confirm-prompt-component';
 import { modelPackageCache } from '../util/model-package-cache';
-
-async function aai(command: string) {
-  echo(`$ aai ${command}`);
-  const argv = command.split(' ');
-  return await cli(...argv);
-}
+import { aai } from '../util/aai';
+import { TargetProtocol } from '../util/target-protocol';
 
 const TESTED_STARTER_APPS_JSON_FILE_NAME = 'alwaysai.tested-starter-apps.json';
 
@@ -22,6 +17,9 @@ export async function underscoreTestStarterAppsComponent(props: {
   reset: boolean;
 }) {
   const { targetHostname, reset } = props;
+  const targetProtocol = targetHostname
+    ? TargetProtocol['ssh+docker:']
+    : TargetProtocol['docker:'];
 
   if (reset) {
     echo(`rm -rf ${ALWAYSAI_STARTER_APPS}`);
@@ -48,8 +46,11 @@ export async function underscoreTestStarterAppsComponent(props: {
     const tested = jsonFile.read()[fileName];
     if (!tested) {
       await aai(
-        `app configure --yes --protocol ssh+docker: --hostname ${targetHostname}`,
+        `app configure --yes --protocol ${targetProtocol}${
+          targetHostname ? ` --hostname ${targetHostname}` : ''
+        }`,
       );
+      await aai('app models update');
       await aai('app deploy');
       echo('$ aai app start');
       const exitCode = await appStartComponent({ superuser: true });

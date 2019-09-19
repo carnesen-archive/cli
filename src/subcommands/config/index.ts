@@ -6,6 +6,7 @@ import {
 } from '@alwaysai/alwayscli';
 import { cliConfigFile, SYSTEM_IDS } from '../../util/cli-config';
 import { ALWAYSAI_CLI_EXECUTABLE_NAME } from '../../constants';
+import { ALWAYSAI_SHOW_HIDDEN } from '../../environment';
 
 const show = createLeaf({
   name: 'show',
@@ -52,7 +53,7 @@ const unset = createLeaf({
 
 export const config = createBranch({
   name: 'config',
-  hidden: true,
+  hidden: !ALWAYSAI_SHOW_HIDDEN,
   description: `Show or set "${ALWAYSAI_CLI_EXECUTABLE_NAME}" configuration values`,
   subcommands: [show, set, unset],
 });
