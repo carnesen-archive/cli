@@ -36,6 +36,10 @@ describe(appModelsAddComponent.name, () => {
       dir,
       ids: ['foo'],
     });
+    // TODO: remove this conditional. it's in place to debug unit tests on the CI system
+    if (exception.code !== TERSE) {
+      throw exception;
+    }
     expect(exception.code).toBe(TERSE);
     expect(exception.message).toMatch(/model not found/i);
   });

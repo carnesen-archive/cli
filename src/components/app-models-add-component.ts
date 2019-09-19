@@ -27,12 +27,12 @@ export async function appModelsAddComponent(props: {
       }
       fetched.push([id, version]);
       spinner.succeed();
-    } catch (ex) {
+    } catch (exception) {
       spinner.fail();
-      if (ex.code === 'MODEL_VERSION_NOT_FOUND') {
+      if (exception.code === 'MODEL_VERSION_NOT_FOUND') {
         throw new TerseError(`Model not found: "${id}"`);
       }
-      throw ex;
+      throw exception;
     }
   }
   fetched.forEach(([id, version]) => {
