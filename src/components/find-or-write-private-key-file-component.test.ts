@@ -27,7 +27,7 @@ describe(findOrWritePrivateKeyFileComponent.name, () => {
     // Writes the private key file if it does not exist
     await findOrWritePrivateKeyFileComponent({ yes });
     const keys0 = readKeys();
-    expect(keys0.priv).toMatch('BEGIN OPENSSH PRIVATE KEY');
+    expect(keys0.priv).toMatch('PRIVATE KEY');
     expect(keys0.pub).toMatch(PUBLIC_KEY_FILE_COMMENT);
 
     // Regenerates public key file if it does not exist but private does
