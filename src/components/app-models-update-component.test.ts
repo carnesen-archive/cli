@@ -30,7 +30,7 @@ describe(appModelsUpdateComponent.name, () => {
     await appModelsUpdateComponent({ yes, dir });
 
     // Throws if the model id does not exist
-    appJsonFile.write({ models: { foo: 'bar' } });
+    appJsonFile.write({ models: { 'foo/bar': 1 } });
     const exception = await runAndCatch(appModelsUpdateComponent, { yes, dir });
     expect(exception.code).toBe(TERSE);
     expect(exception.message).toMatch(/model not found/i);

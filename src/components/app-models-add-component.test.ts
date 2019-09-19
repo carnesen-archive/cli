@@ -34,12 +34,8 @@ describe(appModelsAddComponent.name, () => {
     const exception = await runAndCatch(appModelsAddComponent, {
       yes,
       dir,
-      ids: ['foo'],
+      ids: ['foo/bar'],
     });
-    // TODO: remove this conditional. it's in place to debug unit tests on the CI system
-    if (exception.code !== TERSE) {
-      throw exception;
-    }
     expect(exception.code).toBe(TERSE);
     expect(exception.message).toMatch(/model not found/i);
   });
