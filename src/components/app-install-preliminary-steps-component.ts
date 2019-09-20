@@ -7,11 +7,14 @@ import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-componen
 
 export async function appInstallPreliminaryStepsComponent(props: { yes: boolean }) {
   const { yes } = props;
-  const appJsonFile = AppJsonFile();
+
   await checkUserIsLoggedInComponent({ yes });
+
+  const appJsonFile = AppJsonFile();
   if (!appJsonFile.exists()) {
     throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appJsonFile.name));
   }
+
   if (!existsSync(DOCKERFILE)) {
     throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
   }

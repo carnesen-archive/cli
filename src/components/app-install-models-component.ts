@@ -6,6 +6,8 @@ import { echo } from '../util/echo';
 import { appInstallModels } from '../util/app-install-models';
 import { Spawner } from '../util/spawner/types';
 
+const SEPARATOR = '\n    ';
+
 export async function appInstallModelsComponent(spawner: Spawner) {
   const appJsonFile = AppJsonFile();
   const appJson = appJsonFile.read();
@@ -18,7 +20,7 @@ export async function appInstallModelsComponent(spawner: Spawner) {
       await runWithSpinner(
         appInstallModels,
         [spawner],
-        `Model${ids.length > 1 ? 's' : ''} ${ids.join(' ')}`,
+        `Install model${ids.length > 1 ? `s:${SEPARATOR}` : ' '}${ids.join(SEPARATOR)}`,
       );
     }
   }

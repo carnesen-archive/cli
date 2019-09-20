@@ -21,6 +21,7 @@ export const ALWAYSAI_STARTER_APPS = 'alwaysai-starter-apps';
 
 export const VENV = 'venv';
 export const VENV_BIN_ACTIVATE = posix.join(VENV, 'bin', 'activate');
+export const VENV_SCRIPTS_ACTIVATE = join(VENV, 'Scripts', 'activate.bat');
 export const APP_JSON_FILE_NAME = 'alwaysai.app.json';
 export const PYTHON_REQUIREMENTS_FILE_NAME = 'requirements.txt';
 

@@ -5,15 +5,17 @@ import {
   VENV_BIN_ACTIVATE,
   APP_JSON_FILE_NAME,
   ALWAYSAI_CLI_EXECUTABLE_NAME,
+  VENV_SCRIPTS_ACTIVATE,
 } from '../constants';
 import { ALWAYSAI_HOME } from '../environment';
+import { runForeground } from '../util/spawner-base/run-foreground';
 
 export async function appStartComponent(props: { superuser: boolean }) {
   const { superuser } = props;
   const appJsonFile = AppJsonFile();
   const appJson = appJsonFile.read();
-  const script = appJson.scripts && appJson.scripts.start;
-  if (!script) {
+  const startScript = appJson.scripts && appJson.scripts.start;
+  if (!startScript) {
     throw new TerseError(
       `This application does not define a "start" script in its application configuration file "${APP_JSON_FILE_NAME}"`,
     );
@@ -33,7 +35,7 @@ export async function appStartComponent(props: { superuser: boolean }) {
             '-O',
             'huponexit',
             '-c',
-            `. ${VENV_BIN_ACTIVATE} && ${script}`,
+            `. ${VENV_BIN_ACTIVATE} && ${startScript}`,
           ],
           cwd: '.',
           tty: true,
@@ -53,7 +55,7 @@ export async function appStartComponent(props: { superuser: boolean }) {
             '-O',
             'huponexit',
             '-c',
-            `'. ${VENV_BIN_ACTIVATE} && ${script}'`,
+            `'. ${VENV_BIN_ACTIVATE} && ${startScript}'`,
           ],
           cwd: '.',
           tty: true,
@@ -71,7 +73,10 @@ export async function appStartComponent(props: { superuser: boolean }) {
 
   // There is no target json file
   if (ALWAYSAI_HOME) {
-    // run the app
+    await runForeground({
+      exe: 'cmd.exe',
+      args: ['/c', `${VENV_SCRIPTS_ACTIVATE} && ${startScript}`],
+    });
   } else {
     throw new TerseError(
       `Target configuration file not found. Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app deploy"?`,

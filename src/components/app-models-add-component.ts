@@ -19,7 +19,7 @@ export async function appModelsAddComponent(props: {
   await checkUserIsLoggedInComponent({ yes });
   const fetched: [string, number][] = [];
   for (const id of ids) {
-    const spinner = Spinner(`Fetch model "${id}"`);
+    const spinner = Spinner(`Fetch model ${id}`);
     try {
       const { version } = await rpcClient.getModelVersion({ id });
       if (!modelPackageCache.has(id, version)) {

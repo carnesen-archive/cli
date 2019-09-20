@@ -1,16 +1,20 @@
 import { JsSpawner } from '../util/spawner/js-spawner';
 import { runWithSpinner } from '../util/run-with-spinner';
-import { VENV_BIN_ACTIVATE, PYTHON_REQUIREMENTS_FILE_NAME } from '../constants';
-import { appInstallPythonDependencies } from '../util/app-install-python-dependencies';
-import { appInstallVirtualenv } from '../util/app-install-virtualenv';
+import { VENV, VENV_SCRIPTS_ACTIVATE, PYTHON_REQUIREMENTS_FILE_NAME } from '../constants';
 import { appInstallPreliminaryStepsComponent } from './app-install-preliminary-steps-component';
 import { appInstallModelsComponent } from './app-install-models-component';
 import { ALWAYSAI_HOME } from '../environment';
 import { TerseError } from '@alwaysai/alwayscli';
 import { isAbsolute, join } from 'path';
+import { platform } from 'os';
+import { run } from '../util/spawner-base/run';
+import { existsSync } from 'fs';
 
-export async function appInstallComponent(props: { yes: boolean }) {
-  const { yes } = props;
+export async function appInstallComponent(props: {
+  yes: boolean;
+  nodejsPlatform?: NodeJS.Platform;
+}) {
+  const { yes, nodejsPlatform = platform() } = props;
 
   if (!ALWAYSAI_HOME || !isAbsolute(ALWAYSAI_HOME)) {
     throw new TerseError(
@@ -18,13 +22,17 @@ export async function appInstallComponent(props: { yes: boolean }) {
     );
   }
 
+  if (nodejsPlatform !== 'win32') {
+    throw new TerseError(
+      `This command is not yet supported on your operating system platform "${nodejsPlatform}"`,
+    );
+  }
+
   await appInstallPreliminaryStepsComponent({ yes });
 
-  const spawner = JsSpawner();
+  await appInstallModelsComponent(JsSpawner());
 
-  await appInstallModelsComponent(spawner);
-
-  if (!(await spawner.exists(VENV_BIN_ACTIVATE))) {
+  if (!existsSync(VENV_SCRIPTS_ACTIVATE)) {
     const pythonExecutablePath = join(
       ALWAYSAI_HOME,
       'resources',
@@ -34,16 +42,27 @@ export async function appInstallComponent(props: { yes: boolean }) {
     );
 
     await runWithSpinner(
-      appInstallVirtualenv,
-      [spawner, pythonExecutablePath],
-      'Install python virtualenv',
+      run,
+      [
+        {
+          exe: pythonExecutablePath,
+          args: ['-m', VENV, '--system-site-packages', VENV],
+          cwd: '.',
+        },
+      ],
+      'Install python virtual environment',
     );
   }
 
-  if (await spawner.exists(PYTHON_REQUIREMENTS_FILE_NAME)) {
+  if (existsSync(PYTHON_REQUIREMENTS_FILE_NAME)) {
     await runWithSpinner(
-      appInstallPythonDependencies,
-      [spawner],
+      run,
+      [
+        {
+          exe: join(VENV, 'Scripts', 'pip'),
+          args: ['--requirement', PYTHON_REQUIREMENTS_FILE_NAME],
+        },
+      ],
       'Install python dependencies',
     );
   }
