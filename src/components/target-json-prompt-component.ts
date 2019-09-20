@@ -8,6 +8,7 @@ import { DOCKER_IMAGE_ID_INITIAL_VALUE } from '../constants';
 import { writeTargetJsonFileComponent } from './write-target-json-file-component';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 import { runWithSpinner } from '../util/run-with-spinner';
+import { findOrWriteDockerfileComponent } from './find-or-write-dockerfile-component';
 
 export async function targetJsonPromptComponent(
   props: {
@@ -17,6 +18,7 @@ export async function targetJsonPromptComponent(
     nodejsPlatform?: NodeJS.Platform;
   } = {},
 ) {
+  const yes = false;
   const currentTargetJson = TargetJsonFile().readIfExists();
   const targetProtocol = await targetProtocolPromptComponent({
     nodejsPlatform: props.nodejsPlatform,
@@ -35,6 +37,7 @@ export async function targetJsonPromptComponent(
 
     case 'docker:':
       await checkForDockerComponent();
+      await findOrWriteDockerfileComponent({ yes });
       writeTargetJsonFileComponent({
         targetProtocol,
         dockerImageId: DOCKER_IMAGE_ID_INITIAL_VALUE,
@@ -42,7 +45,8 @@ export async function targetJsonPromptComponent(
       break;
 
     case 'ssh+docker:':
-      await findOrWritePrivateKeyFileComponent({ yes: false });
+      await findOrWriteDockerfileComponent({ yes });
+      await findOrWritePrivateKeyFileComponent({ yes });
       let currentTargetHostname: string | undefined;
       let currentTargetPath: string | undefined;
       if (currentTargetJson && currentTargetJson.targetProtocol === 'ssh+docker:') {

@@ -24,7 +24,6 @@ async function appConfigurePreliminaryStepsComponent(props: { yes: boolean }) {
   const { yes } = props;
   await checkUserIsLoggedInComponent({ yes });
   await findOrWriteAppJsonFileComponent({ yes });
-  await findOrWriteDockerfileComponent({ yes });
 }
 
 export async function appConfigureComponent(props: {
@@ -65,6 +64,7 @@ export async function appConfigureComponent(props: {
 
       case 'docker:': {
         await appConfigurePreliminaryStepsComponent({ yes });
+        await findOrWriteDockerfileComponent({ yes });
         await targetJsonYesComponent({
           targetJson: {
             targetProtocol,
@@ -85,6 +85,7 @@ export async function appConfigureComponent(props: {
           );
         }
         await appConfigurePreliminaryStepsComponent({ yes });
+        await findOrWriteDockerfileComponent({ yes });
         await targetJsonYesComponent({
           targetJson: {
             targetProtocol,
