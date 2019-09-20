@@ -21,9 +21,9 @@ export async function appStartComponent(props: { superuser: boolean }) {
     );
   }
   const targetJsonFile = TargetJsonFile();
-  const spawner = targetJsonFile.readContainerSpawner();
   const targetJson = targetJsonFile.readIfExists();
   if (targetJson) {
+    const spawner = targetJsonFile.readContainerSpawner();
     const { targetProtocol } = targetJson;
     switch (targetProtocol) {
       case 'docker:': {
