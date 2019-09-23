@@ -64,6 +64,7 @@
     "semver": "6.3.0",
     "signal-exit": "3.0.2",
     "tar": "4.4.11",
+    "tempy": "0.3.0",
     "to-readable-stream": "2.1.0",
     "yauzl": "2.10.0"
   },
@@ -75,7 +76,6 @@
     "@types/node": "12.7.5",
     "get-stream": "5.1.0",
     "jest": "24.9.0",
-    "tempy": "0.3.0",
     "ts-jest": "24.1.0",
     "ts-node": "8.4.1",
     "tslint": "5.20.0",

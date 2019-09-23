@@ -29,7 +29,6 @@ describe('model package cloud client', () => {
       mockModel.metadata.id,
       mockModel.metadata.version,
     );
-
     await new Promise((resolve, reject) => {
       pump(readable, createWriteStream(modelPackageFilePath), err => {
         if (err) {
@@ -39,9 +38,16 @@ describe('model package cloud client', () => {
         }
       });
     });
+
     const targetDir = tempy.directory();
+
     // tar automatically detects gzip compression
-    await tar.extract({ file: modelPackageFilePath, cwd: targetDir });
+    await tar.extract({
+      file: modelPackageFilePath,
+      cwd: targetDir,
+      strict: true,
+    });
+
     const downloadedModelJsonFile = ModelJsonFile(
       join(targetDir, basename(mockModel.dir)),
     );

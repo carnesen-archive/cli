@@ -45,7 +45,7 @@ export async function underscoreTestScratchAppComponent(props: {
   await aai('app models add alwaysai/yolo_v3', { yes });
   await aai('app show', { yes });
   echo(`TODO $ echo "bleach==2.0.0" > ${PYTHON_REQUIREMENTS_FILE_NAME}`);
-  // writeFileSync(PYTHON_REQUIREMENTS_FILE_NAME, 'bleach==2.0.0\n');
+  writeFileSync(PYTHON_REQUIREMENTS_FILE_NAME, 'bleach==2.0.0\n');
   await aai('app deploy', { yes });
   echo('$ aai app start');
   const exitCode = await appStartComponent({ superuser: false });

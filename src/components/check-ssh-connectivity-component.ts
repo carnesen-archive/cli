@@ -11,7 +11,7 @@ export async function checkSshConnectivityComponent(props: {
   warnOrFail?: 'warn' | 'fail';
 }) {
   const { targetHostname, warnOrFail = 'fail' } = props;
-  const spinner = ora('Check SSH connectivity').start();
+  const spinner = ora('Connect by SSH').start();
   const spawner = SshSpawner({ targetHostname });
   try {
     await Promise.race([
