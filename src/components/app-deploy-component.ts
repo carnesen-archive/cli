@@ -10,6 +10,7 @@ import {
   VENV_BIN_ACTIVATE,
   PYTHON_REQUIREMENTS_FILE_NAME,
   VENV,
+  DOCKERFILE,
 } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
@@ -28,6 +29,10 @@ export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
 
   await appInstallPreliminaryStepsComponent({ yes });
+
+  if (!existsSync(DOCKERFILE)) {
+    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
+  }
 
   let ranTargetJsonPromptComponent = false;
   const targetJsonFile = TargetJsonFile();
