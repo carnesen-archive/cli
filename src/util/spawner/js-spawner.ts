@@ -15,6 +15,7 @@ import * as rimrafJs from 'rimraf';
 import { Spawner, Cmd } from './types';
 import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
+import pump = require('pump');
 
 export function JsSpawner(context: { path?: string } = {}): Spawner {
   const gnuSpawner = GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
@@ -31,6 +32,18 @@ export function JsSpawner(context: { path?: string } = {}): Spawner {
     mkdirp,
     rimraf,
     tar,
+    async untar(input, cwd) {
+      await new Promise((resolve, reject) => {
+        const writable = tarJs.extract({ cwd: resolvePath(cwd) });
+        pump(input, writable, err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+    },
     exists,
   };
 
