@@ -1,11 +1,21 @@
-import { APP_PY_FILE_NAME, PYTHON_REQUIREMENTS_FILE_NAME } from '../constants';
-import { existsSync, writeFileSync } from 'fs';
-import { echo } from '../util/echo';
-import { appStartComponent } from './app-start-component';
+import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
+import { existsSync, writeFileSync } from 'fs';
+
+import {
+  APP_PY_FILE_NAME,
+  PYTHON_REQUIREMENTS_FILE_NAME,
+  MODEL_PACKAGE_CACHE_DIR,
+  ALWAYSAI_CLI_EXECUTABLE_NAME,
+} from '../constants';
+import { echo, echoCommandInvocation } from '../util/echo';
+import { appStartComponent } from './app-start-component';
 import { modelPackageCache } from '../util/model-package-cache';
 import { aai } from '../util/aai';
-import mkdirp = require('mkdirp');
+import { TargetJsonFile } from '../util/target-json-file';
+import { systemId } from '../util/cli-config';
+import { appInstallComponent } from './app-install-component';
+import { runWithEchoAndProceedPrompt } from '../util/run-with-echo-and-proceed-prompt';
 
 const SCRATCH_APP = 'scratch-app';
 
@@ -23,13 +33,14 @@ httpd.serve_forever()
 export async function underscoreTestScratchAppComponent(props: {
   yes: boolean;
   reset: boolean;
+  nodejsPlatform?: NodeJS.Platform;
 }) {
-  const { yes, reset } = props;
+  const { yes, reset, nodejsPlatform } = props;
 
   if (reset) {
-    echo(`rm -rf ${SCRATCH_APP}`);
+    echoCommandInvocation(`rm -rf ${SCRATCH_APP}`);
     rimraf.sync(SCRATCH_APP);
-    echo('clear model package cache');
+    echoCommandInvocation(`rm -rf ${MODEL_PACKAGE_CACHE_DIR}/${systemId}`);
     await modelPackageCache.clear();
   }
 
@@ -37,7 +48,7 @@ export async function underscoreTestScratchAppComponent(props: {
     mkdirp.sync(SCRATCH_APP);
   }
 
-  echo(`$ cd ${SCRATCH_APP}`);
+  echoCommandInvocation(`$ cd ${SCRATCH_APP}`);
   process.chdir(SCRATCH_APP);
   await aai('app configure', { yes });
   writeFileSync(APP_PY_FILE_NAME, PYTHON_APPLICATION_CODE);
@@ -45,8 +56,19 @@ export async function underscoreTestScratchAppComponent(props: {
   await aai('app models add alwaysai/yolo_v3', { yes });
   await aai('app show', { yes });
   echo(`TODO $ echo "bleach==2.0.0" > ${PYTHON_REQUIREMENTS_FILE_NAME}`);
-  writeFileSync(PYTHON_REQUIREMENTS_FILE_NAME, 'bleach==2.0.0\n');
-  await aai('app deploy', { yes });
+  // writeFileSync(PYTHON_REQUIREMENTS_FILE_NAME, 'bleach==2.0.0\n');
+  const targetJsonFile = TargetJsonFile();
+  if (targetJsonFile.exists()) {
+    await aai('app deploy', { yes });
+  } else {
+    if (nodejsPlatform) {
+      await runWithEchoAndProceedPrompt(appInstallComponent, [{ yes, nodejsPlatform }], {
+        yes,
+      });
+    } else {
+      await aai('app install', { yes });
+    }
+  }
   echo('$ aai app start');
   const exitCode = await appStartComponent({ superuser: false });
   echo(`"app start" exited with code ${exitCode}`);

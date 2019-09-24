@@ -1,8 +1,6 @@
-import { existsSync } from 'fs';
 import { TerseError } from '@alwaysai/alwayscli';
 
 import { AppJsonFile } from '../util/app-json-file';
-import { DOCKERFILE } from '../constants';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 
 export async function appInstallPreliminaryStepsComponent(props: { yes: boolean }) {
@@ -13,10 +11,6 @@ export async function appInstallPreliminaryStepsComponent(props: { yes: boolean 
   const appJsonFile = AppJsonFile();
   if (!appJsonFile.exists()) {
     throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appJsonFile.name));
-  }
-
-  if (!existsSync(DOCKERFILE)) {
-    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
   }
 }
 

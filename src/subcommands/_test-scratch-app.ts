@@ -1,8 +1,9 @@
-import { createLeaf, createFlagInput } from '@alwaysai/alwayscli';
+import { createLeaf, createFlagInput, createOneOfInput } from '@alwaysai/alwayscli';
 
 import { ALWAYSAI_SHOW_HIDDEN } from '../environment';
 import { underscoreTestScratchAppComponent } from '../components/underscore-test-scratch-app-component';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
+import { nodejsPlatformCliInput } from '../cli-inputs/nodejs-platform-cli-input';
 
 export const underscoreTestScratchAppCliLeaf = createLeaf({
   name: '_test-scratch-app',
@@ -11,8 +12,9 @@ export const underscoreTestScratchAppCliLeaf = createLeaf({
   options: {
     yes: yesCliInput,
     reset: createFlagInput(),
+    platform: nodejsPlatformCliInput
   },
-  async action(_, { reset, yes }) {
-    await underscoreTestScratchAppComponent({ reset, yes });
+  async action(_, { reset, yes, platform }) {
+    await underscoreTestScratchAppComponent({ reset, yes, nodejsPlatform: platform });
   },
 });

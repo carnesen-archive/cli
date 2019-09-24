@@ -8,3 +8,7 @@ export const echo: (...args: any[]) => void =
         audit(`echo "${args}"`);
         console.log(...args);
       };
+
+export function echoCommandInvocation(command: string) {
+  echo(`$ ${command}`);
+}

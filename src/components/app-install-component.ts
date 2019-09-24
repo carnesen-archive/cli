@@ -22,12 +22,6 @@ export async function appInstallComponent(props: {
     );
   }
 
-  if (nodejsPlatform !== 'win32') {
-    throw new TerseError(
-      `This command is not yet supported on your operating system platform "${nodejsPlatform}"`,
-    );
-  }
-
   await appInstallPreliminaryStepsComponent({ yes });
 
   await appInstallModelsComponent(JsSpawner());
@@ -59,7 +53,7 @@ export async function appInstallComponent(props: {
       run,
       [
         {
-          exe: join(VENV, 'Scripts', 'pip'),
+          exe: join(VENV, nodejsPlatform === 'win32' ? 'Scripts' : 'bin', 'pip'),
           args: ['--requirement', PYTHON_REQUIREMENTS_FILE_NAME],
         },
       ],
