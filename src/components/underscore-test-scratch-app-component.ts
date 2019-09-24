@@ -6,7 +6,6 @@ import {
   APP_PY_FILE_NAME,
   PYTHON_REQUIREMENTS_FILE_NAME,
   MODEL_PACKAGE_CACHE_DIR,
-  ALWAYSAI_CLI_EXECUTABLE_NAME,
 } from '../constants';
 import { echo, echoCommandInvocation } from '../util/echo';
 import { appStartComponent } from './app-start-component';
