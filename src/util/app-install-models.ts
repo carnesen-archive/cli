@@ -58,13 +58,7 @@ export async function appInstallModels(target: Spawner) {
         }));
         await target.rimraf(destinationDir);
         await target.mkdirp(dirname(destinationDir));
-        await target.run({
-          exe: 'mv',
-          args: [
-            target.resolvePath(tmpDir, fileNames[0]),
-            target.resolvePath(destinationDir),
-          ],
-        });
+        await target.rename(target.resolvePath(tmpDir, fileNames[0]), destinationDir);
       } catch (exception) {
         try {
           await target.rimraf(tmpDir);
