@@ -63,7 +63,7 @@
     "rimraf": "3.0.0",
     "semver": "6.3.0",
     "signal-exit": "3.0.2",
-    "tar": "4.4.12",
+    "tar": "4.4.13",
     "tempy": "0.3.0",
     "to-readable-stream": "2.1.0",
     "yauzl": "2.10.0"
