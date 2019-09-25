@@ -29,7 +29,7 @@ print("Listening http://0.0.0.0:{}/".format(PORT))
 httpd.serve_forever()
 `;
 
-export async function underscoreTestScratchAppComponent(props: {
+export async function testScratchAppComponent(props: {
   yes: boolean;
   reset: boolean;
   nodejsPlatform?: NodeJS.Platform;

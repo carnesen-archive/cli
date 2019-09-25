@@ -4,8 +4,8 @@ import { user } from './user';
 import { rpc } from './rpc';
 import { model } from './model';
 import { getStarterAppsCliLeaf } from './get-starter-apps';
-import { underscoreTestStarterAppsCliLeaf } from './_test-starter-apps';
-import { underscoreTestScratchAppCliLeaf } from './_test-scratch-app';
+import { testStarterAppsCliLeaf } from './test-starter-apps';
+import { testScratchAppCliLeaf } from './test-scratch-app';
 import { getModelPackageCliLeaf } from './get-model-package';
 
 export const subcommands = [
@@ -16,6 +16,6 @@ export const subcommands = [
   model,
   rpc,
   config,
-  underscoreTestStarterAppsCliLeaf,
-  underscoreTestScratchAppCliLeaf,
+  testStarterAppsCliLeaf,
+  testScratchAppCliLeaf,
 ];
