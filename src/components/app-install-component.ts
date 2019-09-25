@@ -1,14 +1,20 @@
-import { JsSpawner } from '../util/spawner/js-spawner';
-import { runWithSpinner } from '../util/run-with-spinner';
-import { VENV, VENV_SCRIPTS_ACTIVATE, PYTHON_REQUIREMENTS_FILE_NAME } from '../constants';
-import { appInstallPreliminaryStepsComponent } from './app-install-preliminary-steps-component';
-import { appInstallModelsComponent } from './app-install-models-component';
-import { ALWAYSAI_HOME } from '../environment';
 import { TerseError } from '@alwaysai/alwayscli';
 import { isAbsolute, join } from 'path';
 import { platform } from 'os';
-import { run } from '../util/spawner-base/run';
 import { existsSync } from 'fs';
+
+import { JsSpawner } from '../util/spawner/js-spawner';
+import { runWithSpinner } from '../util/run-with-spinner';
+import {
+  VENV,
+  VENV_SCRIPTS_ACTIVATE,
+  PYTHON_REQUIREMENTS_FILE_NAME,
+  ALWAYSAI_DESKTOP_SOFTWARE_NAME,
+} from '../constants';
+import { appInstallPreliminaryStepsComponent } from './app-install-preliminary-steps-component';
+import { appInstallModelsComponent } from './app-install-models-component';
+import { ALWAYSAI_HOME } from '../environment';
+import { run } from '../util/spawner-base/run';
 
 export async function appInstallComponent(props: {
   yes: boolean;
@@ -18,7 +24,7 @@ export async function appInstallComponent(props: {
 
   if (!ALWAYSAI_HOME || !isAbsolute(ALWAYSAI_HOME)) {
     throw new TerseError(
-      'This command requires that ALWAYSAI_HOME is set in your environment to the absolute path of your alwaysAI installation',
+      `This command requires that ALWAYSAI_HOME is set in your environment to the absolute path of your ${ALWAYSAI_DESKTOP_SOFTWARE_NAME} installation`,
     );
   }
 
@@ -26,6 +32,7 @@ export async function appInstallComponent(props: {
 
   await appInstallModelsComponent(JsSpawner());
 
+  // TODO: Remove Windows specificity
   if (!existsSync(VENV_SCRIPTS_ACTIVATE)) {
     const pythonExecutablePath = join(
       ALWAYSAI_HOME,

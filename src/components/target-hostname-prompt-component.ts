@@ -2,9 +2,9 @@ import { TERSE } from '@alwaysai/alwayscli';
 
 import { promptForInput } from '../util/prompt-for-input';
 import {
-  checkSshConnectivityComponent,
+  connectBySshComponent,
   TIMED_OUT_CONNECTING_TO,
-} from './check-ssh-connectivity-component';
+} from './connect-by-ssh-component';
 import { PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE } from '../util/spawner-base/run';
 import { echo } from '../util/echo';
 import { setUpPasswordlessSshComponent } from './set-up-passwordless-ssh-component';
@@ -15,7 +15,7 @@ export async function targetHostnamePromptComponent(props: { targetHostname?: st
   while (!connected) {
     targetHostname = await promptForTargetHostname();
     try {
-      await checkSshConnectivityComponent({
+      await connectBySshComponent({
         targetHostname,
         warnOrFail: 'warn',
       });

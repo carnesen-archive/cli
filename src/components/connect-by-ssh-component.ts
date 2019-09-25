@@ -6,7 +6,7 @@ import { TerseError } from '@alwaysai/alwayscli';
 const TEN_SECONDS = 10 * 1000;
 export const TIMED_OUT_CONNECTING_TO = 'Timed out connecting to';
 
-export async function checkSshConnectivityComponent(props: {
+export async function connectBySshComponent(props: {
   targetHostname: string;
   warnOrFail?: 'warn' | 'fail';
 }) {

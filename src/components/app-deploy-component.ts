@@ -13,7 +13,7 @@ import {
   DOCKERFILE,
 } from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
-import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
+import { connectBySshComponent } from './connect-by-ssh-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { buildDockerImageComponent } from './build-docker-image-component';
@@ -64,7 +64,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
       if (!ranTargetJsonPromptComponent) {
         // If we ran the targetJsonPromptComponent we can skip these checks
         await findOrWritePrivateKeyFileComponent({ yes });
-        await checkSshConnectivityComponent({ targetHostname });
+        await connectBySshComponent({ targetHostname });
         await createTargetDirectoryComponent({ targetHostname, targetPath });
       }
 
