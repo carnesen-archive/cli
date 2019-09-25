@@ -1,14 +1,14 @@
 import { buildDockerImage } from '../util/build-docker-image';
-import { Spawner } from '../spawner/types';
-import ora = require('ora');
+import { Spawner } from '../util/spawner/types';
+import { Spinner } from '../util/spinner';
 
 export async function buildDockerImageComponent(props: { targetHostSpawner: Spawner }) {
   const BUILD_DOCKER_IMAGE_MESSAGE = 'Build docker image';
   const FIFTEEN_SECONDS = 15 * 1000;
 
-  const spinner = ora(BUILD_DOCKER_IMAGE_MESSAGE).start();
+  const spinner = Spinner(BUILD_DOCKER_IMAGE_MESSAGE);
   const timeout = setTimeout(() => {
-    spinner.text = `${BUILD_DOCKER_IMAGE_MESSAGE} (this may take several minutes)`;
+    spinner.setMessage(`${BUILD_DOCKER_IMAGE_MESSAGE} (this may take several minutes)`);
   }, FIFTEEN_SECONDS);
   try {
     const dockerImageId = await buildDockerImage(props.targetHostSpawner);

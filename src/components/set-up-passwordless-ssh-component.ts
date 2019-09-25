@@ -1,8 +1,8 @@
 import { createReadStream } from 'fs';
 
 import { echo } from '../util/echo';
-import { run } from '../spawner/spawner-base/run';
-import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
+import { run } from '../util/spawner-base/run';
+import { connectBySshComponent } from './connect-by-ssh-component';
 import { PUBLIC_KEY_FILE_PATH, PUBLIC_KEY_FILE_PRETTY_PATH } from '../constants';
 import logSymbols = require('log-symbols');
 
@@ -34,7 +34,7 @@ export async function setUpPasswordlessSshComponent(props: { targetHostname: str
     echo(`${logSymbols.error} Copy "${PUBLIC_KEY_FILE_PRETTY_PATH}" to authorized_keys`);
     throw exception;
   }
-  await checkSshConnectivityComponent({
+  await connectBySshComponent({
     targetHostname: props.targetHostname,
   });
 }

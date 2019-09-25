@@ -2,6 +2,8 @@
   "cSpell.words": [
     "alwaysai",
     "alwayscli",
+    "busybox",
+    "carnesen",
     "cognito",
     "create",
     "deserialize",
@@ -17,7 +19,9 @@
     "subcommands",
     "tarbomb",
     "tempy",
+    "totp",
     "untar",
+    "venv",
     "virtualenv",
     "workdir"
   ],

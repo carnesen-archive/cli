@@ -2,7 +2,7 @@ import { runAndExit, createCli, createLeaf, createFlagInput } from '@alwaysai/al
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
 import { targetHostnameCliInput } from '../cli-inputs/target-hostname-cli-input';
 import { targetPathCliInput } from '../cli-inputs/target-path-cli-input';
-import { targetConfigFile } from '../util/target-config-file';
+import { TargetJsonFile } from '../util/target-json-file';
 import { appDeployComponent } from './app-deploy-component';
 import { DOCKER_IMAGE_ID_INITIAL_VALUE } from '../constants';
 
@@ -15,11 +15,12 @@ const leaf = createLeaf({
     path: targetPathCliInput,
   },
   async action(_, { yes, rm, hostname: targetHostname, path: targetPath }) {
+    const targetJsonFile = TargetJsonFile();
     if (rm) {
-      targetConfigFile.remove();
+      targetJsonFile.remove();
     }
     if (targetHostname && targetPath) {
-      targetConfigFile.write({
+      targetJsonFile.write({
         targetProtocol: 'ssh+docker:',
         targetHostname,
         targetPath,

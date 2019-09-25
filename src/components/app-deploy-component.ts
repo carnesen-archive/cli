@@ -1,38 +1,42 @@
-import { existsSync } from 'fs';
-import logSymbols = require('log-symbols');
 import { TerseError } from '@alwaysai/alwayscli';
+import { existsSync } from 'fs';
 
-import { appConfigFile } from '../util/app-config-file';
-import { targetConfigFile } from '../util/target-config-file';
-import { JsSpawner } from '../spawner/js-spawner';
-import { AppInstaller } from '../app-installer';
-import { spinOnPromise } from '../util/spin-on-promise';
-import { echo } from '../util/echo';
-import { getBearerToken } from '../util/cognito-auth';
-import { TARGET_JSON_FILE_NAME, DOCKERFILE, DOCKER_TEST_IMAGE_ID } from '../constants';
+import { TargetJsonFile } from '../util/target-json-file';
+import { JsSpawner } from '../util/spawner/js-spawner';
+import { runWithSpinner } from '../util/run-with-spinner';
+import {
+  TARGET_JSON_FILE_NAME,
+  DOCKER_TEST_IMAGE_ID,
+  VENV_BIN_ACTIVATE,
+  PYTHON_REQUIREMENTS_FILE_NAME,
+  VENV,
+  DOCKERFILE,
+} from '../constants';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
-import { MissingFilePleaseRunAppConfigureMessage } from '../util/missing-file-please-run-app-configure-message';
-import { checkSshConnectivityComponent } from './check-ssh-connectivity-component';
+import { connectBySshComponent } from './connect-by-ssh-component';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { buildDockerImageComponent } from './build-docker-image-component';
-import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
-import ora = require('ora');
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
+import { appCopyFiles } from '../util/app-copy-files';
+import { Spinner } from '../util/spinner';
+import { appInstallPreliminaryStepsComponent } from './app-install-preliminary-steps-component';
+import { appInstallModelsComponent } from './app-install-models-component';
+import { SshDockerSpawner } from '../util/spawner/ssh-docker-spawner';
+import { posix } from 'path';
 
 export async function appDeployComponent(props: { yes: boolean }) {
   const { yes } = props;
 
-  await checkUserIsLoggedInComponent({ yes });
-  if (!appConfigFile.exists()) {
-    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appConfigFile.name));
-  }
+  await appInstallPreliminaryStepsComponent({ yes });
+
   if (!existsSync(DOCKERFILE)) {
     throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
   }
 
   let ranTargetJsonPromptComponent = false;
-  if (!targetConfigFile.exists()) {
+  const targetJsonFile = TargetJsonFile();
+  if (!targetJsonFile.exists()) {
     if (yes) {
       throw new TerseError(
         MissingFilePleaseRunAppConfigureMessage(TARGET_JSON_FILE_NAME),
@@ -49,85 +53,95 @@ export async function appDeployComponent(props: { yes: boolean }) {
     ranTargetJsonPromptComponent = true;
   }
 
-  const bearerToken = await getBearerToken();
-  if (!bearerToken) {
-    throw new Error('Expected to get bearer token');
-  }
-
-  const appConfig = appConfigFile.read();
-  const targetHostSpawner = targetConfigFile.readHostSpawner();
-  const targetConfig = targetConfigFile.read();
+  const targetHostSpawner = targetJsonFile.readHostSpawner();
+  const targetJson = targetJsonFile.read();
   const sourceSpawner = JsSpawner();
 
-  const hostAppInstaller = AppInstaller(targetHostSpawner, bearerToken);
-
   // Protocol-specific installation steps
-  switch (targetConfig.targetProtocol) {
+  switch (targetJson.targetProtocol) {
     case 'ssh+docker:': {
-      const { targetHostname, targetPath } = targetConfig;
+      const { targetHostname, targetPath } = targetJson;
       if (!ranTargetJsonPromptComponent) {
         // If we ran the targetJsonPromptComponent we can skip these checks
         await findOrWritePrivateKeyFileComponent({ yes });
-        await checkSshConnectivityComponent({ targetHostname });
+        await connectBySshComponent({ targetHostname });
         await createTargetDirectoryComponent({ targetHostname, targetPath });
       }
-      const spinner = ora('Copy application to target').start();
-      try {
-        await hostAppInstaller.installSource(sourceSpawner);
-        await targetHostSpawner.run({
-          exe: 'docker',
-          args: [
-            'run',
-            '--rm',
-            '--workdir',
-            '/app',
-            '--volume',
-            '$(pwd):/app',
-            DOCKER_TEST_IMAGE_ID,
-            'chown',
-            '-R',
-            '$(id -u ${USER}):$(id -g ${USER})',
-            '/app',
-          ],
-          cwd: '.',
-        });
-        spinner.succeed();
-      } catch (exception) {
-        spinner.fail();
-        throw exception;
-      }
-    }
-  }
 
-  let hasModels = false;
-  if (appConfig.models) {
-    const ids = Object.keys(appConfig.models);
-    if (ids.length > 0) {
-      hasModels = true;
-      await spinOnPromise(
-        hostAppInstaller.installModels(appConfig.models),
-        `Model${ids.length > 1 ? 's' : ''} ${ids.join(' ')}`,
+      const busyboxSpawner = SshDockerSpawner({
+        targetHostname,
+        targetPath,
+        dockerImageId: DOCKER_TEST_IMAGE_ID,
+      });
+
+      await runWithSpinner(
+        async () => {
+          await appCopyFiles(sourceSpawner, busyboxSpawner);
+          await targetHostSpawner.run({
+            exe: 'docker',
+            args: [
+              'run',
+              '--rm',
+              '--workdir',
+              '/app',
+              '--volume',
+              '$(pwd):/app',
+              DOCKER_TEST_IMAGE_ID,
+              'chown',
+              '-R',
+              '$(id -u ${USER}):$(id -g ${USER})',
+              '/app',
+            ],
+            cwd: '.',
+          });
+        },
+        [],
+        'Copy application to target',
       );
     }
   }
 
-  if (!hasModels) {
-    echo(`${logSymbols.warning} Application has no models`);
-  }
-
   const dockerImageId = await buildDockerImageComponent({ targetHostSpawner });
-  targetConfigFile.update(targetConfiguration => {
-    targetConfiguration.dockerImageId = dockerImageId;
+  targetJsonFile.update(targetJson => {
+    targetJson.dockerImageId = dockerImageId;
   });
 
-  const targetSpawner = targetConfigFile.readContainerSpawner();
-  const targetAppInstaller = AppInstaller(targetSpawner, bearerToken);
-  await spinOnPromise(
-    targetAppInstaller.installVirtualenv(),
-    'Install python virtualenv',
-  );
-  await spinOnPromise(
-    targetAppInstaller.installPythonDeps(),
-    'Install python dependencies',
-  );
+  const targetSpawner = targetJsonFile.readContainerSpawner();
+
+  await appInstallModelsComponent(targetSpawner);
+
+  const spinner = Spinner('Install python virtual environment');
+  try {
+    if (await targetSpawner.exists(VENV_BIN_ACTIVATE)) {
+      spinner.succeed('Found python virtual environment');
+    } else {
+      await targetSpawner.run({
+        exe: 'virtualenv',
+        args: ['--system-site-packages', VENV],
+        cwd: '.',
+      });
+      spinner.succeed();
+    }
+  } catch (exception) {
+    spinner.fail();
+    throw exception;
+  }
+
+  if (existsSync(PYTHON_REQUIREMENTS_FILE_NAME)) {
+    await runWithSpinner(
+      targetSpawner.run,
+      [
+        {
+          exe: posix.join(VENV, 'bin', 'pip'),
+          args: ['install', '--requirement', PYTHON_REQUIREMENTS_FILE_NAME],
+          cwd: '.',
+        },
+      ],
+      'Install python dependencies',
+    );
+  }
+}
+
+function MissingFilePleaseRunAppConfigureMessage(fileName: string) {
+  return `Missing file "${fileName}". Please run \`alwaysai app configure\` to set up this directory as an alwaysAI application.`;
 }

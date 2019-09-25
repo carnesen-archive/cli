@@ -10,7 +10,7 @@ export const alwaysaiUserEmailCliInput: Input<string | undefined, false> = {
       return undefined;
     }
 
-    if (argv.length > 2) {
+    if (argv.length > 1) {
       throw new UsageError(`Expected a single ${placeholder}`);
     }
 

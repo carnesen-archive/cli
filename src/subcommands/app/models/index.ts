@@ -3,7 +3,7 @@ import { addModelsAddCliLeaf } from './add';
 import { removeModels } from './remove';
 import { showModels } from './show';
 import { searchModels } from './search';
-import { appModelsUpdate } from './update';
+import { appModelsUpdateCliLeaf } from './update';
 
 export const appModelsCliBranch = createBranch({
   name: 'models',
@@ -13,6 +13,6 @@ export const appModelsCliBranch = createBranch({
     removeModels,
     searchModels,
     showModels,
-    appModelsUpdate,
+    appModelsUpdateCliLeaf,
   ],
 });

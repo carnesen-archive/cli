@@ -1,11 +1,11 @@
-import ora = require('ora');
-import { SshSpawner } from '../spawner/ssh-spawner';
+import { SshSpawner } from '../util/spawner/ssh-spawner';
+import { Spinner } from '../util/spinner';
 
 export async function createTargetDirectoryComponent(props: {
   targetHostname: string;
   targetPath: string;
 }) {
-  const spinner = ora('Create target directory').start();
+  const spinner = Spinner('Create target directory');
   try {
     const spawner = SshSpawner({
       targetHostname: props.targetHostname,

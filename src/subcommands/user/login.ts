@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import { createLeaf, UsageError } from '@alwaysai/alwayscli';
 
-import { getMaybeCurrentUser } from '../../util/cognito-auth';
 import { alwaysaiUserEmailCliInput } from '../../cli-inputs/alwaysai-user-email-cli-input';
 import { alwaysaiUserPasswordCliInput } from '../../cli-inputs/alwaysai-user-password-cli-input';
 import { yesCliInput } from '../../cli-inputs/yes-cli-input';
-import { alwaysaiUserPromptedLoginComponent } from '../../components/alwaysai-user-prompted-login-component';
+import { alwaysaiUserLoginPromptComponent } from '../../components/alwaysai-user-login-prompt-component';
 import { RequiredWithYesMessage } from '../../util/required-with-yes-message';
-import { alwaysaiUserLoginComponent } from '../../components/alwaysai-user-login-component';
+import { alwaysaiUserLoginYesComponent } from '../../components/alwaysai-user-login-yes-component';
 import { echo } from '../../util/echo';
+import { authenticationClient } from '../../util/authentication-client';
 
 export const userLogin = createLeaf({
   name: 'login',
@@ -23,16 +23,16 @@ export const userLogin = createLeaf({
       if (!email || !password) {
         throw new UsageError(RequiredWithYesMessage('email', 'password'));
       }
-      await alwaysaiUserLoginComponent({
+      await alwaysaiUserLoginYesComponent({
         alwaysaiUserEmail: email,
         alwaysaiUserPassword: password,
       });
     } else {
-      const cognitoUser = await getMaybeCurrentUser();
-      if (cognitoUser) {
-        echo(`Already logged in as ${chalk.bold(cognitoUser.getUsername())}`);
+      if (authenticationClient.isSignedIn()) {
+        const { email } = await authenticationClient.getInfo();
+        echo(`Already logged in as ${chalk.bold(email)}`);
       } else {
-        await alwaysaiUserPromptedLoginComponent({
+        await alwaysaiUserLoginPromptComponent({
           alwaysaiUserEmail: email,
           alwaysaiUserPassword: password,
         });

@@ -1,11 +1,11 @@
 import { TERSE } from '@alwaysai/alwayscli';
 
-import { prompt } from '../util/prompt';
+import { promptForInput } from '../util/prompt-for-input';
 import {
-  checkSshConnectivityComponent,
+  connectBySshComponent,
   TIMED_OUT_CONNECTING_TO,
-} from './check-ssh-connectivity-component';
-import { PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE } from '../spawner/spawner-base/run';
+} from './connect-by-ssh-component';
+import { PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE } from '../util/spawner-base/run';
 import { echo } from '../util/echo';
 import { setUpPasswordlessSshComponent } from './set-up-passwordless-ssh-component';
 
@@ -15,7 +15,7 @@ export async function targetHostnamePromptComponent(props: { targetHostname?: st
   while (!connected) {
     targetHostname = await promptForTargetHostname();
     try {
-      await checkSshConnectivityComponent({
+      await connectBySshComponent({
         targetHostname,
         warnOrFail: 'warn',
       });
@@ -44,16 +44,19 @@ export async function targetHostnamePromptComponent(props: { targetHostname?: st
   return targetHostname;
 
   async function promptForTargetHostname() {
-    const answer = await prompt([
-      {
-        type: 'text',
-        name: 'hostname',
-        message:
-          'Please enter the hostname (with optional user name) to connect to your device via ssh (e.g. "pi@1.2.3.4"):',
-        initial: targetHostname,
-        validate: value => (!value ? 'Value is required' : true),
-      },
-    ]);
-    return answer.hostname as string;
+    const answers = await promptForInput({
+      purpose: 'for the target hostname',
+      questions: [
+        {
+          type: 'text',
+          name: 'hostname',
+          message:
+            'Please enter the hostname (with optional user name) to connect to your device via ssh (e.g. "pi@1.2.3.4"):',
+          initial: targetHostname,
+          validate: value => (!value ? 'Value is required' : true),
+        },
+      ],
+    });
+    return answers.hostname as string;
   }
 }

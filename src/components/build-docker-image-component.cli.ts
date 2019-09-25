@@ -1,7 +1,7 @@
 import { runAndExit, createCli, createLeaf, createFlagInput } from '@alwaysai/alwayscli';
 import { basename } from 'path';
 import { buildDockerImageComponent } from './build-docker-image-component';
-import { JsSpawner } from '../spawner/js-spawner';
+import { JsSpawner } from '../util/spawner/js-spawner';
 
 const leaf = createLeaf({
   name: basename(__filename),

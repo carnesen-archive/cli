@@ -1,8 +1,7 @@
 import { createBranch } from '@alwaysai/alwayscli';
 import { appShowCliLeaf } from './show';
 import { appModelsCliBranch } from './models';
-import { appUnderscoreInstallCliLeaf } from './_install';
-import { appUnderscoreStartCliLeaf } from './_start';
+import { appInstallCliLeaf } from './install';
 import { appConfigureCliLeaf } from './configure';
 import { appDeployCliLeaf } from './deploy';
 import { appStartCliLeaf } from './start';
@@ -15,12 +14,11 @@ export const appCliBranch = createBranch({
   subcommands: [
     appConfigureCliLeaf,
     appDeployCliLeaf,
+    appInstallCliLeaf,
     appExecCliLeaf,
     appModelsCliBranch,
     appShellCliLeaf,
     appShowCliLeaf,
     appStartCliLeaf,
-    appUnderscoreInstallCliLeaf,
-    appUnderscoreStartCliLeaf,
   ],
 });

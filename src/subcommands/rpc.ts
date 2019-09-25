@@ -1,47 +1,40 @@
-import {
-  createLeaf,
-  createJsonInput,
-  createBranch,
-  createStringInput,
-} from '@alwaysai/alwayscli';
+import { createLeaf, createJsonInput, createBranch } from '@alwaysai/alwayscli';
 import { rpcMethodSpecs } from '@alwaysai/cloud-api';
-import { RpcClient } from '../rpc-client';
-import { SendRpcData } from '../rpc-client/send-rpc-data';
-import { getBearerToken } from '../util/cognito-auth';
+import { rpcClient } from '../util/rpc-client';
+import { ALWAYSAI_SHOW_HIDDEN } from '../environment';
 
-const methods = Object.entries(rpcMethodSpecs).map(([methodName, { description }]) => {
-  return createLeaf({
-    name: methodName,
-    description,
-    args: createJsonInput({
-      placeholder: '<args>',
-      description: 'Method arguments array as a JSON string',
-    }),
-    async action(args) {
-      const rpcClient = await RpcClient();
-      const method = (rpcClient as any)[methodName];
-      const result = await method(...(args || []));
-      return result;
-    },
-  });
-});
+const rpcMethodCliLeaves = Object.entries(rpcMethodSpecs).map(
+  ([methodName, { description }]) => {
+    return createLeaf({
+      name: methodName,
+      description,
+      args: createJsonInput({
+        placeholder: '<args>',
+        description: 'Method arguments array as a JSON string',
+      }),
+      async action(args) {
+        const method = (rpcClient as any)[methodName];
+        const result = await method(...(args || []));
+        return result;
+      },
+    });
+  },
+);
 
-const raw = createLeaf({
+const rpcRawCliLeaf = createLeaf({
   name: 'raw',
-  args: createStringInput({
-    placeholder: '<data>',
+  args: createJsonInput({
     required: true,
   }),
   description: 'Send a custom data payload to the RPC endpoint',
   async action(data) {
-    const bearerToken = await getBearerToken();
-    const sendRpcData = SendRpcData({ bearerToken });
-    return await sendRpcData(data);
+    return await rpcClient.raw(data);
   },
 });
 
 export const rpc = createBranch({
   name: 'rpc',
+  hidden: !ALWAYSAI_SHOW_HIDDEN,
   description: 'Call the alwaysAI Cloud API RPC interface',
-  subcommands: [...methods, raw],
+  subcommands: [...rpcMethodCliLeaves, rpcRawCliLeaf],
 });

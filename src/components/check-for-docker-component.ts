@@ -1,10 +1,9 @@
-import ora = require('ora');
-
-import { SshSpawner } from '../spawner/ssh-spawner';
-import { JsSpawner } from '../spawner/js-spawner';
+import { SshSpawner } from '../util/spawner/ssh-spawner';
+import { JsSpawner } from '../util/spawner/js-spawner';
 import { echo } from '../util/echo';
 import { TerseError } from '@alwaysai/alwayscli';
 import { DOCKER_TEST_IMAGE_ID } from '../constants';
+import { Spinner } from '../util/spinner';
 
 export async function checkForDockerComponent(props: { targetHostname?: string } = {}) {
   const spawner = props.targetHostname
@@ -12,8 +11,7 @@ export async function checkForDockerComponent(props: { targetHostname?: string }
     : JsSpawner();
 
   {
-    const spinner = ora('Check docker executable').start();
-    spinner.start();
+    const spinner = Spinner('Check docker executable');
     try {
       await spawner.run({ exe: 'docker', args: ['--version'] });
       spinner.succeed();
@@ -35,8 +33,7 @@ export async function checkForDockerComponent(props: { targetHostname?: string }
   }
 
   {
-    const spinner = ora('Check docker permissions').start();
-    spinner.start();
+    const spinner = Spinner('Check docker permissions');
     try {
       await spawner.run({
         exe: 'docker',
