@@ -11,10 +11,17 @@ const buff = Buffer.from(writeKey, 'utf-8');
 const authHeader = buff.toString('base64');
 
 const track = async (message: any) => {
-  message.userId =
-    (await authenticationClient.getInfo().then(res => {
-      return res.uuid;
-    })) || 'undefined';
+  let userId;
+
+  try {
+    userId = await authenticationClient.getInfo().then(res => {
+      return res.uuid || 'undefined';
+    });
+  } catch {
+    userId = 'undefined';
+  }
+
+  message.userId = userId;
   message.properties.version = require('../package.json').version;
   await fetch('https://api.segment.io/v1/track', {
     method: 'POST',
