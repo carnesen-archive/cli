@@ -22,6 +22,7 @@ const track = async (message: any) => {
   }
 
   message.userId = userId;
+  message.context = { direct: true };
   message.properties.version = require('../package.json').version;
   await fetch('https://api.segment.io/v1/track', {
     method: 'POST',
