@@ -11,17 +11,17 @@ const buff = Buffer.from(writeKey, 'utf-8');
 const authHeader = buff.toString('base64');
 
 const track = async (message: any) => {
-  let userId;
+  let uuid;
 
   try {
-    userId = await authenticationClient.getInfo().then(res => {
+    uuid = await authenticationClient.getInfo().then(res => {
       return res.uuid || 'undefined';
     });
   } catch {
-    userId = 'undefined';
+    uuid = 'undefined';
   }
 
-  message.userId = userId;
+  message.userId = uuid;
   message.context = { direct: true };
   message.properties.version = require('../package.json').version;
   try {
