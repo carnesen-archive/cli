@@ -24,14 +24,16 @@ const track = async (message: any) => {
   message.userId = userId;
   message.context = { direct: true };
   message.properties.version = require('../package.json').version;
-  await fetch('https://api.segment.io/v1/track', {
-    method: 'POST',
-    body: JSON.stringify(message, null, 2),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Basic ${authHeader}`,
-    },
-  });
+  try {
+    await fetch('https://api.segment.io/v1/track', {
+      method: 'POST',
+      body: JSON.stringify(message, null, 2),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${authHeader}`,
+      },
+    });
+  } catch {}
 };
 
 const root = createBranch({
@@ -54,21 +56,33 @@ export async function cli(...argv: string[]) {
   }
 
   audit(`start "${argv.join(' ')}"`);
-  const returnValue = await createdCli(...argv);
-  await new Promise(resolve => {
-    audit(`end "${returnValue}"`, () => {
-      resolve();
-    });
-  });
 
   const commandName = argv.join(' ');
+  try {
+    const returnValue = await createdCli(...argv);
+    await track({
+      event: commandName,
+      properties: {
+        category: 'CLI',
+      },
+    });
 
-  await track({
-    event: commandName,
-    properties: {
-      returnVal: returnValue,
-    },
-  });
+    await new Promise(resolve => {
+      audit(`end "${returnValue}"`, () => {
+        resolve();
+      });
+    });
 
-  return returnValue;
+    return returnValue;
+  } catch (ex) {
+    await track({
+      event: commandName,
+      properties: {
+        label: ex,
+        category: 'CLI',
+      },
+    });
+
+    throw ex;
+  }
 }
