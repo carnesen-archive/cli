@@ -3,9 +3,9 @@ import { platform } from 'os';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
 import { ALWAYSAI_HOME } from '../environment';
 import { destinationPromptComponent, Destination } from './destination-prompt-component';
-import { TargetJsonFile } from '../util/target-json-file';
-import { runWithSpinner } from '../util/run-with-spinner';
 import { PLEASE_REPORT_THIS_ERROR_MESSAGE } from '../constants';
+import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
+import { removeTargetJsonFileComponent } from './remove-target-json-file-component';
 
 export async function appConfigurePromptComponent(props: {
   targetProtocol?: TargetProtocol;
@@ -13,8 +13,9 @@ export async function appConfigurePromptComponent(props: {
   targetPath?: string;
   osPlatform?: NodeJS.Platform;
 }) {
+  const yes = false;
   const { targetHostname, targetPath, targetProtocol, osPlatform = platform() } = props;
-
+  await appConfigurePreliminaryStepsComponent({ yes });
   switch (osPlatform) {
     case 'linux': {
       // Note: We do not yet support ALWAYSAI_HOME on linux
@@ -30,7 +31,15 @@ export async function appConfigurePromptComponent(props: {
     case 'win32':
     case 'darwin':
     default: {
-      if (ALWAYSAI_HOME) {
+      if (!ALWAYSAI_HOME) {
+        await targetJsonPromptComponent({
+          targetProtocol,
+          targetHostname,
+          targetPath,
+          osPlatform,
+        });
+      } else {
+        // ALWAYSAI_HOME is defined
         const destination = await destinationPromptComponent({
           destination:
             targetProtocol === TargetProtocol['ssh+docker:']
@@ -39,14 +48,7 @@ export async function appConfigurePromptComponent(props: {
         });
         switch (destination) {
           case Destination.YOUR_LOCAL_COMPUTER: {
-            const targetJsonFile = TargetJsonFile();
-            if (targetJsonFile.exists()) {
-              runWithSpinner(
-                targetJsonFile.remove,
-                [],
-                'Remove target configuration file',
-              );
-            }
+            await removeTargetJsonFileComponent();
             break;
           }
           case Destination.REMOTE_DEVICE: {
@@ -60,7 +62,7 @@ export async function appConfigurePromptComponent(props: {
           }
           default: {
             throw new Error(
-              `Unexpected destination. ${PLEASE_REPORT_THIS_ERROR_MESSAGE}`,
+              `Unexpected destination "${destination}". ${PLEASE_REPORT_THIS_ERROR_MESSAGE}`,
             );
           }
         }

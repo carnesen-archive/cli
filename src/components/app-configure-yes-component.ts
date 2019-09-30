@@ -10,10 +10,9 @@ import { findOrWriteDockerfileComponent } from './find-or-write-dockerfile-compo
 import { RequiredWithYesMessage } from '../util/required-with-yes-message';
 import { targetJsonYesComponent } from './target-json-yes-component';
 import { TargetPathDefaultValue } from '../util/target-path-default-value';
-import { TargetJsonFile } from '../util/target-json-file';
-import { runWithSpinner } from '../util/run-with-spinner';
 import { ALWAYSAI_HOME } from '../environment';
 import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
+import { removeTargetJsonFileComponent } from './remove-target-json-file-component';
 
 const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 
@@ -38,10 +37,7 @@ export async function appConfigureYesComponent(props: {
       if (targetPath) {
         throw new UsageError(OnlyAllowedWithSshPlusDockerMessage('path'));
       }
-      const targetJsonFile = TargetJsonFile();
-      if (targetJsonFile.exists()) {
-        runWithSpinner(targetJsonFile.remove, [], 'Remove target configuration file');
-      }
+      await removeTargetJsonFileComponent();
       break;
     }
 
