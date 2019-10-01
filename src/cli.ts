@@ -59,13 +59,14 @@ export async function cli(...argv: string[]) {
 
   const commandName = argv.join(' ');
   try {
-    const returnValue = await createdCli(...argv);
     await track({
       event: commandName,
       properties: {
         category: 'CLI',
       },
     });
+
+    const returnValue = await createdCli(...argv);
 
     await new Promise(resolve => {
       audit(`end "${returnValue}"`, () => {
