@@ -3,6 +3,7 @@ import { TargetProtocol } from '../util/target-protocol';
 import {
   PLEASE_REPORT_THIS_ERROR_MESSAGE,
   ALWAYSAI_DESKTOP_SOFTWARE_NAME,
+  DOCKER_IMAGE_ID_INITIAL_VALUE,
 } from '../constants';
 import { findOrWriteDockerfileComponent } from './find-or-write-dockerfile-component';
 import { RequiredWithYesMessage } from '../util/required-with-yes-message';
@@ -11,8 +12,6 @@ import { TargetPathDefaultValue } from '../util/target-path-default-value';
 import { ALWAYSAI_HOME } from '../environment';
 import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
 import { removeTargetJsonFileComponent } from './remove-target-json-file-component';
-
-const DOCKER_IMAGE_ID_INITIAL_VALUE = '';
 
 export async function appConfigureYesComponent(props: {
   targetProtocol?: TargetProtocol;
