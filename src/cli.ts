@@ -4,6 +4,37 @@ import { ALWAYSAI_CLI_EXECUTABLE_NAME } from './constants';
 import { audit, openAuditLog } from './util/audit';
 import { ALWAYSAI_AUDIT_LOG } from './environment';
 import logSymbols = require('log-symbols');
+import { authenticationClient } from './util/authentication-client';
+
+const writeKey = 'H9SHsAseGIYI6PjjNhBO6OSyzx4cJSUG:';
+const buff = Buffer.from(writeKey, 'utf-8');
+const authHeader = buff.toString('base64');
+
+const track = async (message: any) => {
+  let uuid;
+
+  try {
+    uuid = await authenticationClient.getInfo().then(res => {
+      return res.uuid || 'undefined';
+    });
+  } catch {
+    uuid = 'undefined';
+  }
+
+  message.userId = uuid;
+  message.context = { direct: true };
+  message.properties.version = require('../package.json').version;
+  try {
+    await fetch('https://api.segment.io/v1/track', {
+      method: 'POST',
+      body: JSON.stringify(message, null, 2),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${authHeader}`,
+      },
+    });
+  } catch {}
+};
 
 const root = createBranch({
   name: ALWAYSAI_CLI_EXECUTABLE_NAME,
@@ -25,11 +56,33 @@ export async function cli(...argv: string[]) {
   }
 
   audit(`start "${argv.join(' ')}"`);
-  const returnValue = await createdCli(...argv);
-  await new Promise(resolve => {
-    audit(`end "${returnValue}"`, () => {
-      resolve();
+
+  const commandName = argv.join(' ');
+  try {
+    const returnValue = await createdCli(...argv);
+    await track({
+      event: commandName,
+      properties: {
+        category: 'CLI',
+      },
     });
-  });
-  return returnValue;
+
+    await new Promise(resolve => {
+      audit(`end "${returnValue}"`, () => {
+        resolve();
+      });
+    });
+
+    return returnValue;
+  } catch (ex) {
+    await track({
+      event: commandName,
+      properties: {
+        label: ex,
+        category: 'CLI',
+      },
+    });
+
+    throw ex;
+  }
 }

@@ -13,7 +13,8 @@ export async function openAuditLog(path: string) {
   const uniqueId = RandomString().padEnd(11, ' ');
   const stream = createWriteStream(path, { flags: 'a' });
   const writeToStream: typeof audit = (message, callback) => {
-    stream.write(`${new Date().toISOString()} ${uniqueId} ${message}\n`, callback);
+    const formattedMessage = `${new Date().toISOString()} ${uniqueId} ${message}\n`;
+    stream.write(formattedMessage, callback);
   };
   await new Promise((resolve, reject) => {
     stream.on('error', err => {
