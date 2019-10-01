@@ -5,13 +5,19 @@ import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { APP_DIR } from './docker-spawner';
 import { ResolvePosixPath } from '../resolve-posix-path';
-import { PRIVATE_KEY_FILE_PATH } from '../../constants';
+import { PRIVATE_KEY_FILE_PATH, EMPTY_DOCKER_IMAGE_ID_MESSAGE } from '../../constants';
+import { TerseError } from '@alwaysai/alwayscli';
 
 export function SshDockerSpawner(opts: {
   targetPath: string;
   targetHostname: string;
   dockerImageId: string;
 }) {
+  const { dockerImageId } = opts;
+  if (!dockerImageId) {
+    throw new TerseError(EMPTY_DOCKER_IMAGE_ID_MESSAGE);
+  }
+
   const resolvePath = ResolvePosixPath(APP_DIR);
   return GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
 

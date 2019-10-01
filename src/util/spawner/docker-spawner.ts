@@ -4,10 +4,16 @@ import { Spawner, Cmd } from './types';
 import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { ResolvePosixPath } from '../resolve-posix-path';
+import { TerseError } from '@alwaysai/alwayscli';
+import { EMPTY_DOCKER_IMAGE_ID_MESSAGE } from '../../constants';
 
 export const APP_DIR = '/app';
 
 export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
+  const { dockerImageId } = opts;
+  if (!dockerImageId) {
+    throw new TerseError(EMPTY_DOCKER_IMAGE_ID_MESSAGE);
+  }
   const resolvePath = ResolvePosixPath(APP_DIR);
   const gnuSpawner = GnuSpawner({ resolvePath, ...SpawnerBase(translate) });
   return {
@@ -52,7 +58,7 @@ export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
     }
 
     args.push('--workdir', resolvePath(cmd.cwd));
-    args.push(opts.dockerImageId, cmd.exe);
+    args.push(dockerImageId, cmd.exe);
 
     if (cmd.args) {
       args.push(...cmd.args);

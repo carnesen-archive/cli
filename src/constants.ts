@@ -16,7 +16,7 @@ export const DOCKER_EDGEIQ_REPOSITORY_NAME = 'alwaysai/edgeiq';
 export const DOCKER_FALLBACK_TAG_NAME = 'latest';
 export const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
 export const DOCKER_TEST_IMAGE_ID = 'busybox';
-
+export const EMPTY_DOCKER_IMAGE_ID_MESSAGE = `Empty docker image ID. Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app deploy"?`;
 export const ALWAYSAI_STARTER_APPS = 'alwaysai-starter-apps';
 
 export const VENV = 'venv';
