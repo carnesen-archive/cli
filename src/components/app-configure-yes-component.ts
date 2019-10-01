@@ -1,8 +1,6 @@
 import { UsageError } from '@alwaysai/alwayscli';
 import { TargetProtocol } from '../util/target-protocol';
 import {
-  DOCKER_EDGEIQ_REPOSITORY_NAME,
-  DOCKER_FALLBACK_TAG_NAME,
   PLEASE_REPORT_THIS_ERROR_MESSAGE,
   ALWAYSAI_DESKTOP_SOFTWARE_NAME,
 } from '../constants';
@@ -14,7 +12,7 @@ import { ALWAYSAI_HOME } from '../environment';
 import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
 import { removeTargetJsonFileComponent } from './remove-target-json-file-component';
 
-const DOCKER_IMAGE_ID_INITIAL_VALUE = `${DOCKER_EDGEIQ_REPOSITORY_NAME}:${DOCKER_FALLBACK_TAG_NAME}`;
+const DOCKER_IMAGE_ID_INITIAL_VALUE = '';
 
 export async function appConfigureYesComponent(props: {
   targetProtocol?: TargetProtocol;
