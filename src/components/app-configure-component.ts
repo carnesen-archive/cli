@@ -1,8 +1,7 @@
 import { platform } from 'os';
 import { TargetProtocol } from '../util/target-protocol';
-import { targetJsonPromptComponent } from './target-json-prompt-component';
-import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
 import { appConfigureYesComponent } from './app-configure-yes-component';
+import { appConfigurePromptComponent } from './app-configure-prompt-component';
 
 export async function appConfigureComponent(props: {
   yes: boolean;
@@ -22,13 +21,11 @@ export async function appConfigureComponent(props: {
   if (yes) {
     await appConfigureYesComponent({ targetProtocol, targetHostname, targetPath });
   } else {
-    await appConfigurePreliminaryStepsComponent({ yes });
-
-    await targetJsonPromptComponent({
-      osPlatform,
+    await appConfigurePromptComponent({
       targetProtocol,
       targetHostname,
       targetPath,
+      osPlatform,
     });
   }
 }
