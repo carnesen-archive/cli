@@ -29,7 +29,7 @@
     "postversion": "npm publish"
   },
   "dependencies": {
-    "@alwaysai/alwayscli": "0.0.0",
+    "@alwaysai/alwayscli": "0.1.0",
     "@alwaysai/cloud-api": "0.1.1",
     "@alwaysai/codecs": "0.0.0",
     "@alwaysai/config-nodejs": "0.0.1",
@@ -63,7 +63,7 @@
     "rimraf": "3.0.0",
     "semver": "6.3.0",
     "signal-exit": "3.0.2",
-    "tar": "4.4.13",
+    "tar": "5.0.2",
     "tempy": "0.3.0",
     "to-readable-stream": "2.1.0",
     "yauzl": "2.10.0"
