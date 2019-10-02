@@ -10,6 +10,7 @@ import {
 import { ALWAYSAI_HOME } from '../environment';
 import { runForeground } from '../util/spawner-base/run-foreground';
 import { platform } from 'os';
+import { existsSync } from 'fs';
 
 const BASH_INITIAL_ARGS = ['-o', 'onecmd', '-O', 'huponexit', '-c'];
 
@@ -67,11 +68,21 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
       );
     }
     if (platform() === 'win32') {
+      if (!existsSync(VENV_SCRIPTS_ACTIVATE)) {
+        throw new TerseError(
+          `File not found "${VENV_SCRIPTS_ACTIVATE}". Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app install"?`,
+        );
+      }
       exitCode = await runForeground({
         exe: 'cmd.exe',
         args: ['/c', `${VENV_SCRIPTS_ACTIVATE} && ${startScript}`],
       });
     } else {
+      if (!existsSync(VENV_BIN_ACTIVATE)) {
+        throw new TerseError(
+          `File not found "${VENV_BIN_ACTIVATE}". Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app install"?`,
+        );
+      }
       exitCode = await runForeground({
         exe: '/bin/bash',
         args: ['-o', 'onecmd', '-c', `. ${VENV_BIN_ACTIVATE} && ${startScript}`],
