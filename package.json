@@ -1,7 +1,7 @@
 {
   "name": "alwaysai",
   "description": "The alwaysAI command-line interface (CLI)",
-  "version": "0.4.2-0",
+  "version": "0.4.2-1",
   "main": "lib/index.js",
   "publishConfig": {
     "access": "public",
