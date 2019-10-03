@@ -7,7 +7,7 @@ import { targetHostnameCliInput } from '../cli-inputs/target-hostname-cli-input'
 
 export const testScratchAppCliLeaf = createLeaf({
   name: 'test-scratch-app',
-  description: "Install this application's dependencies",
+  description: 'Test the workflow for creating a new application "from scratch"',
   hidden: !ALWAYSAI_SHOW_HIDDEN,
   options: {
     hostname: targetHostnameCliInput,

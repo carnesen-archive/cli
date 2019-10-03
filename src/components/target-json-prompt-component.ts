@@ -8,21 +8,17 @@ import { DOCKER_IMAGE_ID_INITIAL_VALUE } from '../constants';
 import { writeTargetJsonFileComponent } from './write-target-json-file-component';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
 import { findOrWriteDockerfileComponent } from './find-or-write-dockerfile-component';
-import { platform } from 'os';
 
 export async function targetJsonPromptComponent(
   props: {
     targetProtocol?: TargetProtocol;
     targetHostname?: string;
     targetPath?: string;
-    osPlatform?: NodeJS.Platform;
   } = {},
 ) {
   const yes = false;
-  const { osPlatform = platform() } = props;
   const currentTargetJson = TargetJsonFile().readIfExists();
   const targetProtocol = await targetProtocolPromptComponent({
-    osPlatform,
     targetProtocol:
       props.targetProtocol || (currentTargetJson && currentTargetJson.targetProtocol),
   });

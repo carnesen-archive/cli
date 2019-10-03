@@ -1,19 +1,15 @@
-import { runAndExit, createCli, createLeaf, createOneOfInput } from '@alwaysai/alwayscli';
+import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
 import { appConfigureComponent } from './app-configure-component';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
-
-const NODEJS_PLATFORMS: NodeJS.Platform[] = ['win32', 'darwin', 'linux'];
 
 const leaf = createLeaf({
   name: appConfigureComponent.name,
   options: {
     yes: yesCliInput,
-    platform: createOneOfInput({ required: false, values: NODEJS_PLATFORMS }),
   },
-  async action(_, { yes, platform }) {
+  async action(_, { yes }) {
     return await appConfigureComponent({
       yes,
-      osPlatform: platform,
     });
   },
 });

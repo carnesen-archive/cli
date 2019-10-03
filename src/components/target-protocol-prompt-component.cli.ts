@@ -4,9 +4,7 @@ import { targetProtocolPromptComponent } from './target-protocol-prompt-componen
 const leaf = createLeaf({
   name: targetProtocolPromptComponent.name,
   async action() {
-    return await targetProtocolPromptComponent({
-      osPlatform: 'linux',
-    });
+    return await targetProtocolPromptComponent({});
   },
 });
 

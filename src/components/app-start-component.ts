@@ -7,15 +7,16 @@ import {
   ALWAYSAI_CLI_EXECUTABLE_NAME,
   VENV_SCRIPTS_ACTIVATE,
 } from '../constants';
-import { ALWAYSAI_HOME } from '../environment';
+import { ALWAYSAI_HOME, ALWAYSAI_OS_PLATFORM } from '../environment';
 import { runForeground } from '../util/spawner-base/run-foreground';
-import { platform } from 'os';
 import { existsSync } from 'fs';
 
 const BASH_INITIAL_ARGS = ['-o', 'onecmd', '-O', 'huponexit', '-c'];
 
-export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
-  const { noSuperuser } = props;
+export async function appStartComponent(
+  props: { noSuperuser?: boolean; args?: string[] } = {},
+) {
+  const { noSuperuser, args = [] } = props;
   const appJsonFile = AppJsonFile();
   const appJson = appJsonFile.read();
   const startScript = appJson.scripts && appJson.scripts.start;
@@ -27,6 +28,7 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
   const targetJsonFile = TargetJsonFile();
   const targetJson = targetJsonFile.readIfExists();
   let exitCode: number | undefined;
+  const quotedArgsString = args.map(arg => `'${arg}'`).join(' ');
   if (targetJson) {
     const spawner = targetJsonFile.readContainerSpawner();
     const { targetProtocol } = targetJson;
@@ -34,7 +36,10 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
       case 'docker:': {
         exitCode = await spawner.runForeground({
           exe: '/bin/bash',
-          args: [...BASH_INITIAL_ARGS, `. ${VENV_BIN_ACTIVATE} && ${startScript}`],
+          args: [
+            ...BASH_INITIAL_ARGS,
+            `. ${VENV_BIN_ACTIVATE} && ${startScript} ${quotedArgsString}`,
+          ],
           cwd: '.',
           tty: true,
           expose5000: true,
@@ -47,7 +52,10 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
       case 'ssh+docker:': {
         exitCode = await spawner.runForeground({
           exe: '/bin/bash',
-          args: [...BASH_INITIAL_ARGS, `'. ${VENV_BIN_ACTIVATE} && ${startScript}'`],
+          args: [
+            ...BASH_INITIAL_ARGS,
+            `'. ${VENV_BIN_ACTIVATE} && ${startScript} ${quotedArgsString}'`,
+          ],
           cwd: '.',
           tty: true,
           expose5000: true,
@@ -67,7 +75,7 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
         `Target configuration file not found. Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app deploy"?`,
       );
     }
-    if (platform() === 'win32') {
+    if (ALWAYSAI_OS_PLATFORM === 'win32') {
       if (!existsSync(VENV_SCRIPTS_ACTIVATE)) {
         throw new TerseError(
           `File not found "${VENV_SCRIPTS_ACTIVATE}". Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app install"?`,
@@ -75,7 +83,7 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
       }
       exitCode = await runForeground({
         exe: 'cmd.exe',
-        args: ['/c', `${VENV_SCRIPTS_ACTIVATE} && ${startScript}`],
+        args: ['/c', `${VENV_SCRIPTS_ACTIVATE} && ${startScript} ${args.join(' ')}`],
       });
     } else {
       if (!existsSync(VENV_BIN_ACTIVATE)) {
@@ -85,7 +93,12 @@ export async function appStartComponent(props: { noSuperuser?: boolean } = {}) {
       }
       exitCode = await runForeground({
         exe: '/bin/bash',
-        args: ['-o', 'onecmd', '-c', `. ${VENV_BIN_ACTIVATE} && ${startScript}`],
+        args: [
+          '-o',
+          'onecmd',
+          '-c',
+          `. ${VENV_BIN_ACTIVATE} && ${startScript} ${quotedArgsString}`,
+        ],
       });
     }
   }

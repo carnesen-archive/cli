@@ -1,7 +1,6 @@
 import { TargetProtocol } from '../util/target-protocol';
-import { platform } from 'os';
 import { targetJsonPromptComponent } from './target-json-prompt-component';
-import { ALWAYSAI_HOME } from '../environment';
+import { ALWAYSAI_HOME, ALWAYSAI_OS_PLATFORM } from '../environment';
 import { destinationPromptComponent, Destination } from './destination-prompt-component';
 import { PLEASE_REPORT_THIS_ERROR_MESSAGE } from '../constants';
 import { appConfigurePreliminaryStepsComponent } from './app-configure-preliminary-steps-component';
@@ -11,19 +10,17 @@ export async function appConfigurePromptComponent(props: {
   targetProtocol?: TargetProtocol;
   targetHostname?: string;
   targetPath?: string;
-  osPlatform?: NodeJS.Platform;
 }) {
   const yes = false;
-  const { targetHostname, targetPath, targetProtocol, osPlatform = platform() } = props;
+  const { targetHostname, targetPath, targetProtocol } = props;
   await appConfigurePreliminaryStepsComponent({ yes });
-  switch (osPlatform) {
+  switch (ALWAYSAI_OS_PLATFORM) {
     case 'linux': {
       // Note: We do not yet support ALWAYSAI_HOME on linux
       await targetJsonPromptComponent({
         targetProtocol,
         targetHostname,
         targetPath,
-        osPlatform,
       });
       break;
     }
@@ -36,7 +33,6 @@ export async function appConfigurePromptComponent(props: {
           targetProtocol,
           targetHostname,
           targetPath,
-          osPlatform,
         });
       } else {
         // ALWAYSAI_HOME is defined
@@ -56,7 +52,6 @@ export async function appConfigurePromptComponent(props: {
               targetProtocol,
               targetHostname,
               targetPath,
-              osPlatform,
             });
             break;
           }

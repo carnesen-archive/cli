@@ -1,15 +1,13 @@
-import { platform } from 'os';
-
 import { TargetProtocol } from '../util/target-protocol';
 import { destinationPromptComponent, Destination } from './destination-prompt-component';
+import { ALWAYSAI_OS_PLATFORM } from '../environment';
 
 export async function targetProtocolPromptComponent(props: {
   targetProtocol?: TargetProtocol;
-  osPlatform?: NodeJS.Platform;
 }) {
-  const { targetProtocol, osPlatform = platform() } = props;
+  const { targetProtocol } = props;
   let answer: TargetProtocol;
-  switch (osPlatform) {
+  switch (ALWAYSAI_OS_PLATFORM) {
     case 'linux': {
       const destination = await destinationPromptComponent({
         destination:

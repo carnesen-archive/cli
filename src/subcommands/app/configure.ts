@@ -6,8 +6,8 @@ import { targetProtocolCliInput } from '../../cli-inputs/target-protocol-cli-inp
 import { targetHostnameCliInput } from '../../cli-inputs/target-hostname-cli-input';
 import { targetPathCliInput } from '../../cli-inputs/target-path-cli-input';
 import { NotAllowedWithMessage } from '../../util/not-allowed-with-message';
-import { platform } from 'os';
 import { TargetProtocol } from '../../util/target-protocol';
+import { ALWAYSAI_OS_PLATFORM } from '../../environment';
 
 export const appConfigureCliLeaf = createLeaf({
   name: 'configure',
@@ -22,11 +22,11 @@ export const appConfigureCliLeaf = createLeaf({
     const { yes, hostname, path, protocol } = opts;
 
     // Preliminary checks that don't help us with type narrowing
-    if (protocol === 'docker:' && platform() !== 'linux') {
+    if (protocol === 'docker:' && ALWAYSAI_OS_PLATFORM !== 'linux') {
       throw new UsageError(
         `Option "protocol" is not allowed to have value "${
           TargetProtocol['docker:']
-        }" if your operating system platform is "${platform}"`,
+        }" if your operating system platform is "${ALWAYSAI_OS_PLATFORM}"`,
       );
     }
 

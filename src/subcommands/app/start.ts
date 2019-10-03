@@ -1,4 +1,4 @@
-import { createLeaf, createFlagInput } from '@alwaysai/alwayscli';
+import { createLeaf, createFlagInput, createStringArrayInput } from '@alwaysai/alwayscli';
 
 import { appStartComponent } from '../../components/app-start-component';
 
@@ -15,9 +15,16 @@ export const appStartCliLeaf = createLeaf({
         'If running in a container, do so as the login user instead of as the superuser "root"',
     }),
   },
+  escaped: createStringArrayInput({
+    placeholder: '<args>',
+    description: 'Arguments passed directly to the application',
+  }),
   description: 'Run this application\'s "start" script',
-  async action(_, opts) {
-    const exitCode = await appStartComponent({ noSuperuser: opts['no-superuser'] });
+  async action(_, opts, escaped) {
+    const exitCode = await appStartComponent({
+      noSuperuser: opts['no-superuser'],
+      args: escaped,
+    });
     process.exit(exitCode);
   },
 });

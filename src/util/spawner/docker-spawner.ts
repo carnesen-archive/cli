@@ -1,11 +1,10 @@
-import { platform } from 'os';
-
 import { Spawner, Cmd } from './types';
 import { SpawnerBase } from '../spawner-base';
 import { GnuSpawner } from './gnu-spawner';
 import { ResolvePosixPath } from '../resolve-posix-path';
 import { TerseError } from '@alwaysai/alwayscli';
 import { EMPTY_DOCKER_IMAGE_ID_MESSAGE } from '../../constants';
+import { ALWAYSAI_OS_PLATFORM } from '../../environment';
 
 export const APP_DIR = '/app';
 
@@ -41,7 +40,7 @@ export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
     }
 
     if (cmd.expose5000) {
-      if (platform() === 'linux') {
+      if (ALWAYSAI_OS_PLATFORM === 'linux') {
         args.push('--network=host');
       } else {
         args.push('--publish', '127.0.0.1:5000:5000/tcp');
@@ -49,7 +48,7 @@ export function DockerSpawner(opts: { dockerImageId: string }): Spawner {
     }
 
     // Note: We do not fully support docker spawner except on Linux
-    if (platform() !== 'win32') {
+    if (ALWAYSAI_OS_PLATFORM !== 'win32') {
       args.push('--volume', '/dev:/dev');
     }
 

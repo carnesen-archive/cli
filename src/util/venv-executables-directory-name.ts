@@ -1,5 +1,5 @@
-import { platform } from 'os';
+import { ALWAYSAI_OS_PLATFORM } from '../environment';
 
-export function VenvExecutablesDirectoryName(osPlatform = platform()) {
-  return osPlatform === 'win32' ? 'Scripts' : 'bin';
+export function VenvExecutablesDirectoryName() {
+  return ALWAYSAI_OS_PLATFORM === 'win32' ? 'Scripts' : 'bin';
 }
