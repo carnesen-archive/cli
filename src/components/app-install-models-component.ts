@@ -3,10 +3,8 @@ import logSymbols = require('log-symbols');
 import { AppJsonFile } from '../util/app-json-file';
 import { runWithSpinner } from '../util/run-with-spinner';
 import { echo } from '../util/echo';
-import { appInstallModels } from '../util/app-install-models';
+import { appInstallModel } from '../util/app-install-model';
 import { Spawner } from '../util/spawner/types';
-
-const SEPARATOR = '\n    ';
 
 export async function appInstallModelsComponent(spawner: Spawner) {
   const appJsonFile = AppJsonFile();
@@ -14,13 +12,12 @@ export async function appInstallModelsComponent(spawner: Spawner) {
 
   let hasModels = false;
   if (appJson.models) {
-    const ids = Object.keys(appJson.models);
-    if (ids.length > 0) {
+    for (const [id, version] of Object.entries(appJson.models)) {
       hasModels = true;
       await runWithSpinner(
-        appInstallModels,
-        [spawner],
-        `Install model${ids.length > 1 ? `s:${SEPARATOR}` : ' '}${ids.join(SEPARATOR)}`,
+        appInstallModel,
+        [spawner, id, version],
+        `Install model ${id}`,
       );
     }
   }
