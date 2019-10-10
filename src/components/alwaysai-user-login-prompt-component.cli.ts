@@ -1,12 +1,12 @@
-import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf, runCliAndExit } from '@alwaysai/alwayscli';
 import { alwaysaiUserLoginPromptComponent } from './alwaysai-user-login-prompt-component';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
 import { alwaysaiUserEmailCliInput } from '../cli-inputs/alwaysai-user-email-cli-input';
 import { alwaysaiUserPasswordCliInput } from '../cli-inputs/alwaysai-user-password-cli-input';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: alwaysaiUserLoginPromptComponent.name,
-  options: {
+  namedInputs: {
     yes: yesCliInput,
     email: alwaysaiUserEmailCliInput,
     password: alwaysaiUserPasswordCliInput,
@@ -19,8 +19,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

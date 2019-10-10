@@ -2,7 +2,7 @@ import { AppJsonFile } from '../util/app-json-file';
 import { APP_JSON_FILE_NAME } from '../constants';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
 import { findOrWriteAppPyFileComponent } from './find-or-write-app-py-file-component';
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import { UnableToProceedWithoutMessage } from '../util/unable-to-proceed-without-message';
 import { Spinner } from '../util/spinner';
 
@@ -23,7 +23,7 @@ export async function findOrWriteAppJsonFileComponent(props: { yes: boolean }) {
         description: 'Configuration file',
       }));
     if (!confirmed) {
-      throw new TerseError(UnableToProceedWithoutMessage(APP_JSON_FILE_NAME));
+      throw new CliTerseError(UnableToProceedWithoutMessage(APP_JSON_FILE_NAME));
     }
     try {
       appJsonFile.initialize();

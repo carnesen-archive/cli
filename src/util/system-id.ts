@@ -1,7 +1,7 @@
 import { join } from 'path';
 import * as t from 'io-ts';
 import { ConfigFile, ALWAYSAI_CONFIG_DIR } from '@alwaysai/config-nodejs';
-import { TERSE } from '@alwaysai/alwayscli';
+import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 import KeyMirror = require('keymirror');
 import { ALWAYSAI_CLI_EXECUTABLE_NAME } from '../constants';
 
@@ -25,16 +25,25 @@ const codec = t.partial(props);
 const CLI_JSON_FILE_NAME = 'alwaysai.cli.json';
 const path = join(ALWAYSAI_CONFIG_DIR, CLI_JSON_FILE_NAME);
 
-export const cliConfigFile = ConfigFile({
+const cliJsonFile = ConfigFile({
   path,
   codec,
   ENOENT: {
-    code: TERSE,
+    code: CLI_TERSE_ERROR,
     message: `File not found ${CLI_JSON_FILE_NAME}. Run command "${ALWAYSAI_CLI_EXECUTABLE_NAME} config set" to set configuration values.`,
   },
   initialValue: {},
 });
 
-const maybeConfig = cliConfigFile.readIfExists();
-export const systemId =
-  maybeConfig && maybeConfig.systemId ? maybeConfig.systemId : 'production';
+export function setSystemId(systemId: SystemId) {
+  return cliJsonFile.update(json => {
+    json.systemId = systemId;
+  });
+}
+
+export function getSystemId() {
+  const maybeConfig = cliJsonFile.readIfExists();
+  const systemId =
+    maybeConfig && maybeConfig.systemId ? maybeConfig.systemId : 'production';
+  return systemId;
+}

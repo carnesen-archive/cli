@@ -1,14 +1,13 @@
-import { createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf } from '@alwaysai/alwayscli';
 import { AppJsonFile } from '../../../util/app-json-file';
 import { modelIdsCliInput } from '../../../cli-inputs/model-ids-cli-input';
 import logSymbols = require('log-symbols');
 import { echo } from '../../../util/echo';
 
-export const removeModels = createLeaf({
+export const removeModels = CliLeaf({
   name: 'remove',
   description: `Remove model(s) from this application`,
-  options: {},
-  args: modelIdsCliInput,
+  positionalInput: modelIdsCliInput,
   async action(ids) {
     const appJsonFile = AppJsonFile();
     appJsonFile.read();

@@ -1,9 +1,9 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 
 import { AppJsonFile } from '../util/app-json-file';
 import { echo } from '../util/echo';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
-import { rpcClient } from '../util/rpc-client';
+import { CliRpcClient } from '../util/rpc-client';
 import { downloadModelPackageToCache } from '../util/download-model-package-to-cache';
 import { modelPackageCache } from '../util/model-package-cache';
 import { Spinner } from '../util/spinner';
@@ -21,7 +21,7 @@ export async function appModelsAddComponent(props: {
   for (const id of ids) {
     const spinner = Spinner(`Fetch model ${id}`);
     try {
-      const { version } = await rpcClient.getModelVersion({ id });
+      const { version } = await CliRpcClient().getModelVersion({ id });
       if (!modelPackageCache.has(id, version)) {
         await downloadModelPackageToCache(id, version);
       }
@@ -30,7 +30,7 @@ export async function appModelsAddComponent(props: {
     } catch (exception) {
       spinner.fail();
       if (exception.code === 'MODEL_VERSION_NOT_FOUND') {
-        throw new TerseError(`Model not found: "${id}"`);
+        throw new CliTerseError(`Model not found: "${id}"`);
       }
       throw exception;
     }

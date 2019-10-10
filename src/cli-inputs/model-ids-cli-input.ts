@@ -1,6 +1,6 @@
-import { createStringArrayInput } from '@alwaysai/alwayscli';
+import { CliStringArrayInput } from '@alwaysai/alwayscli';
 
-export const modelIdsCliInput = createStringArrayInput({
+export const modelIdsCliInput = CliStringArrayInput({
   description: 'For example, "alwaysai/MobileNetSSD"',
   required: true,
   placeholder: '<id> [...]',

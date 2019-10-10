@@ -1,4 +1,4 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import { isAbsolute, join } from 'path';
 import { existsSync } from 'fs';
 
@@ -19,7 +19,7 @@ export async function appInstallComponent(props: { yes: boolean }) {
   const { yes } = props;
 
   if (!ALWAYSAI_HOME || !isAbsolute(ALWAYSAI_HOME)) {
-    throw new TerseError(
+    throw new CliTerseError(
       `This command requires that ALWAYSAI_HOME is set in your environment to the absolute path of your ${ALWAYSAI_DESKTOP_SOFTWARE_NAME} installation`,
     );
   }

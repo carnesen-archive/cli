@@ -1,14 +1,14 @@
-import { runAndExit, createCli, createLeaf, createFlagInput } from '@alwaysai/alwayscli';
+import { CliLeaf, CliFlagInput, runCliAndExit } from '@alwaysai/alwayscli';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
 import { findOrWriteAppPyFileComponent } from './find-or-write-app-py-file-component';
 import { APP_PY_FILE_NAME } from '../constants';
 import rimraf = require('rimraf');
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: findOrWriteAppPyFileComponent.name,
-  options: {
+  namedInputs: {
     yes: yesCliInput,
-    rm: createFlagInput({ description: `Remove ${APP_PY_FILE_NAME} first` }),
+    rm: CliFlagInput({ description: `Remove ${APP_PY_FILE_NAME} first` }),
   },
   async action(_, { yes, rm }) {
     if (rm) {
@@ -20,8 +20,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

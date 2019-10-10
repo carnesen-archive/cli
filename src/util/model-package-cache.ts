@@ -2,16 +2,14 @@ import { join, dirname } from 'path';
 import { rename, createWriteStream, existsSync, createReadStream } from 'fs';
 import { promisify } from 'util';
 
+import mkdirp = require('mkdirp');
 import pump = require('pump');
 import rimraf = require('rimraf');
 
 import { MODEL_PACKAGE_CACHE_DIR } from '../constants';
 import { RandomString } from './get-random-string';
-import mkdirp = require('mkdirp');
 import { ModelId } from './model-id';
-import { systemId } from './cli-config';
-
-const SYSTEM_MODEL_PACKAGE_CACHE_DIR = join(MODEL_PACKAGE_CACHE_DIR, systemId);
+import { getSystemId } from './system-id';
 
 export const modelPackageCache = {
   has(id: string, version: number) {
@@ -26,7 +24,7 @@ export const modelPackageCache = {
 
   async clear() {
     await new Promise((resolve, reject) => {
-      rimraf(SYSTEM_MODEL_PACKAGE_CACHE_DIR, err => {
+      rimraf(ModelPackageDirectory(), err => {
         if (err) {
           reject(err);
         } else {
@@ -75,7 +73,11 @@ export const modelPackageCache = {
   },
 };
 
+function ModelPackageDirectory() {
+  return join(MODEL_PACKAGE_CACHE_DIR, getSystemId());
+}
+
 function ModelPackagePath(id: string, version: number) {
   const { publisher, name } = ModelId.parse(id);
-  return join(SYSTEM_MODEL_PACKAGE_CACHE_DIR, publisher, name, `${version}.tar.gz`);
+  return join(ModelPackageDirectory(), publisher, name, `${version}.tar.gz`);
 }

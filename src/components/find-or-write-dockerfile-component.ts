@@ -7,7 +7,7 @@ import {
   DOCKER_FALLBACK_TAG_NAME,
 } from '../constants';
 import { confirmWriteFilePromptComponent } from './confirm-write-file-prompt-component';
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import { UnableToProceedWithoutMessage } from '../util/unable-to-proceed-without-message';
 import { Spinner } from '../util/spinner';
 
@@ -22,7 +22,7 @@ export async function findOrWriteDockerfileComponent(props: { yes: boolean }) {
     const confirmed =
       yes || (await confirmWriteFilePromptComponent({ fileName: DOCKERFILE }));
     if (!confirmed) {
-      throw new TerseError(UnableToProceedWithoutMessage(DOCKERFILE));
+      throw new CliTerseError(UnableToProceedWithoutMessage(DOCKERFILE));
     }
     const spinner = Spinner(WRITE_MESSAGE);
     const buffer = await download(

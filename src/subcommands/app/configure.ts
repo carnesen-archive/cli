@@ -1,4 +1,4 @@
-import { createLeaf, UsageError } from '@alwaysai/alwayscli';
+import { CliLeaf, CliUsageError } from '@alwaysai/alwayscli';
 
 import { yesCliInput } from '../../cli-inputs/yes-cli-input';
 import { appConfigureComponent } from '../../components/app-configure-component';
@@ -9,10 +9,10 @@ import { NotAllowedWithMessage } from '../../util/not-allowed-with-message';
 import { TargetProtocol } from '../../util/target-protocol';
 import { ALWAYSAI_OS_PLATFORM } from '../../environment';
 
-export const appConfigureCliLeaf = createLeaf({
+export const appConfigureCliLeaf = CliLeaf({
   name: 'configure',
   description: 'Configure this directory as an alwaysAI application',
-  options: {
+  namedInputs: {
     yes: yesCliInput,
     protocol: targetProtocolCliInput,
     hostname: targetHostnameCliInput,
@@ -23,7 +23,7 @@ export const appConfigureCliLeaf = createLeaf({
 
     // Preliminary checks that don't help us with type narrowing
     if (protocol === 'docker:' && ALWAYSAI_OS_PLATFORM !== 'linux') {
-      throw new UsageError(
+      throw new CliUsageError(
         `Option "protocol" is not allowed to have value "${
           TargetProtocol['docker:']
         }" if your operating system platform is "${ALWAYSAI_OS_PLATFORM}"`,
@@ -31,13 +31,13 @@ export const appConfigureCliLeaf = createLeaf({
     }
 
     if (protocol === 'docker:' && hostname) {
-      throw new UsageError(
+      throw new CliUsageError(
         NotAllowedWithMessage('hostname', 'protocol', TargetProtocol['docker:']),
       );
     }
 
     if (protocol === 'docker:' && path) {
-      throw new UsageError(
+      throw new CliUsageError(
         NotAllowedWithMessage('path', 'protocol', TargetProtocol['docker:']),
       );
     }

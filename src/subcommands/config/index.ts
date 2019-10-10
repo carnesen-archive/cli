@@ -1,59 +1,30 @@
-import {
-  createBranch,
-  createLeaf,
-  createOneOfInput,
-  createFlagInput,
-} from '@alwaysai/alwayscli';
-import { cliConfigFile, SYSTEM_IDS } from '../../util/cli-config';
+import { CliBranch, CliLeaf, CliOneOfInput } from '@alwaysai/alwayscli';
+import { SYSTEM_IDS, getSystemId, setSystemId } from '../../util/system-id';
 import { ALWAYSAI_CLI_EXECUTABLE_NAME } from '../../constants';
 import { ALWAYSAI_SHOW_HIDDEN } from '../../environment';
 
-const show = createLeaf({
+const show = CliLeaf({
   name: 'show',
   description: `Show your current "${ALWAYSAI_CLI_EXECUTABLE_NAME}" configuration`,
   action() {
-    return cliConfigFile.read();
+    return { systemId: getSystemId() };
   },
 });
 
-const set = createLeaf({
+const set = CliLeaf({
   name: 'set',
   description: `Set an "${ALWAYSAI_CLI_EXECUTABLE_NAME}" configuration value`,
-  options: {
-    systemId: createOneOfInput({ values: SYSTEM_IDS, required: true }),
+  namedInputs: {
+    systemId: CliOneOfInput({ values: SYSTEM_IDS, required: true }),
   },
-  action(_, opts) {
-    if (opts.systemId) {
-      cliConfigFile.update(config => {
-        config.systemId = opts.systemId;
-      });
-    }
+  action(_, { systemId }) {
+    return setSystemId(systemId);
   },
 });
 
-const unset = createLeaf({
-  name: 'unset',
-  description: `Unset an "${ALWAYSAI_CLI_EXECUTABLE_NAME}" configuration value`,
-  options: {
-    all: createFlagInput(),
-    systemId: createFlagInput(),
-  },
-  action(_, opts) {
-    if (opts.all) {
-      cliConfigFile.remove();
-      return;
-    }
-    if (opts.systemId) {
-      cliConfigFile.update(config => {
-        delete config.systemId;
-      });
-    }
-  },
-});
-
-export const config = createBranch({
+export const config = CliBranch({
   name: 'config',
   hidden: !ALWAYSAI_SHOW_HIDDEN,
   description: `Show or set "${ALWAYSAI_CLI_EXECUTABLE_NAME}" configuration values`,
-  subcommands: [show, set, unset],
+  subcommands: [show, set],
 });

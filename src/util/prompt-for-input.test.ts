@@ -1,4 +1,4 @@
-import { runAndCatch } from '@alwaysai/alwayscli';
+import { runAndCatch } from '@carnesen/run-and-catch';
 
 import { promptForInput } from './prompt-for-input';
 

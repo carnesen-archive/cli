@@ -5,20 +5,18 @@ import { CLOUD_API_MODEL_VERSION_PACKAGES_PATH, CloudApiUrl } from '@alwaysai/cl
 import { CodedError } from '@carnesen/coded-error';
 import * as tar from 'tar';
 
-import { rpcClient } from './rpc-client';
-import { authenticationClient } from './authentication-client';
+import { CliRpcClient } from './rpc-client';
+import { CliAuthenticationClient } from './authentication-client';
 import { ModelJsonFile } from './model-json-file';
 import { promisify } from 'util';
 import tempy = require('tempy');
-import { systemId } from './cli-config';
-
-const cloudApiUrl = CloudApiUrl(systemId);
+import { getSystemId } from './system-id';
 
 export const modelPackageCloudClient = {
   async download(id: string, version: number) {
-    const { uuid } = await rpcClient.getModelVersion({ id, version });
+    const { uuid } = await CliRpcClient().getModelVersion({ id, version });
     const modelPackageUrl = ModelPackageUrl(uuid);
-    const authorizationHeader = await authenticationClient.getAuthorizationHeader();
+    const authorizationHeader = await CliAuthenticationClient().getAuthorizationHeader();
     const response = await fetch(modelPackageUrl, {
       method: 'GET',
       headers: { ...authorizationHeader, 'Content-Length': '0' },
@@ -29,9 +27,10 @@ export const modelPackageCloudClient = {
 
   async publish(dir = process.cwd()) {
     const modelJson = ModelJsonFile(dir).read();
+    const rpcClient = CliRpcClient();
     const { uuid } = await rpcClient.createModelVersion(modelJson);
 
-    const authorizationHeader = await authenticationClient.getAuthorizationHeader();
+    const authorizationHeader = await CliAuthenticationClient().getAuthorizationHeader();
     const modelPackagePath = tempy.file();
 
     // Note: The TypeScript types on tar.create are not 100% accurate
@@ -59,6 +58,7 @@ export const modelPackageCloudClient = {
 };
 
 function ModelPackageUrl(uuid: string) {
+  const cloudApiUrl = CloudApiUrl(getSystemId());
   return `${cloudApiUrl}${CLOUD_API_MODEL_VERSION_PACKAGES_PATH}/${uuid}`;
 }
 

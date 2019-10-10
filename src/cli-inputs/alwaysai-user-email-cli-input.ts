@@ -1,9 +1,9 @@
-import { Input, UsageError, TerseError } from '@alwaysai/alwayscli';
+import { CliInput, CliUsageError, CliTerseError } from '@alwaysai/alwayscli';
 import { VALID_EMAIL_REGULAR_EXPRESSION } from '../constants';
 
 const placeholder = '<address>';
 
-export const alwaysaiUserEmailCliInput: Input<string | undefined, false> = {
+export const alwaysaiUserEmailCliInput: CliInput<string | undefined, false> = {
   required: false,
   async getValue(argv) {
     if (!argv) {
@@ -11,21 +11,19 @@ export const alwaysaiUserEmailCliInput: Input<string | undefined, false> = {
     }
 
     if (argv.length > 1) {
-      throw new UsageError(`Expected a single ${placeholder}`);
+      throw new CliUsageError(`Expected a single ${placeholder}`);
     }
 
     if (!argv[0]) {
-      throw new UsageError(`Expected an ${placeholder}`);
+      throw new CliUsageError(`Expected an ${placeholder}`);
     }
 
     if (!VALID_EMAIL_REGULAR_EXPRESSION.test(argv[0])) {
-      throw new TerseError(`"${argv[0]}" is not a valid email`);
+      throw new CliTerseError(`"${argv[0]}" is not a valid email`);
     }
 
     return argv[0];
   },
-  getDescription() {
-    return 'Email address associated with your alwaysAI user account';
-  },
+  description: 'Email address associated with your alwaysAI user account',
   placeholder,
 };

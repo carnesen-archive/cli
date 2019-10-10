@@ -1,7 +1,7 @@
 import { SshSpawner } from '../util/spawner/ssh-spawner';
 import { JsSpawner } from '../util/spawner/js-spawner';
 import { echo } from '../util/echo';
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import { DOCKER_TEST_IMAGE_ID } from '../constants';
 import { Spinner } from '../util/spinner';
 
@@ -28,7 +28,7 @@ export async function checkForDockerComponent(props: { targetHostname?: string }
       echo();
       echo('  https://docs.docker.com/install/');
       echo();
-      throw new TerseError('Failed to run "docker --version"');
+      throw new CliTerseError('Failed to run "docker --version"');
     }
   }
 
@@ -49,7 +49,7 @@ export async function checkForDockerComponent(props: { targetHostname?: string }
       echo();
       echo('  https://docs.docker.com/install/linux/linux-postinstall/');
       echo();
-      throw new TerseError(`Failed to run "docker run ${DOCKER_TEST_IMAGE_ID}"`);
+      throw new CliTerseError(`Failed to run "docker run ${DOCKER_TEST_IMAGE_ID}"`);
     }
   }
 }

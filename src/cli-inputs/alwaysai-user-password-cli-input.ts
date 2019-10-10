@@ -1,8 +1,8 @@
-import { createStringInput } from '@alwaysai/alwayscli';
+import { CliStringInput } from '@alwaysai/alwayscli';
 
 const placeholder = '<password>';
 
-export const alwaysaiUserPasswordCliInput = createStringInput({
+export const alwaysaiUserPasswordCliInput = CliStringInput({
   description: 'Your alwaysAI user password',
   placeholder,
   required: false,

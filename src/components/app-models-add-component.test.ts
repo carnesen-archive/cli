@@ -1,11 +1,13 @@
+import { runAndCatch } from '@carnesen/run-and-catch';
 import tempy = require('tempy');
+
 import { AppJsonFile } from '../util/app-json-file';
-import { rpcClient } from '../util/rpc-client';
+import { CliRpcClient } from '../util/rpc-client';
 import { appModelsAddComponent } from './app-models-add-component';
 import { modelPackageCache } from '../util/model-package-cache';
-import { runAndCatch, TERSE } from '@alwaysai/alwayscli';
+import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 import { RandomString } from '../util/get-random-string';
-import { authenticationClient } from '../util/authentication-client';
+import { CliAuthenticationClient } from '../util/authentication-client';
 
 const EMPTY_MODEL_ID = 'alwaysai/empty';
 
@@ -16,10 +18,10 @@ describe(appModelsAddComponent.name, () => {
     const dir = tempy.directory();
     const appJsonFile = AppJsonFile(dir);
     appJsonFile.write({ models: {} });
-    const { username } = await authenticationClient.getInfo();
+    const { username } = await CliAuthenticationClient().getInfo();
 
     // We'll add the "empty" model
-    const { version } = await rpcClient.getModelVersion({ id: EMPTY_MODEL_ID });
+    const { version } = await CliRpcClient().getModelVersion({ id: EMPTY_MODEL_ID });
 
     // Make sure it's not in the cache
     modelPackageCache.remove(EMPTY_MODEL_ID, version);
@@ -39,7 +41,7 @@ describe(appModelsAddComponent.name, () => {
       dir,
       ids: [`${username}/${RandomString()}`],
     });
-    expect(exception.code).toBe(TERSE);
+    expect(exception.code).toBe(CLI_TERSE_ERROR);
     expect(exception.message).toMatch(/model not found/i);
   });
 });

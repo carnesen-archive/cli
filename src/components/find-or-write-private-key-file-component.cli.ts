@@ -1,4 +1,4 @@
-import { runAndExit, createCli, createLeaf, createFlagInput } from '@alwaysai/alwayscli';
+import { CliLeaf, CliFlagInput, runCliAndExit } from '@alwaysai/alwayscli';
 import rimraf = require('rimraf');
 import { basename } from 'path';
 import { findOrWritePrivateKeyFileComponent } from './find-or-write-private-key-file-component';
@@ -10,14 +10,14 @@ import {
   PUBLIC_KEY_FILE_PATH,
 } from '../constants';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: basename(__filename),
-  options: {
+  namedInputs: {
     yes: yesCliInput,
-    rm: createFlagInput({
+    rm: CliFlagInput({
       description: `Remove ${PRIVATE_KEY_FILE_PRETTY_PATH} and ${PUBLIC_KEY_FILE_PRETTY_PATH} first`,
     }),
-    'rm-pub': createFlagInput({
+    'rm-pub': CliFlagInput({
       description: `Remove ${PUBLIC_KEY_FILE_PRETTY_PATH} first`,
     }),
   },
@@ -35,8 +35,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

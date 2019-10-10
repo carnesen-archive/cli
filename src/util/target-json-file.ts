@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import * as t from 'io-ts';
 
 import { ConfigFile } from '@alwaysai/config-nodejs';
-import { TerseError, TERSE } from '@alwaysai/alwayscli';
+import { CliTerseError, CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 
 import { DockerSpawner } from './spawner/docker-spawner';
 import { TargetProtocol } from './target-protocol';
@@ -39,7 +39,7 @@ const DID_YOU_RUN_APP_CONFIGURE = 'Did you run "alwaysai app configure"?';
 
 const ENOENT = {
   message: `${TARGET_JSON_FILE_NAME} not found. ${DID_YOU_RUN_APP_CONFIGURE}`,
-  code: TERSE,
+  code: CLI_TERSE_ERROR,
 };
 
 export function TargetJsonFile(cwd = process.cwd()) {
@@ -91,7 +91,7 @@ export function TargetJsonFile(cwd = process.cwd()) {
       }
 
       default:
-        throw new TerseError('Unsupported protocol');
+        throw new CliTerseError('Unsupported protocol');
     }
   }
 
@@ -111,7 +111,7 @@ export function TargetJsonFile(cwd = process.cwd()) {
       }
 
       default:
-        throw new TerseError('Unsupported protocol');
+        throw new CliTerseError('Unsupported protocol');
     }
   }
 }

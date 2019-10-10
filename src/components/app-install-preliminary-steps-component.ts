@@ -1,4 +1,4 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 
 import { AppJsonFile } from '../util/app-json-file';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
@@ -10,7 +10,7 @@ export async function appInstallPreliminaryStepsComponent(props: { yes: boolean 
 
   const appJsonFile = AppJsonFile();
   if (!appJsonFile.exists()) {
-    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(appJsonFile.name));
+    throw new CliTerseError(MissingFilePleaseRunAppConfigureMessage(appJsonFile.name));
   }
 }
 

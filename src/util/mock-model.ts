@@ -3,11 +3,11 @@ import { modelPackageCloudClient } from './model-package-cloud-client';
 import { ModelJsonFile, ModelJson } from './model-json-file';
 import { RandomString } from './get-random-string';
 import { ModelId } from './model-id';
-import { authenticationClient } from './authentication-client';
-import { rpcClient } from './rpc-client';
+import { CliAuthenticationClient } from './authentication-client';
+import { CliRpcClient } from './rpc-client';
 
 export async function MockModel() {
-  const { username } = await authenticationClient.getInfo();
+  const { username } = await CliAuthenticationClient().getInfo();
 
   const id = ModelId.serialize({
     publisher: username,
@@ -18,6 +18,7 @@ export async function MockModel() {
   const modelJsonFile = ModelJsonFile(dir);
   const json: ModelJson = {
     accuracy: '',
+    dataset: '',
     description: RandomString(),
     id,
     inference_time: null,
@@ -32,7 +33,7 @@ export async function MockModel() {
   modelJsonFile.write(json);
 
   const uuid = await modelPackageCloudClient.publish(dir);
-  const metadata = await rpcClient.getModelVersionByUuid(uuid);
+  const metadata = await CliRpcClient().getModelVersionByUuid(uuid);
   return {
     json,
     dir,

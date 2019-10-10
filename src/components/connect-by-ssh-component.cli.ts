@@ -1,10 +1,10 @@
-import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf, runCliAndExit } from '@alwaysai/alwayscli';
 import { connectBySshComponent } from './connect-by-ssh-component';
 import { targetHostnameCliInput } from '../cli-inputs/target-hostname-cli-input';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: connectBySshComponent.name,
-  options: {
+  namedInputs: {
     hostname: targetHostnameCliInput,
   },
   async action(_, { hostname = 'localhost' }) {
@@ -14,8 +14,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

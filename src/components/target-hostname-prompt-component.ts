@@ -1,4 +1,4 @@
-import { TERSE } from '@alwaysai/alwayscli';
+import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 
 import { promptForInput } from '../util/prompt-for-input';
 import {
@@ -23,7 +23,7 @@ export async function targetHostnamePromptComponent(props: { targetHostname?: st
     } catch (exception) {
       if (
         exception &&
-        exception.code === TERSE &&
+        exception.code === CLI_TERSE_ERROR &&
         typeof exception.message === 'string' &&
         (exception.message.includes(PROCESS_EXITED_WITH_NON_ZERO_STATUS_CODE) ||
           exception.message.includes(TIMED_OUT_CONNECTING_TO))

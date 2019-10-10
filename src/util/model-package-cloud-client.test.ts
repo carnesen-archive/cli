@@ -1,6 +1,6 @@
 import tempy = require('tempy');
 import { runAndCatch } from '@carnesen/run-and-catch';
-import { TERSE } from '@alwaysai/alwayscli';
+import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 import pump = require('pump');
 import { createWriteStream } from 'fs';
 import * as tar from 'tar';
@@ -11,10 +11,10 @@ import { join, basename } from 'path';
 import { MockModel } from './mock-model';
 
 describe('model package cloud client', () => {
-  it(`throws ${TERSE} error if directory does not have a model json file`, async () => {
+  it(`throws ${CLI_TERSE_ERROR} error if directory does not have a model json file`, async () => {
     const tmpDir = tempy.directory();
     const exception = await runAndCatch(modelPackageCloudClient.publish, tmpDir);
-    expect(exception.code).toBe(TERSE);
+    expect(exception.code).toBe(CLI_TERSE_ERROR);
   });
 
   it(`publish and download`, async () => {

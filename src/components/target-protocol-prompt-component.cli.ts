@@ -1,15 +1,13 @@
-import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf, runCliAndExit } from '@alwaysai/alwayscli';
 import { targetProtocolPromptComponent } from './target-protocol-prompt-component';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: targetProtocolPromptComponent.name,
   async action() {
     return await targetProtocolPromptComponent({});
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

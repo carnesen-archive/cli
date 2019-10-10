@@ -1,21 +1,21 @@
 import {
-  createLeaf,
-  createStringArrayInput,
-  createFlagInput,
-  TerseError,
+  CliLeaf,
+  CliStringArrayInput,
+  CliFlagInput,
+  CliTerseError,
 } from '@alwaysai/alwayscli';
 import { TargetJsonFile } from '../../util/target-json-file';
 
-export const appExecCliLeaf = createLeaf({
+export const appExecCliLeaf = CliLeaf({
   name: 'exec',
   description: 'Run a command in the target directory',
-  options: {
-    superuser: createFlagInput({ description: 'Run the command as superuser "root"' }),
-    'no-container': createFlagInput({
+  namedInputs: {
+    superuser: CliFlagInput({ description: 'Run the command as superuser "root"' }),
+    'no-container': CliFlagInput({
       description: 'Run the command directly on the target host, not in a container',
     }),
   },
-  args: createStringArrayInput({
+  positionalInput: CliStringArrayInput({
     placeholder: '<command> [<args>]',
     required: true,
   }),
@@ -23,7 +23,7 @@ export const appExecCliLeaf = createLeaf({
     const targetJsonFile = TargetJsonFile();
     if (opts['no-container']) {
       if (opts.superuser) {
-        throw new TerseError('--superuser is not yet supported with --no-container');
+        throw new CliTerseError('--superuser is not yet supported with --no-container');
       }
       targetJsonFile.readHostSpawner().runForegroundSync({ exe, args, cwd: '.' });
     } else {

@@ -1,12 +1,12 @@
-import { runAndExit, createCli, createLeaf, createFlagInput } from '@alwaysai/alwayscli';
+import { CliLeaf, CliFlagInput, runCliAndExit } from '@alwaysai/alwayscli';
 import { basename } from 'path';
 import { buildDockerImageComponent } from './build-docker-image-component';
 import { JsSpawner } from '../util/spawner/js-spawner';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: basename(__filename),
-  options: {
-    rm: createFlagInput({ description: 'Run "docker system prune --all --force"' }),
+  namedInputs: {
+    rm: CliFlagInput({ description: 'Run "docker system prune --all --force"' }),
   },
   async action(_, { rm }) {
     const targetHostSpawner = JsSpawner();
@@ -20,8 +20,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

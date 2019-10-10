@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import signalExit = require('signal-exit');
 import chalk from 'chalk';
 
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 
 import { Cmd } from '../spawner/types';
 
@@ -53,7 +53,7 @@ export async function run(cmd: Cmd) {
         message += `$ ${cmd.exe} ${cmd.args ? cmd.args.join(' ') : ''}`;
         message += '\n\n';
         message += Buffer.concat(allChunks).toString('utf8');
-        reject(new TerseError(message));
+        reject(new CliTerseError(message));
       }
     });
   });

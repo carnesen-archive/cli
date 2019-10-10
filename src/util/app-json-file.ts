@@ -3,7 +3,7 @@ import { join } from 'path';
 import * as t from 'io-ts';
 import chalk from 'chalk';
 import { ConfigFile } from '@alwaysai/config-nodejs';
-import { TERSE } from '@alwaysai/alwayscli';
+import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 
 import {
   APP_PY_FILE_NAME,
@@ -20,7 +20,7 @@ export type AppConfig = t.TypeOf<typeof codec>;
 
 const ENOENT = {
   message: `${APP_JSON_FILE_NAME} not found. Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app configure"?`,
-  code: TERSE,
+  code: CLI_TERSE_ERROR,
 };
 
 export function AppJsonFile(dir = process.cwd()) {

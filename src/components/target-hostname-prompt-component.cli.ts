@@ -1,7 +1,7 @@
-import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf, runCliAndExit } from '@alwaysai/alwayscli';
 import { targetHostnamePromptComponent } from './target-hostname-prompt-component';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: targetHostnamePromptComponent.name,
   async action() {
     return await targetHostnamePromptComponent({
@@ -10,8 +10,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

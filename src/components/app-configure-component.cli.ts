@@ -1,10 +1,10 @@
-import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf, runCliAndExit } from '@alwaysai/alwayscli';
 import { appConfigureComponent } from './app-configure-component';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: appConfigureComponent.name,
-  options: {
+  namedInputs: {
     yes: yesCliInput,
   },
   async action(_, { yes }) {
@@ -14,8 +14,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

@@ -1,4 +1,4 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 
 import { echo, echoCommandInvocation } from './echo';
 import { confirmPromptComponent } from '../components/confirm-prompt-component';
@@ -23,7 +23,7 @@ export async function runWithEchoAndProceedPrompt<TArgs extends any[]>(
       message: `${endOfCommandMessage}. Proceed?`,
     });
     if (!confirmed) {
-      throw new TerseError('User elected not to proceed');
+      throw new CliTerseError('User elected not to proceed');
     }
   } else {
     echo(`${logSymbols.success} ${chalk.bold(endOfCommandMessage)}`);

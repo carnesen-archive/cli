@@ -1,4 +1,4 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import { existsSync } from 'fs';
 
 import { TargetJsonFile } from '../util/target-json-file';
@@ -31,14 +31,14 @@ export async function appDeployComponent(props: { yes: boolean }) {
   await appInstallPreliminaryStepsComponent({ yes });
 
   if (!existsSync(DOCKERFILE)) {
-    throw new TerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
+    throw new CliTerseError(MissingFilePleaseRunAppConfigureMessage(DOCKERFILE));
   }
 
   let ranTargetJsonPromptComponent = false;
   const targetJsonFile = TargetJsonFile();
   if (!targetJsonFile.exists()) {
     if (yes) {
-      throw new TerseError(
+      throw new CliTerseError(
         MissingFilePleaseRunAppConfigureMessage(TARGET_JSON_FILE_NAME),
       );
     }
@@ -47,7 +47,7 @@ export async function appDeployComponent(props: { yes: boolean }) {
       description: 'Target configuration',
     });
     if (!confirmed) {
-      throw new TerseError('Unable to proceed without a target configuration');
+      throw new CliTerseError('Unable to proceed without a target configuration');
     }
     await targetJsonPromptComponent();
     ranTargetJsonPromptComponent = true;

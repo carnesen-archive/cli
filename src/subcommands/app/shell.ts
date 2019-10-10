@@ -1,16 +1,16 @@
-import { createLeaf, createFlagInput, TerseError } from '@alwaysai/alwayscli';
+import { CliLeaf, CliFlagInput, CliTerseError } from '@alwaysai/alwayscli';
 import { TargetJsonFile } from '../../util/target-json-file';
 import { VENV_BIN_ACTIVATE } from '../../constants';
 
-export const appShellCliLeaf = createLeaf({
+export const appShellCliLeaf = CliLeaf({
   name: 'shell',
   description: 'Launch a bash shell in the target directory',
-  options: {
-    'no-container': createFlagInput({
+  namedInputs: {
+    'no-container': CliFlagInput({
       description:
         'Open the shell on the target host, not in a container on the target host',
     }),
-    superuser: createFlagInput({
+    superuser: CliFlagInput({
       description: 'Open the shell as superuser "root"',
     }),
   },
@@ -33,7 +33,9 @@ export const appShellCliLeaf = createLeaf({
       case 'ssh+docker:': {
         if (opts['no-container']) {
           if (opts.superuser) {
-            throw new TerseError('--superuser is not yet supported with --no-container');
+            throw new CliTerseError(
+              '--superuser is not yet supported with --no-container',
+            );
           }
           targetJsonFile.readHostSpawner().runForegroundSync({
             exe: '/bin/bash',

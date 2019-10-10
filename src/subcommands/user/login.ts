@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { createLeaf, UsageError } from '@alwaysai/alwayscli';
+import { CliLeaf, CliUsageError } from '@alwaysai/alwayscli';
 
 import { alwaysaiUserEmailCliInput } from '../../cli-inputs/alwaysai-user-email-cli-input';
 import { alwaysaiUserPasswordCliInput } from '../../cli-inputs/alwaysai-user-password-cli-input';
@@ -8,12 +8,12 @@ import { alwaysaiUserLoginPromptComponent } from '../../components/alwaysai-user
 import { RequiredWithYesMessage } from '../../util/required-with-yes-message';
 import { alwaysaiUserLoginYesComponent } from '../../components/alwaysai-user-login-yes-component';
 import { echo } from '../../util/echo';
-import { authenticationClient } from '../../util/authentication-client';
+import { CliAuthenticationClient } from '../../util/authentication-client';
 
-export const userLogin = createLeaf({
+export const userLogin = CliLeaf({
   name: 'login',
   description: 'Log in to the alwaysAI Cloud',
-  options: {
+  namedInputs: {
     yes: yesCliInput,
     email: alwaysaiUserEmailCliInput,
     password: alwaysaiUserPasswordCliInput,
@@ -21,13 +21,14 @@ export const userLogin = createLeaf({
   async action(_, { yes, email, password }) {
     if (yes) {
       if (!email || !password) {
-        throw new UsageError(RequiredWithYesMessage('email', 'password'));
+        throw new CliUsageError(RequiredWithYesMessage('email', 'password'));
       }
       await alwaysaiUserLoginYesComponent({
         alwaysaiUserEmail: email,
         alwaysaiUserPassword: password,
       });
     } else {
+      const authenticationClient = CliAuthenticationClient();
       if (authenticationClient.isSignedIn()) {
         const { email } = await authenticationClient.getInfo();
         echo(`Already logged in as ${chalk.bold(email)}`);

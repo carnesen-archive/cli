@@ -1,4 +1,4 @@
-import { TERSE } from '@alwaysai/alwayscli';
+import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 
 import { promptForInput } from '../util/prompt-for-input';
 import { createTargetDirectoryComponent } from './create-target-directory-component';
@@ -47,7 +47,7 @@ export async function targetPathPromptComponent(props: {
       });
       writable = true;
     } catch (exception) {
-      if (exception.code === TERSE) {
+      if (exception.code === CLI_TERSE_ERROR) {
         skipPromptForTargetPath = false;
         echo(exception.message);
       } else {

@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync } from 'fs';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 
 import {
   PRIVATE_KEY_FILE_PRETTY_PATH,
@@ -33,7 +33,7 @@ export async function findOrWritePrivateKeyFileComponent(props: { yes: boolean }
           description: 'Public key file',
         }));
       if (!confirmed) {
-        throw new TerseError(UnableToProceedWithoutMessage(PUBLIC_KEY_FILE_PATH));
+        throw new CliTerseError(UnableToProceedWithoutMessage(PUBLIC_KEY_FILE_PATH));
       }
       const spinner = Spinner(`Write ${PUBLIC_KEY_FILE_PRETTY_PATH}`);
       try {
@@ -63,7 +63,9 @@ export async function findOrWritePrivateKeyFileComponent(props: { yes: boolean }
         description: 'Private key file',
       }));
     if (!confirmed) {
-      throw new TerseError(UnableToProceedWithoutMessage(PRIVATE_KEY_FILE_PRETTY_PATH));
+      throw new CliTerseError(
+        UnableToProceedWithoutMessage(PRIVATE_KEY_FILE_PRETTY_PATH),
+      );
     }
 
     // ssh-keygen does not automatically create the .ssh directory on Windows if

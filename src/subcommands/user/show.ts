@@ -1,14 +1,14 @@
-import { createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf } from '@alwaysai/alwayscli';
 
 import chalk from 'chalk';
-import { authenticationClient } from '../../util/authentication-client';
+import { CliAuthenticationClient } from '../../util/authentication-client';
 import { echo } from '../../util/echo';
 
-export const userShow = createLeaf({
+export const userShow = CliLeaf({
   name: 'show',
   description: 'Show the currently logged in user',
-  options: {},
   async action() {
+    const authenticationClient = CliAuthenticationClient();
     if (authenticationClient.isSignedIn()) {
       echo('Not logged in');
     } else {

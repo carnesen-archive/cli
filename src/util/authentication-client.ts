@@ -1,9 +1,11 @@
 (global as any)['fetch'] = require('node-fetch');
 import { AuthenticationClient } from '@alwaysai/cloud-api';
-import { systemId } from './cli-config';
+import { getSystemId } from './system-id';
 import { credentialsJsonFile } from './credentials-json-file';
 
-export const authenticationClient = AuthenticationClient({
-  systemId,
-  storage: credentialsJsonFile,
-});
+export function CliAuthenticationClient() {
+  return AuthenticationClient({
+    systemId: getSystemId(),
+    storage: credentialsJsonFile,
+  });
+}

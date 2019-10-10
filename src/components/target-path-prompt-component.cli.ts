@@ -1,11 +1,11 @@
-import { runAndExit, createCli, createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf, runCliAndExit } from '@alwaysai/alwayscli';
 import { targetPathPromptComponent } from './target-path-prompt-component';
 import { targetHostnameCliInput } from '../cli-inputs/target-hostname-cli-input';
 import { targetPathCliInput } from '../cli-inputs/target-path-cli-input';
 
-const leaf = createLeaf({
+const leaf = CliLeaf({
   name: targetPathPromptComponent.name,
-  options: {
+  namedInputs: {
     hostname: targetHostnameCliInput,
     path: targetPathCliInput,
   },
@@ -14,8 +14,6 @@ const leaf = createLeaf({
   },
 });
 
-const cli = createCli(leaf);
-
 if (module === require.main) {
-  runAndExit(cli, ...process.argv.slice(2));
+  runCliAndExit(leaf);
 }

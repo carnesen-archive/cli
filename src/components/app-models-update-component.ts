@@ -1,8 +1,8 @@
 import logSymbols = require('log-symbols');
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 
 import { AppJsonFile } from '../util/app-json-file';
-import { rpcClient } from '../util/rpc-client';
+import { CliRpcClient } from '../util/rpc-client';
 import { echo } from '../util/echo';
 import { checkUserIsLoggedInComponent } from './check-user-is-logged-in-component';
 import { Spinner } from '../util/spinner';
@@ -19,14 +19,14 @@ export async function appModelsUpdateComponent(props: { yes: boolean; dir?: stri
     const spinner = Spinner('Fetching model metadata');
     for (const [id, currentVersion] of Object.entries(models)) {
       try {
-        const { version: latestVersion } = await rpcClient.getModelVersion({ id });
+        const { version: latestVersion } = await CliRpcClient().getModelVersion({ id });
         if (currentVersion !== latestVersion) {
           updates.push([id, currentVersion, latestVersion]);
         }
       } catch (exception) {
         spinner.fail();
         if (exception.code === 'MODEL_VERSION_NOT_FOUND') {
-          throw new TerseError(`Model not found: "${id}"`);
+          throw new CliTerseError(`Model not found: "${id}"`);
         }
         throw exception;
       }

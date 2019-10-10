@@ -1,4 +1,4 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import delay = require('delay');
 
 import { SshSpawner } from '../util/spawner/ssh-spawner';
@@ -18,7 +18,7 @@ export async function connectBySshComponent(props: {
     await Promise.race([
       spawner.run({ exe: 'echo' }),
       delay.reject(TEN_SECONDS, {
-        value: new TerseError(`${TIMED_OUT_CONNECTING_TO} "${targetHostname}"`),
+        value: new CliTerseError(`${TIMED_OUT_CONNECTING_TO} "${targetHostname}"`),
       }),
     ]);
     spinner.succeed();

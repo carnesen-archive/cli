@@ -1,5 +1,5 @@
-import { createFlagInput } from '@alwaysai/alwayscli';
+import { CliFlagInput } from '@alwaysai/alwayscli';
 
-export const yesCliInput = createFlagInput({
+export const yesCliInput = CliFlagInput({
   description: 'Skip interactive prompts (accept default response)',
 });

@@ -1,4 +1,4 @@
-import { UsageError } from '@alwaysai/alwayscli';
+import { CliUsageError } from '@alwaysai/alwayscli';
 import { TargetProtocol } from '../util/target-protocol';
 import {
   PLEASE_REPORT_THIS_ERROR_MESSAGE,
@@ -24,15 +24,15 @@ export async function appConfigureYesComponent(props: {
   switch (targetProtocol) {
     case undefined: {
       if (!ALWAYSAI_HOME) {
-        throw new UsageError(
+        throw new CliUsageError(
           `The --protocol option is required unless the environment variable ALWAYSAI_HOME is set to the location of an ${ALWAYSAI_DESKTOP_SOFTWARE_NAME} installation.`,
         );
       }
       if (targetHostname) {
-        throw new UsageError(OnlyAllowedWithSshPlusDockerMessage('hostname'));
+        throw new CliUsageError(OnlyAllowedWithSshPlusDockerMessage('hostname'));
       }
       if (targetPath) {
-        throw new UsageError(OnlyAllowedWithSshPlusDockerMessage('path'));
+        throw new CliUsageError(OnlyAllowedWithSshPlusDockerMessage('path'));
       }
       await removeTargetJsonFileComponent();
       break;
@@ -52,7 +52,7 @@ export async function appConfigureYesComponent(props: {
 
     case 'ssh+docker:': {
       if (!targetHostname) {
-        throw new UsageError(
+        throw new CliUsageError(
           RequiredWithYesMessage(
             'hostname',
             undefined,

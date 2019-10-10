@@ -1,4 +1,4 @@
-import { createLeaf, createFlagInput, createStringArrayInput } from '@alwaysai/alwayscli';
+import { CliLeaf, CliFlagInput, CliStringArrayInput } from '@alwaysai/alwayscli';
 
 import { appStartComponent } from '../../components/app-start-component';
 
@@ -7,15 +7,15 @@ import { appStartComponent } from '../../components/app-start-component';
 // the NCS even without --privileged mode, but we need to do the work to set
 // that up. See https://movidius.github.io/ncsdk/docker.html
 
-export const appStartCliLeaf = createLeaf({
+export const appStartCliLeaf = CliLeaf({
   name: 'start',
-  options: {
-    'no-superuser': createFlagInput({
+  namedInputs: {
+    'no-superuser': CliFlagInput({
       description:
         'If running in a container, do so as the login user instead of as the superuser "root"',
     }),
   },
-  escaped: createStringArrayInput({
+  escapedInput: CliStringArrayInput({
     placeholder: '<args>',
     description: 'Arguments passed directly to the application',
   }),

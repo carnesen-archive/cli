@@ -1,4 +1,4 @@
-import { TerseError } from '@alwaysai/alwayscli';
+import { CliTerseError } from '@alwaysai/alwayscli';
 import { AppJsonFile } from '../util/app-json-file';
 import { TargetJsonFile } from '../util/target-json-file';
 import {
@@ -21,7 +21,7 @@ export async function appStartComponent(
   const appJson = appJsonFile.read();
   const startScript = appJson.scripts && appJson.scripts.start;
   if (!startScript) {
-    throw new TerseError(
+    throw new CliTerseError(
       `This application does not define a "start" script in its application configuration file "${APP_JSON_FILE_NAME}"`,
     );
   }
@@ -71,13 +71,13 @@ export async function appStartComponent(
   } else {
     // There is no target json file
     if (!ALWAYSAI_HOME) {
-      throw new TerseError(
+      throw new CliTerseError(
         `Target configuration file not found. Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app deploy"?`,
       );
     }
     if (ALWAYSAI_OS_PLATFORM === 'win32') {
       if (!existsSync(VENV_SCRIPTS_ACTIVATE)) {
-        throw new TerseError(
+        throw new CliTerseError(
           `File not found "${VENV_SCRIPTS_ACTIVATE}". Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app install"?`,
         );
       }
@@ -87,7 +87,7 @@ export async function appStartComponent(
       });
     } else {
       if (!existsSync(VENV_BIN_ACTIVATE)) {
-        throw new TerseError(
+        throw new CliTerseError(
           `File not found "${VENV_BIN_ACTIVATE}". Did you run "${ALWAYSAI_CLI_EXECUTABLE_NAME} app install"?`,
         );
       }

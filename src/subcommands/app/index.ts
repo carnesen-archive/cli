@@ -1,4 +1,4 @@
-import { createBranch } from '@alwaysai/alwayscli';
+import { CliBranch } from '@alwaysai/alwayscli';
 import { appShowCliLeaf } from './show';
 import { appModelsCliBranch } from './models';
 import { appInstallCliLeaf } from './install';
@@ -8,7 +8,7 @@ import { appStartCliLeaf } from './start';
 import { appExecCliLeaf } from './exec';
 import { appShellCliLeaf } from './shell';
 
-export const appCliBranch = createBranch({
+export const appCliBranch = CliBranch({
   name: 'app',
   description: 'Develop an alwaysAI application',
   subcommands: [

@@ -12,8 +12,8 @@ import { ConfigFile } from '@alwaysai/config-nodejs';
 import { modelPackageCache } from '../util/model-package-cache';
 import { aai } from '../util/aai';
 import { testAppComponent } from './test-app-component';
-import { systemId } from '../util/cli-config';
 import { cd } from '../util/cd';
+import { getSystemId } from '../util/system-id';
 
 const TESTED_STARTER_APPS_JSON_FILE_NAME = 'alwaysai.tested-starter-apps.json';
 
@@ -37,7 +37,7 @@ export async function underscoreTestStarterAppsComponent(props: {
     jsonFile.remove();
     echoCommandInvocation(`rm -rf ${ALWAYSAI_STARTER_APPS}`);
     rimraf.sync(ALWAYSAI_STARTER_APPS);
-    echoCommandInvocation(`rm -rf ${MODEL_PACKAGE_CACHE_DIR}/${systemId}`);
+    echoCommandInvocation(`rm -rf ${MODEL_PACKAGE_CACHE_DIR}/${getSystemId()}`);
     await modelPackageCache.clear();
   }
 

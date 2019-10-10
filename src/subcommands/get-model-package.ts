@@ -1,7 +1,7 @@
-import { createLeaf, createStringInput, createNumberInput } from '@alwaysai/alwayscli';
+import { CliLeaf, CliStringInput, CliNumberInput } from '@alwaysai/alwayscli';
 import { checkUserIsLoggedInComponent } from '../components/check-user-is-logged-in-component';
 import { yesCliInput } from '../cli-inputs/yes-cli-input';
-import { rpcClient } from '../util/rpc-client';
+import { CliRpcClient } from '../util/rpc-client';
 import { modelPackageCache } from '../util/model-package-cache';
 import { downloadModelPackageToCache } from '../util/download-model-package-to-cache';
 import { createWriteStream } from 'fs';
@@ -10,16 +10,16 @@ import { runWithSpinner } from '../util/run-with-spinner';
 import pump = require('pump');
 import { ALWAYSAI_SHOW_HIDDEN } from '../environment';
 
-export const getModelPackageCliLeaf = createLeaf({
+export const getModelPackageCliLeaf = CliLeaf({
   name: 'get-model-package',
   description: 'Get a model package',
   hidden: !ALWAYSAI_SHOW_HIDDEN,
-  options: {
-    id: createStringInput({
+  namedInputs: {
+    id: CliStringInput({
       description: 'An alwaysAI model ID, e.g. alwaysai/mobilenet_ssd',
       required: true,
     }),
-    version: createNumberInput({
+    version: CliNumberInput({
       description: 'The version number of the model',
     }),
     yes: yesCliInput,
@@ -27,7 +27,8 @@ export const getModelPackageCliLeaf = createLeaf({
   async action(_, { yes, id, version: maybeVersion }) {
     const { publisher, name } = ModelId.parse(id);
     await checkUserIsLoggedInComponent({ yes });
-    const version = maybeVersion || (await rpcClient.getModelVersion({ id })).version;
+    const version =
+      maybeVersion || (await CliRpcClient().getModelVersion({ id })).version;
     const fileName = `${publisher}-${name}-${version}.tar.gz`;
     await runWithSpinner(
       async () => {

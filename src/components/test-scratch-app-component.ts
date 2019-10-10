@@ -6,9 +6,9 @@ import { APP_PY_FILE_NAME, MODEL_PACKAGE_CACHE_DIR } from '../constants';
 import { echoCommandInvocation } from '../util/echo';
 import { modelPackageCache } from '../util/model-package-cache';
 import { aai } from '../util/aai';
-import { systemId } from '../util/cli-config';
 import { testAppComponent } from './test-app-component';
 import { cd } from '../util/cd';
+import { getSystemId } from '../util/system-id';
 
 const SCRATCH_APP = 'scratch-app';
 
@@ -33,7 +33,7 @@ export async function testScratchAppComponent(props: {
   if (reset) {
     echoCommandInvocation(`rm -rf ${SCRATCH_APP}`);
     rimraf.sync(SCRATCH_APP);
-    echoCommandInvocation(`rm -rf ${MODEL_PACKAGE_CACHE_DIR}/${systemId}`);
+    echoCommandInvocation(`rm -rf ${MODEL_PACKAGE_CACHE_DIR}/${getSystemId()}`);
     await modelPackageCache.clear();
   }
 

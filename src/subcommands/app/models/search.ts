@@ -1,11 +1,11 @@
-import { createLeaf } from '@alwaysai/alwayscli';
+import { CliLeaf } from '@alwaysai/alwayscli';
 import { appModelsSearchComponent } from '../../../components/app-models-search-component';
 import { yesCliInput } from '../../../cli-inputs/yes-cli-input';
 
-export const searchModels = createLeaf({
+export const searchModels = CliLeaf({
   name: 'search',
   description: 'Search models in the alwaysAI Cloud',
-  options: {
+  namedInputs: {
     yes: yesCliInput,
   },
   async action(_, { yes }) {
