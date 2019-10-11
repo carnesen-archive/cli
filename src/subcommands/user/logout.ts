@@ -6,7 +6,7 @@ export const userLogout = CliLeaf({
   description: 'Log out of the alwaysAI Cloud',
   async action() {
     try {
-      await CliAuthenticationClient().signOut();
+      CliAuthenticationClient().signOut();
       return 'Logged out successfully';
     } catch {
       return 'An error occurred logging out';
