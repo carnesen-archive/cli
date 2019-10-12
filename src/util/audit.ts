@@ -1,4 +1,4 @@
-import { RandomString } from './get-random-string';
+import { RandomString } from './random-string';
 import { createWriteStream } from 'fs';
 
 const noop = (_: string, callback?: () => void) => {

@@ -1,7 +1,7 @@
 import tempy = require('tempy');
 import { modelPackageCloudClient } from './model-package-cloud-client';
 import { ModelJsonFile, ModelJson } from './model-json-file';
-import { RandomString } from './get-random-string';
+import { RandomString } from './random-string';
 import { ModelId } from './model-id';
 import { CliAuthenticationClient } from './authentication-client';
 import { CliRpcClient } from './rpc-client';

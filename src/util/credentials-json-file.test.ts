@@ -1,5 +1,5 @@
 import { CredentialsJsonFile } from './credentials-json-file';
-import { RandomString } from './get-random-string';
+import { RandomString } from './random-string';
 import tempy = require('tempy');
 
 describe('credentials json file', () => {

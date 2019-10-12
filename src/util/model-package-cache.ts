@@ -7,7 +7,7 @@ import pump = require('pump');
 import rimraf = require('rimraf');
 
 import { MODEL_PACKAGE_CACHE_DIR } from '../constants';
-import { RandomString } from './get-random-string';
+import { RandomString } from './random-string';
 import { ModelId } from './model-id';
 import { getSystemId } from './system-id';
 

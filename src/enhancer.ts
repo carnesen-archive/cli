@@ -1,4 +1,4 @@
-import { CliEnhancer } from '@alwaysai/alwayscli';
+import { CliEnhancer, CLI_USAGE_ERROR } from '@alwaysai/alwayscli';
 import logSymbols = require('log-symbols');
 import { audit, openAuditLog } from './util/audit';
 import { ALWAYSAI_AUDIT_LOG } from './environment';
@@ -30,10 +30,14 @@ export const enhancer: CliEnhancer = argvInterface => async (...argv: string[]) 
     await trackingPromise;
     return returnValue;
   } catch (exception) {
-    await Promise.all([
-      postTrackingDataToSegment(argvString, exception),
-      trackingPromise,
-    ]);
+    if (exception.code !== CLI_USAGE_ERROR) {
+      await Promise.all([
+        postTrackingDataToSegment(argvString, exception),
+        trackingPromise,
+      ]);
+    } else {
+      await trackingPromise;
+    }
     throw exception;
   }
 };

@@ -1,4 +1,5 @@
 import { CliAuthenticationClient } from './authentication-client';
+import { ALWAYSAI_DO_NOT_TRACK } from '../environment';
 
 const version = require('../../package.json');
 
@@ -7,9 +8,12 @@ const buffer = Buffer.from(writeKey, 'utf8');
 const authHeader = buffer.toString('base64');
 
 export async function postTrackingDataToSegment(event: string, label?: any) {
+  if (ALWAYSAI_DO_NOT_TRACK) {
+    return;
+  }
   let uuid = 'undefined';
   try {
-    ({ uuid } = await CliAuthenticationClient().getInfo());
+    ({ uuid } = await CliAuthenticationClient({ readonly: true }).getInfo());
   } catch {}
 
   const data = {

@@ -4,7 +4,7 @@ import { AppJsonFile } from '../util/app-json-file';
 import { CliRpcClient } from '../util/rpc-client';
 import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
 import { CliAuthenticationClient } from '../util/authentication-client';
-import { RandomString } from '../util/get-random-string';
+import { RandomString } from '../util/random-string';
 import { runAndCatch } from '@carnesen/run-and-catch';
 
 describe(appModelsUpdateComponent.name, () => {
