@@ -3,7 +3,7 @@ import { dirname, posix } from 'path';
 import { Spawner } from './spawner/types';
 import { ModelId } from './model-id';
 import { MODEL_JSON_FILE_NAME } from './model-json-file';
-import { RandomString } from './get-random-string';
+import { RandomString } from './random-string';
 import { modelPackageCache } from './model-package-cache';
 import { downloadModelPackageToCache } from './download-model-package-to-cache';
 import { APP_MODELS_DIRECTORY_NAME } from '../constants';

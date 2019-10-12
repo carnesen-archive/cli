@@ -10,10 +10,10 @@ export const userShow = CliLeaf({
   async action() {
     const authenticationClient = CliAuthenticationClient();
     if (authenticationClient.isSignedIn()) {
-      echo('Not logged in');
-    } else {
       const { email } = await authenticationClient.getInfo();
       echo(`Logged in as ${chalk.bold(email)}`);
+    } else {
+      echo('Not logged in');
     }
   },
 });

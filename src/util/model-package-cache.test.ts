@@ -3,7 +3,7 @@ import getStream = require('get-stream');
 
 import { modelPackageCache } from './model-package-cache';
 import { ModelId } from './model-id';
-import { RandomString } from './get-random-string';
+import { RandomString } from './random-string';
 
 describe('model package cache', () => {
   const id = ModelId.serialize({

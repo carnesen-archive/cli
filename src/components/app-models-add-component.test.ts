@@ -6,7 +6,7 @@ import { CliRpcClient } from '../util/rpc-client';
 import { appModelsAddComponent } from './app-models-add-component';
 import { modelPackageCache } from '../util/model-package-cache';
 import { CLI_TERSE_ERROR } from '@alwaysai/alwayscli';
-import { RandomString } from '../util/get-random-string';
+import { RandomString } from '../util/random-string';
 import { CliAuthenticationClient } from '../util/authentication-client';
 
 const EMPTY_MODEL_ID = 'alwaysai/empty';
