@@ -1,7 +1,7 @@
 {
   "name": "alwaysai",
   "description": "The alwaysAI command-line interface (CLI)",
-  "version": "0.5.0-0",
+  "version": "0.5.0-1",
   "main": "lib/exports.js",
   "types": "lib/exports.d.ts",
   "publishConfig": {
