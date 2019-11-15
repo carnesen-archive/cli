@@ -18,13 +18,18 @@ export async function MockModel() {
   const modelJsonFile = ModelJsonFile(dir);
   const json: ModelJson = {
     accuracy: '',
+    benchmark: {},
+    categories: {},
     dataset: '',
+    dataset_url: '',
     description: RandomString(),
     id,
     inference_time: null,
+    labels: {},
     license: '',
     mean_average_precision_top_1: null,
     mean_average_precision_top_5: null,
+    media: {},
     public: false,
     website_url: '',
     model_parameters: {},
